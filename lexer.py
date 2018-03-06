@@ -2,6 +2,16 @@ import ply.lex as lex
 
 # Reserved Words
 reserved = {
+  #Input & Output
+  'print' : 'PRINT',
+  'read' : 'READ',
+  #Key Words
+  'main' : 'MAIN',
+  'program' : 'PROGRAM',
+  'func' : 'FUNCTION',
+  'var' : 'VAR',
+  'true' : 'BOOLEAN',
+  'false' : 'BOOLEAN',
   # Conditionals
 	'if' : 'IF',
   'else' : 'ELSE',
@@ -12,38 +22,33 @@ reserved = {
   'decim' : 'DECIM',
   'bool' : 'BOOL',
   'char' : 'CHAR',
-  'string' : 'STRING',
-  #Key Words
-  'main' : 'MAIN',
-  'program' : 'PROGRAM',
-  'func' : 'FUNCTION',
-  'var' : 'VAR'
+  'string' : 'STRING'
 }
 tokens = [
   	# Primitives	
-  	'RESERVED','ID',
+  	'ID',
   	# Data
-    'NUMBER', 'ALPHANUMERIC', 'CHARACTER', 'BOOLEAN',
+    'NUMBER', 'ALPHANUMERIC', 'CHARACTER',
   	# Arithmetic operators
 		'INCREMENT', 'DECREMENT','PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MOD',    
     # Boolean operators
     'EQUAL','NOT_EQUAL','MORE_EQUAL','LESS_EQUAL', 
-    'MORE_THAN', 'LESS_THAN', 'AND', 'OR'
+    'MORE_THAN', 'LESS_THAN', 'AND', 'OR',
     # Block delimitators
     'L_KEY', 'R_KEY', 'L_BRACK', 'R_BRACK', 'L_PAR', 'R_PAR',  
     # Others
-    'ASSIGN', 'COMMA', 'DOT_COMMA', 'COMMENT_LINE', 'END_LINE','PRINT','READ','QUOTE'
+    'ASSIGN', 'COMMA', 'DOT_COMMA', 'COMMENT_LINE', 'END_LINE'
 		] + list(reserved.values())
 
 # Ignore whitespaces
 t_ignore = ' \t'
 
 # Primitives
-def t_RESERVED(t):
+def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
-    t.type = reserved.get(t.value,'ID')    # Check for reserved words
+    if t.value in reserved:
+      t.type = reserved[t.value]
     return t
-t_ID = r'[a-zA-Z_][a-zA-Z_0-9]*'
   
 # Data
 def t_NUMBER(t):
@@ -52,10 +57,11 @@ def t_NUMBER(t):
  	return t
 # FALTA ALPHANUMERIC ////////////////////FALTA ESTO//////////////////////
 t_CHARACTER = r'[a-zA-Z_]'
+t_ALPHANUMERIC = r'\"[a-zA-Z_\s]*\"'
 # FALTA BOOLEAN ////////////////////FALTA ESTO//////////////////////
 
 # Arithmetic operators
-t_INCREMENT = r'\++'
+t_INCREMENT = r'\+\+'
 t_DECREMENT = r'--'
 t_PLUS = r'\+'
 t_MINUS = r'-'
@@ -71,7 +77,7 @@ t_LESS_EQUAL = r'\<='
 t_MORE_THAN = r'\>'
 t_LESS_THAN = r'\<'
 t_AND = r'&&'
-t_OR = r'||'
+t_OR = r'\|\|'
 
 #Block delimitators
 t_L_KEY = r'\['
@@ -86,11 +92,17 @@ t_R_PAR = r'\)'
 t_ASSIGN = r'='
 t_COMMA = r'\,'
 t_DOT_COMMA = r';'
-t_COMMENT_LINE = r'#'
+t_COMMENT_LINE = r'\#.*'
 t_END_LINE = r'\n'
-t_PRINT = r'\print'
-t_READ = r'\read'
-t_QUOTE = r'\"'
 
 # The lexer is built for token generation
-lex.lex()
+lexer = lex.lex()
+
+def prueba():
+    lex.input('''#Hola Mundo
+    a = 3''')
+    while True:
+        tok = lexer.token()
+        if not tok:
+            break      # No more input
+        print(tok)
