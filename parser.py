@@ -81,10 +81,6 @@ def p_assignment(p):
                 | idCall ASSIGN functionCall
                 | idCall INCREMENT 
                 | idCall DECREMENT'''
-  ############## Revisar esta linea de codigo ################
-  if not symTable.symbolTable[actualFunc].findVarKey(ID):
-  	print (ID, "was not found within " + actualFunc)
-  ############################################################
 
 #def p_optionalArrInd(p):
 #  '''optionalArrInd : 
