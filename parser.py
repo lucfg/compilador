@@ -12,7 +12,7 @@ actualFunc = 'program'
 # Program declaration
 def p_program(p):
   '''program : PROGRAM ID L_BRACK codeBlock R_BRACK'''
-  symTable.addFuncKey(p[1], 'NP')
+ # symTable.addFuncKey(p[1], 'NP')
 
 # Code block
 def p_codeBlock(p):
@@ -24,7 +24,8 @@ def p_codeBlock(p):
 # Main body (with variable declaration)
 def p_mainBody(p):
   '''mainBody : MAIN L_PAR R_PAR L_BRACK variables statements R_BRACK
-  	      | MAIN L_PAR R_PAR L_BRACK statements R_BRACK'''
+  	      | MAIN L_PAR R_PAR L_BRACK statements R_BRACK
+  	      | MAIN L_PAR R_PAR L_BRACK R_BRACK'''
 
 # Body (without variable declaration)
 def p_body(p):
@@ -32,9 +33,10 @@ def p_body(p):
   
 # Variable declaration
 def p_variables(p):
-  '''variables : VAR type ID DOT_COMMA
-  	       | VAR type ID assignment DOT_COMMA'''
-  symTable.symbolTable[actualFunc].addVarKey(p[3], p[2])
+  '''variables :
+               | VAR type ID DOT_COMMA variables
+  	       | VAR type assignment DOT_COMMA variables'''
+ # symTable.symbolTable[actualFunc].addVarKey(p[3], p[2])
 
   
 # Variable array declaration
@@ -43,13 +45,19 @@ def p_arrays(p):
 
 # Function declaration
 def p_functions(p):
-  '''functions : FUNCTION type ID L_PAR type ID functionsHelp R_PAR L_BRACK variables statements R_BRACK
-  	       | FUNCTION type ID L_PAR type ID functionsHelp R_PAR L_BRACK statements R_BRACK'''
-  actualFunc = p[3]
-  symTable.addFuncKey(p[3], p[2])
+  '''functions : FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK
+  	       | FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK statements R_BRACK
+  	       | FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK R_BRACK'''
+ # actualFunc = p[3]
+ # symTable.addFuncKey(p[3], p[2])
 def p_functionsHelp(p):
-  '''functionsHelp : 
-  		   | COMMA type ID functionsHelp'''
+  '''functionsHelp :
+  		   | type ID
+  		   | type ID COMMA functionsHelp2'''
+ 
+def p_functionsHelp2(p):
+  '''functionsHelp2 : type ID
+                    | type ID COMMA functionsHelp2'''
 # ---------------------------------------------------------------------------
   
 ## Data Types
@@ -65,7 +73,8 @@ def p_type(p):
 ## STATEMENTS
 # ---------------------------------------------------------------------------
 def p_statements(p):
-  '''statements : assignment DOT_COMMA
+  '''statements :
+                | assignment DOT_COMMA
   		| functionCall DOT_COMMA
                 | ifBlock
                 | whileBlock
@@ -88,11 +97,22 @@ def p_assignment(p):
   
 # Function call
 def p_functionCall(p):
-  '''functionCall : ID L_PAR megaExp R_PAR'''
-def p_functionCallExtraP(p):
-  '''functionCallExtraP : 
-  											| COMMA idCall
-                        | COMMA idCall functionCallExtraP'''
+  '''functionCall : ID L_PAR functionCallParams R_PAR'''
+def p_functionCallParams(p):
+  '''functionCallParams : functionCallParamsOptional
+                        | functionCallParamsMultiple'''
+def p_functionCallParamsOptional(p):
+  '''functionCallParamsOptional : 
+                                | idCall
+                                | megaExp
+                                | functionCall'''
+def p_functionCallParamsMultiple(p):
+  '''functionCallParamsMultiple : functionCallParamsParam
+                                | functionCallParamsParam COMMA functionCallParamsMultiple'''
+def p_functionCallParamsParam(p):
+  '''functionCallParamsParam : idCall
+                             | megaExp
+                             | functionCall'''
   
 # If block
 def p_ifBlock(p):
@@ -133,13 +153,14 @@ def p_exp(p):
           | term MINUS term'''
     
 def p_term(p):
-   '''term : factor TIMES factor
+   '''term : factor
+           | factor TIMES factor
            | factor DIVIDE factor
            | factor MOD factor'''
     
 def p_factor(p): 
    '''factor : NUMBER 
-   	     		 | ALPHANUMERIC 
+             | ALPHANUMERIC 
              | CHARACTER
              | BOOLEAN
              | idCall
@@ -150,8 +171,8 @@ def p_factor(p):
 ## OTHERS
 def p_idCall(p):
   '''idCall : ID
-  	    | ID L_BRACK exp R_BRACK'''
-  symTable.symbolTable[actualFunc].findVarKey(p[1])
+  	    | ID L_KEY exp R_KEY'''
+ # symTable.symbolTable[actualFunc].findVarKey(p[1])
 # ---------------------------------------------------------------------------
 
 ## INPUT AND OUTPUT
@@ -185,6 +206,7 @@ def p_lineComment(p):
 # ---------------------------------------------------------------------------
 def p_error(p):
     print("Syntax error in input!")
+    print(p)
 # ---------------------------------------------------------------------------
     
 # Build the parser to check on grammar's sintaxis

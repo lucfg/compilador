@@ -99,7 +99,7 @@ t_END_LINE = r'\n'
 lexer = lex.lex()
 
 def prueba():
-    lex.input('''program pHola { }''')
+    lex.input('''program programa {main () {var int c; c=2;}}''')
     while True:
         tok = lexer.token()
         if not tok:

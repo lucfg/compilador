@@ -1,0 +1,3435 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> program
+Rule 1     program -> PROGRAM ID L_BRACK codeBlock R_BRACK
+Rule 2     codeBlock -> variables functions mainBody
+Rule 3     codeBlock -> variables mainBody
+Rule 4     codeBlock -> functions mainBody
+Rule 5     codeBlock -> mainBody
+Rule 6     mainBody -> MAIN L_PAR R_PAR L_BRACK variables statements R_BRACK
+Rule 7     mainBody -> MAIN L_PAR R_PAR L_BRACK statements R_BRACK
+Rule 8     mainBody -> MAIN L_PAR R_PAR L_BRACK R_BRACK
+Rule 9     body -> L_BRACK statements R_BRACK
+Rule 10    variables -> <empty>
+Rule 11    variables -> VAR type ID DOT_COMMA variables
+Rule 12    variables -> VAR type assignment DOT_COMMA variables
+Rule 13    arrays -> VAR type ID L_KEY NUMBER R_KEY DOT_COMMA
+Rule 14    functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK
+Rule 15    functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK statements R_BRACK
+Rule 16    functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK R_BRACK
+Rule 17    functionsHelp -> <empty>
+Rule 18    functionsHelp -> type ID
+Rule 19    functionsHelp -> type ID COMMA functionsHelp2
+Rule 20    functionsHelp2 -> type ID
+Rule 21    functionsHelp2 -> type ID COMMA functionsHelp2
+Rule 22    type -> INT
+Rule 23    type -> DECIM
+Rule 24    type -> BOOL
+Rule 25    type -> CHAR
+Rule 26    type -> STRING
+Rule 27    statements -> <empty>
+Rule 28    statements -> assignment DOT_COMMA
+Rule 29    statements -> functionCall DOT_COMMA
+Rule 30    statements -> ifBlock
+Rule 31    statements -> whileBlock
+Rule 32    statements -> forBlock
+Rule 33    statements -> print DOT_COMMA
+Rule 34    statements -> read DOT_COMMA
+Rule 35    statements -> lineComment
+Rule 36    statements -> arrays DOT_COMMA
+Rule 37    assignment -> idCall ASSIGN megaExp
+Rule 38    assignment -> idCall ASSIGN functionCall
+Rule 39    assignment -> idCall INCREMENT
+Rule 40    assignment -> idCall DECREMENT
+Rule 41    functionCall -> ID L_PAR functionCallParams R_PAR
+Rule 42    functionCallParams -> functionCallParamsOptional
+Rule 43    functionCallParams -> functionCallParamsMultiple
+Rule 44    functionCallParamsOptional -> <empty>
+Rule 45    functionCallParamsOptional -> idCall
+Rule 46    functionCallParamsOptional -> megaExp
+Rule 47    functionCallParamsOptional -> functionCall
+Rule 48    functionCallParamsMultiple -> functionCallParamsParam
+Rule 49    functionCallParamsMultiple -> functionCallParamsParam COMMA functionCallParamsMultiple
+Rule 50    functionCallParamsParam -> idCall
+Rule 51    functionCallParamsParam -> megaExp
+Rule 52    functionCallParamsParam -> functionCall
+Rule 53    ifBlock -> IF L_PAR megaExp R_PAR body optionalElse
+Rule 54    optionalElse -> <empty>
+Rule 55    optionalElse -> ELSE body
+Rule 56    whileBlock -> WHILE L_PAR megaExp R_PAR body
+Rule 57    forBlock -> FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+Rule 58    optionalAssign -> <empty>
+Rule 59    optionalAssign -> assignment
+Rule 60    megaExp -> superExp
+Rule 61    megaExp -> superExp AND superExp
+Rule 62    megaExp -> superExp OR superExp
+Rule 63    superExp -> exp
+Rule 64    superExp -> exp MORE_THAN exp
+Rule 65    superExp -> exp LESS_THAN exp
+Rule 66    superExp -> exp MORE_EQUAL exp
+Rule 67    superExp -> exp LESS_EQUAL exp
+Rule 68    superExp -> exp EQUAL exp
+Rule 69    superExp -> exp NOT_EQUAL exp
+Rule 70    exp -> term
+Rule 71    exp -> term PLUS term
+Rule 72    exp -> term MINUS term
+Rule 73    term -> factor
+Rule 74    term -> factor TIMES factor
+Rule 75    term -> factor DIVIDE factor
+Rule 76    term -> factor MOD factor
+Rule 77    factor -> NUMBER
+Rule 78    factor -> ALPHANUMERIC
+Rule 79    factor -> CHARACTER
+Rule 80    factor -> BOOLEAN
+Rule 81    factor -> idCall
+Rule 82    factor -> L_PAR megaExp R_PAR
+Rule 83    factor -> functionCall
+Rule 84    idCall -> ID
+Rule 85    idCall -> ID L_KEY exp R_KEY
+Rule 86    print -> PRINT L_PAR print_help ALPHANUMERIC R_PAR
+Rule 87    print_help -> <empty>
+Rule 88    print_help -> MOD idCall print_help2
+Rule 89    print_help2 -> <empty>
+Rule 90    print_help2 -> COMMA MOD idCall print_help2
+Rule 91    read -> READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR
+Rule 92    readHelp -> <empty>
+Rule 93    readHelp -> MOD type readHelp
+Rule 94    readHelp2 -> <empty>
+Rule 95    readHelp2 -> COMMA idCall readHelp2
+Rule 96    lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE
+
+Terminals, with rules where they appear
+
+ALPHANUMERIC         : 78 86 96
+AND                  : 61
+ASSIGN               : 37 38
+BOOL                 : 24
+BOOLEAN              : 80
+CHAR                 : 25
+CHARACTER            : 79
+COMMA                : 19 21 49 90 91 95
+COMMENT_LINE         : 96
+DECIM                : 23
+DECREMENT            : 40
+DIVIDE               : 75
+DOT_COMMA            : 11 12 13 28 29 33 34 36 57 57
+ELSE                 : 55
+END_LINE             : 96
+EQUAL                : 68
+FOR                  : 57
+FUNCTION             : 14 15 16
+ID                   : 1 11 13 14 15 16 18 19 20 21 41 84 85
+IF                   : 53
+INCREMENT            : 39
+INT                  : 22
+LESS_EQUAL           : 67
+LESS_THAN            : 65
+L_BRACK              : 1 6 7 8 9 14 15 16
+L_KEY                : 13 85
+L_PAR                : 6 7 8 14 15 16 41 53 56 57 82 86 91
+MAIN                 : 6 7 8
+MINUS                : 72
+MOD                  : 76 88 90 91 93
+MORE_EQUAL           : 66
+MORE_THAN            : 64
+NOT_EQUAL            : 69
+NUMBER               : 13 77
+OR                   : 62
+PLUS                 : 71
+PRINT                : 86
+PROGRAM              : 1
+READ                 : 91
+R_BRACK              : 1 6 7 8 9 14 15 16
+R_KEY                : 13 85
+R_PAR                : 6 7 8 14 15 16 41 53 56 57 82 86 91
+STRING               : 26
+TIMES                : 74
+VAR                  : 11 12 13
+WHILE                : 56
+error                : 
+
+Nonterminals, with rules where they appear
+
+arrays               : 36
+assignment           : 12 28 59
+body                 : 53 55 56 57
+codeBlock            : 1
+exp                  : 63 64 64 65 65 66 66 67 67 68 68 69 69 85
+factor               : 73 74 74 75 75 76 76
+forBlock             : 32
+functionCall         : 29 38 47 52 83
+functionCallParams   : 41
+functionCallParamsMultiple : 43 49
+functionCallParamsOptional : 42
+functionCallParamsParam : 48 49
+functions            : 2 4
+functionsHelp        : 14 15 16
+functionsHelp2       : 19 21
+idCall               : 37 38 39 40 45 50 57 81 88 90 91 95
+ifBlock              : 30
+lineComment          : 35
+mainBody             : 2 3 4 5
+megaExp              : 37 46 51 53 56 57 82
+optionalAssign       : 57
+optionalElse         : 53
+print                : 33
+print_help           : 86
+print_help2          : 88 90
+program              : 0
+read                 : 34
+readHelp             : 91 93
+readHelp2            : 91 95
+statements           : 6 7 9 14 15
+superExp             : 60 61 61 62 62
+term                 : 70 71 71 72 72
+type                 : 11 12 13 14 15 16 18 19 20 21 91 93
+variables            : 2 3 6 11 12 14
+whileBlock           : 31
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . PROGRAM ID L_BRACK codeBlock R_BRACK
+
+    PROGRAM         shift and go to state 2
+
+    program                        shift and go to state 1
+
+state 1
+
+    (0) S' -> program .
+
+
+
+state 2
+
+    (1) program -> PROGRAM . ID L_BRACK codeBlock R_BRACK
+
+    ID              shift and go to state 3
+
+
+state 3
+
+    (1) program -> PROGRAM ID . L_BRACK codeBlock R_BRACK
+
+    L_BRACK         shift and go to state 4
+
+
+state 4
+
+    (1) program -> PROGRAM ID L_BRACK . codeBlock R_BRACK
+    (2) codeBlock -> . variables functions mainBody
+    (3) codeBlock -> . variables mainBody
+    (4) codeBlock -> . functions mainBody
+    (5) codeBlock -> . mainBody
+    (10) variables -> .
+    (11) variables -> . VAR type ID DOT_COMMA variables
+    (12) variables -> . VAR type assignment DOT_COMMA variables
+    (14) functions -> . FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK
+    (15) functions -> . FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK statements R_BRACK
+    (16) functions -> . FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK R_BRACK
+    (6) mainBody -> . MAIN L_PAR R_PAR L_BRACK variables statements R_BRACK
+    (7) mainBody -> . MAIN L_PAR R_PAR L_BRACK statements R_BRACK
+    (8) mainBody -> . MAIN L_PAR R_PAR L_BRACK R_BRACK
+
+  ! shift/reduce conflict for FUNCTION resolved as shift
+  ! shift/reduce conflict for MAIN resolved as shift
+    VAR             shift and go to state 9
+    FUNCTION        shift and go to state 10
+    MAIN            shift and go to state 11
+
+  ! FUNCTION        [ reduce using rule 10 (variables -> .) ]
+  ! MAIN            [ reduce using rule 10 (variables -> .) ]
+
+    codeBlock                      shift and go to state 5
+    variables                      shift and go to state 6
+    functions                      shift and go to state 7
+    mainBody                       shift and go to state 8
+
+state 5
+
+    (1) program -> PROGRAM ID L_BRACK codeBlock . R_BRACK
+
+    R_BRACK         shift and go to state 12
+
+
+state 6
+
+    (2) codeBlock -> variables . functions mainBody
+    (3) codeBlock -> variables . mainBody
+    (14) functions -> . FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK
+    (15) functions -> . FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK statements R_BRACK
+    (16) functions -> . FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK R_BRACK
+    (6) mainBody -> . MAIN L_PAR R_PAR L_BRACK variables statements R_BRACK
+    (7) mainBody -> . MAIN L_PAR R_PAR L_BRACK statements R_BRACK
+    (8) mainBody -> . MAIN L_PAR R_PAR L_BRACK R_BRACK
+
+    FUNCTION        shift and go to state 10
+    MAIN            shift and go to state 11
+
+    functions                      shift and go to state 13
+    mainBody                       shift and go to state 14
+
+state 7
+
+    (4) codeBlock -> functions . mainBody
+    (6) mainBody -> . MAIN L_PAR R_PAR L_BRACK variables statements R_BRACK
+    (7) mainBody -> . MAIN L_PAR R_PAR L_BRACK statements R_BRACK
+    (8) mainBody -> . MAIN L_PAR R_PAR L_BRACK R_BRACK
+
+    MAIN            shift and go to state 11
+
+    mainBody                       shift and go to state 15
+
+state 8
+
+    (5) codeBlock -> mainBody .
+
+    R_BRACK         reduce using rule 5 (codeBlock -> mainBody .)
+
+
+state 9
+
+    (11) variables -> VAR . type ID DOT_COMMA variables
+    (12) variables -> VAR . type assignment DOT_COMMA variables
+    (22) type -> . INT
+    (23) type -> . DECIM
+    (24) type -> . BOOL
+    (25) type -> . CHAR
+    (26) type -> . STRING
+
+    INT             shift and go to state 17
+    DECIM           shift and go to state 18
+    BOOL            shift and go to state 19
+    CHAR            shift and go to state 20
+    STRING          shift and go to state 21
+
+    type                           shift and go to state 16
+
+state 10
+
+    (14) functions -> FUNCTION . type ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK
+    (15) functions -> FUNCTION . type ID L_PAR functionsHelp R_PAR L_BRACK statements R_BRACK
+    (16) functions -> FUNCTION . type ID L_PAR functionsHelp R_PAR L_BRACK R_BRACK
+    (22) type -> . INT
+    (23) type -> . DECIM
+    (24) type -> . BOOL
+    (25) type -> . CHAR
+    (26) type -> . STRING
+
+    INT             shift and go to state 17
+    DECIM           shift and go to state 18
+    BOOL            shift and go to state 19
+    CHAR            shift and go to state 20
+    STRING          shift and go to state 21
+
+    type                           shift and go to state 22
+
+state 11
+
+    (6) mainBody -> MAIN . L_PAR R_PAR L_BRACK variables statements R_BRACK
+    (7) mainBody -> MAIN . L_PAR R_PAR L_BRACK statements R_BRACK
+    (8) mainBody -> MAIN . L_PAR R_PAR L_BRACK R_BRACK
+
+    L_PAR           shift and go to state 23
+
+
+state 12
+
+    (1) program -> PROGRAM ID L_BRACK codeBlock R_BRACK .
+
+    $end            reduce using rule 1 (program -> PROGRAM ID L_BRACK codeBlock R_BRACK .)
+
+
+state 13
+
+    (2) codeBlock -> variables functions . mainBody
+    (6) mainBody -> . MAIN L_PAR R_PAR L_BRACK variables statements R_BRACK
+    (7) mainBody -> . MAIN L_PAR R_PAR L_BRACK statements R_BRACK
+    (8) mainBody -> . MAIN L_PAR R_PAR L_BRACK R_BRACK
+
+    MAIN            shift and go to state 11
+
+    mainBody                       shift and go to state 24
+
+state 14
+
+    (3) codeBlock -> variables mainBody .
+
+    R_BRACK         reduce using rule 3 (codeBlock -> variables mainBody .)
+
+
+state 15
+
+    (4) codeBlock -> functions mainBody .
+
+    R_BRACK         reduce using rule 4 (codeBlock -> functions mainBody .)
+
+
+state 16
+
+    (11) variables -> VAR type . ID DOT_COMMA variables
+    (12) variables -> VAR type . assignment DOT_COMMA variables
+    (37) assignment -> . idCall ASSIGN megaExp
+    (38) assignment -> . idCall ASSIGN functionCall
+    (39) assignment -> . idCall INCREMENT
+    (40) assignment -> . idCall DECREMENT
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+
+    ID              shift and go to state 25
+
+    assignment                     shift and go to state 26
+    idCall                         shift and go to state 27
+
+state 17
+
+    (22) type -> INT .
+
+    ID              reduce using rule 22 (type -> INT .)
+    COMMA           reduce using rule 22 (type -> INT .)
+    MOD             reduce using rule 22 (type -> INT .)
+
+
+state 18
+
+    (23) type -> DECIM .
+
+    ID              reduce using rule 23 (type -> DECIM .)
+    COMMA           reduce using rule 23 (type -> DECIM .)
+    MOD             reduce using rule 23 (type -> DECIM .)
+
+
+state 19
+
+    (24) type -> BOOL .
+
+    ID              reduce using rule 24 (type -> BOOL .)
+    COMMA           reduce using rule 24 (type -> BOOL .)
+    MOD             reduce using rule 24 (type -> BOOL .)
+
+
+state 20
+
+    (25) type -> CHAR .
+
+    ID              reduce using rule 25 (type -> CHAR .)
+    COMMA           reduce using rule 25 (type -> CHAR .)
+    MOD             reduce using rule 25 (type -> CHAR .)
+
+
+state 21
+
+    (26) type -> STRING .
+
+    ID              reduce using rule 26 (type -> STRING .)
+    COMMA           reduce using rule 26 (type -> STRING .)
+    MOD             reduce using rule 26 (type -> STRING .)
+
+
+state 22
+
+    (14) functions -> FUNCTION type . ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK
+    (15) functions -> FUNCTION type . ID L_PAR functionsHelp R_PAR L_BRACK statements R_BRACK
+    (16) functions -> FUNCTION type . ID L_PAR functionsHelp R_PAR L_BRACK R_BRACK
+
+    ID              shift and go to state 28
+
+
+state 23
+
+    (6) mainBody -> MAIN L_PAR . R_PAR L_BRACK variables statements R_BRACK
+    (7) mainBody -> MAIN L_PAR . R_PAR L_BRACK statements R_BRACK
+    (8) mainBody -> MAIN L_PAR . R_PAR L_BRACK R_BRACK
+
+    R_PAR           shift and go to state 29
+
+
+state 24
+
+    (2) codeBlock -> variables functions mainBody .
+
+    R_BRACK         reduce using rule 2 (codeBlock -> variables functions mainBody .)
+
+
+state 25
+
+    (11) variables -> VAR type ID . DOT_COMMA variables
+    (84) idCall -> ID .
+    (85) idCall -> ID . L_KEY exp R_KEY
+
+    DOT_COMMA       shift and go to state 30
+    ASSIGN          reduce using rule 84 (idCall -> ID .)
+    INCREMENT       reduce using rule 84 (idCall -> ID .)
+    DECREMENT       reduce using rule 84 (idCall -> ID .)
+    L_KEY           shift and go to state 31
+
+
+state 26
+
+    (12) variables -> VAR type assignment . DOT_COMMA variables
+
+    DOT_COMMA       shift and go to state 32
+
+
+state 27
+
+    (37) assignment -> idCall . ASSIGN megaExp
+    (38) assignment -> idCall . ASSIGN functionCall
+    (39) assignment -> idCall . INCREMENT
+    (40) assignment -> idCall . DECREMENT
+
+    ASSIGN          shift and go to state 33
+    INCREMENT       shift and go to state 34
+    DECREMENT       shift and go to state 35
+
+
+state 28
+
+    (14) functions -> FUNCTION type ID . L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK
+    (15) functions -> FUNCTION type ID . L_PAR functionsHelp R_PAR L_BRACK statements R_BRACK
+    (16) functions -> FUNCTION type ID . L_PAR functionsHelp R_PAR L_BRACK R_BRACK
+
+    L_PAR           shift and go to state 36
+
+
+state 29
+
+    (6) mainBody -> MAIN L_PAR R_PAR . L_BRACK variables statements R_BRACK
+    (7) mainBody -> MAIN L_PAR R_PAR . L_BRACK statements R_BRACK
+    (8) mainBody -> MAIN L_PAR R_PAR . L_BRACK R_BRACK
+
+    L_BRACK         shift and go to state 37
+
+
+state 30
+
+    (11) variables -> VAR type ID DOT_COMMA . variables
+    (10) variables -> .
+    (11) variables -> . VAR type ID DOT_COMMA variables
+    (12) variables -> . VAR type assignment DOT_COMMA variables
+
+  ! shift/reduce conflict for VAR resolved as shift
+    FUNCTION        reduce using rule 10 (variables -> .)
+    MAIN            reduce using rule 10 (variables -> .)
+    ID              reduce using rule 10 (variables -> .)
+    IF              reduce using rule 10 (variables -> .)
+    WHILE           reduce using rule 10 (variables -> .)
+    FOR             reduce using rule 10 (variables -> .)
+    PRINT           reduce using rule 10 (variables -> .)
+    READ            reduce using rule 10 (variables -> .)
+    COMMENT_LINE    reduce using rule 10 (variables -> .)
+    R_BRACK         reduce using rule 10 (variables -> .)
+    VAR             shift and go to state 9
+
+  ! VAR             [ reduce using rule 10 (variables -> .) ]
+
+    variables                      shift and go to state 38
+
+state 31
+
+    (85) idCall -> ID L_KEY . exp R_KEY
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    exp                            shift and go to state 40
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 32
+
+    (12) variables -> VAR type assignment DOT_COMMA . variables
+    (10) variables -> .
+    (11) variables -> . VAR type ID DOT_COMMA variables
+    (12) variables -> . VAR type assignment DOT_COMMA variables
+
+  ! shift/reduce conflict for VAR resolved as shift
+    FUNCTION        reduce using rule 10 (variables -> .)
+    MAIN            reduce using rule 10 (variables -> .)
+    ID              reduce using rule 10 (variables -> .)
+    IF              reduce using rule 10 (variables -> .)
+    WHILE           reduce using rule 10 (variables -> .)
+    FOR             reduce using rule 10 (variables -> .)
+    PRINT           reduce using rule 10 (variables -> .)
+    READ            reduce using rule 10 (variables -> .)
+    COMMENT_LINE    reduce using rule 10 (variables -> .)
+    R_BRACK         reduce using rule 10 (variables -> .)
+    VAR             shift and go to state 9
+
+  ! VAR             [ reduce using rule 10 (variables -> .) ]
+
+    variables                      shift and go to state 50
+
+state 33
+
+    (37) assignment -> idCall ASSIGN . megaExp
+    (38) assignment -> idCall ASSIGN . functionCall
+    (60) megaExp -> . superExp
+    (61) megaExp -> . superExp AND superExp
+    (62) megaExp -> . superExp OR superExp
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+    (63) superExp -> . exp
+    (64) superExp -> . exp MORE_THAN exp
+    (65) superExp -> . exp LESS_THAN exp
+    (66) superExp -> . exp MORE_EQUAL exp
+    (67) superExp -> . exp LESS_EQUAL exp
+    (68) superExp -> . exp EQUAL exp
+    (69) superExp -> . exp NOT_EQUAL exp
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+
+    ID              shift and go to state 54
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+
+    idCall                         shift and go to state 47
+    megaExp                        shift and go to state 51
+    functionCall                   shift and go to state 52
+    superExp                       shift and go to state 53
+    exp                            shift and go to state 55
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+
+state 34
+
+    (39) assignment -> idCall INCREMENT .
+
+    DOT_COMMA       reduce using rule 39 (assignment -> idCall INCREMENT .)
+    R_PAR           reduce using rule 39 (assignment -> idCall INCREMENT .)
+
+
+state 35
+
+    (40) assignment -> idCall DECREMENT .
+
+    DOT_COMMA       reduce using rule 40 (assignment -> idCall DECREMENT .)
+    R_PAR           reduce using rule 40 (assignment -> idCall DECREMENT .)
+
+
+state 36
+
+    (14) functions -> FUNCTION type ID L_PAR . functionsHelp R_PAR L_BRACK variables statements R_BRACK
+    (15) functions -> FUNCTION type ID L_PAR . functionsHelp R_PAR L_BRACK statements R_BRACK
+    (16) functions -> FUNCTION type ID L_PAR . functionsHelp R_PAR L_BRACK R_BRACK
+    (17) functionsHelp -> .
+    (18) functionsHelp -> . type ID
+    (19) functionsHelp -> . type ID COMMA functionsHelp2
+    (22) type -> . INT
+    (23) type -> . DECIM
+    (24) type -> . BOOL
+    (25) type -> . CHAR
+    (26) type -> . STRING
+
+    R_PAR           reduce using rule 17 (functionsHelp -> .)
+    INT             shift and go to state 17
+    DECIM           shift and go to state 18
+    BOOL            shift and go to state 19
+    CHAR            shift and go to state 20
+    STRING          shift and go to state 21
+
+    type                           shift and go to state 56
+    functionsHelp                  shift and go to state 57
+
+state 37
+
+    (6) mainBody -> MAIN L_PAR R_PAR L_BRACK . variables statements R_BRACK
+    (7) mainBody -> MAIN L_PAR R_PAR L_BRACK . statements R_BRACK
+    (8) mainBody -> MAIN L_PAR R_PAR L_BRACK . R_BRACK
+    (10) variables -> .
+    (11) variables -> . VAR type ID DOT_COMMA variables
+    (12) variables -> . VAR type assignment DOT_COMMA variables
+    (27) statements -> .
+    (28) statements -> . assignment DOT_COMMA
+    (29) statements -> . functionCall DOT_COMMA
+    (30) statements -> . ifBlock
+    (31) statements -> . whileBlock
+    (32) statements -> . forBlock
+    (33) statements -> . print DOT_COMMA
+    (34) statements -> . read DOT_COMMA
+    (35) statements -> . lineComment
+    (36) statements -> . arrays DOT_COMMA
+    (37) assignment -> . idCall ASSIGN megaExp
+    (38) assignment -> . idCall ASSIGN functionCall
+    (39) assignment -> . idCall INCREMENT
+    (40) assignment -> . idCall DECREMENT
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+    (53) ifBlock -> . IF L_PAR megaExp R_PAR body optionalElse
+    (56) whileBlock -> . WHILE L_PAR megaExp R_PAR body
+    (57) forBlock -> . FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+    (86) print -> . PRINT L_PAR print_help ALPHANUMERIC R_PAR
+    (91) read -> . READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR
+    (96) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
+    (13) arrays -> . VAR type ID L_KEY NUMBER R_KEY DOT_COMMA
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+
+  ! shift/reduce conflict for R_BRACK resolved as shift
+  ! shift/reduce conflict for VAR resolved as shift
+  ! shift/reduce conflict for R_BRACK resolved as shift
+  ! shift/reduce conflict for ID resolved as shift
+  ! shift/reduce conflict for IF resolved as shift
+  ! shift/reduce conflict for WHILE resolved as shift
+  ! shift/reduce conflict for FOR resolved as shift
+  ! shift/reduce conflict for PRINT resolved as shift
+  ! shift/reduce conflict for READ resolved as shift
+  ! shift/reduce conflict for COMMENT_LINE resolved as shift
+    R_BRACK         shift and go to state 60
+    VAR             shift and go to state 61
+    ID              shift and go to state 54
+    IF              shift and go to state 71
+    WHILE           shift and go to state 72
+    FOR             shift and go to state 73
+    PRINT           shift and go to state 74
+    READ            shift and go to state 75
+    COMMENT_LINE    shift and go to state 76
+
+  ! ID              [ reduce using rule 10 (variables -> .) ]
+  ! IF              [ reduce using rule 10 (variables -> .) ]
+  ! WHILE           [ reduce using rule 10 (variables -> .) ]
+  ! FOR             [ reduce using rule 10 (variables -> .) ]
+  ! PRINT           [ reduce using rule 10 (variables -> .) ]
+  ! READ            [ reduce using rule 10 (variables -> .) ]
+  ! COMMENT_LINE    [ reduce using rule 10 (variables -> .) ]
+  ! VAR             [ reduce using rule 10 (variables -> .) ]
+  ! R_BRACK         [ reduce using rule 10 (variables -> .) ]
+  ! R_BRACK         [ reduce using rule 27 (statements -> .) ]
+
+    variables                      shift and go to state 58
+    statements                     shift and go to state 59
+    assignment                     shift and go to state 62
+    functionCall                   shift and go to state 63
+    ifBlock                        shift and go to state 64
+    whileBlock                     shift and go to state 65
+    forBlock                       shift and go to state 66
+    print                          shift and go to state 67
+    read                           shift and go to state 68
+    lineComment                    shift and go to state 69
+    arrays                         shift and go to state 70
+    idCall                         shift and go to state 27
+
+state 38
+
+    (11) variables -> VAR type ID DOT_COMMA variables .
+
+    FUNCTION        reduce using rule 11 (variables -> VAR type ID DOT_COMMA variables .)
+    MAIN            reduce using rule 11 (variables -> VAR type ID DOT_COMMA variables .)
+    ID              reduce using rule 11 (variables -> VAR type ID DOT_COMMA variables .)
+    IF              reduce using rule 11 (variables -> VAR type ID DOT_COMMA variables .)
+    WHILE           reduce using rule 11 (variables -> VAR type ID DOT_COMMA variables .)
+    FOR             reduce using rule 11 (variables -> VAR type ID DOT_COMMA variables .)
+    PRINT           reduce using rule 11 (variables -> VAR type ID DOT_COMMA variables .)
+    READ            reduce using rule 11 (variables -> VAR type ID DOT_COMMA variables .)
+    COMMENT_LINE    reduce using rule 11 (variables -> VAR type ID DOT_COMMA variables .)
+    VAR             reduce using rule 11 (variables -> VAR type ID DOT_COMMA variables .)
+    R_BRACK         reduce using rule 11 (variables -> VAR type ID DOT_COMMA variables .)
+
+
+state 39
+
+    (84) idCall -> ID .
+    (85) idCall -> ID . L_KEY exp R_KEY
+    (41) functionCall -> ID . L_PAR functionCallParams R_PAR
+
+    TIMES           reduce using rule 84 (idCall -> ID .)
+    DIVIDE          reduce using rule 84 (idCall -> ID .)
+    MOD             reduce using rule 84 (idCall -> ID .)
+    PLUS            reduce using rule 84 (idCall -> ID .)
+    MINUS           reduce using rule 84 (idCall -> ID .)
+    R_KEY           reduce using rule 84 (idCall -> ID .)
+    MORE_THAN       reduce using rule 84 (idCall -> ID .)
+    LESS_THAN       reduce using rule 84 (idCall -> ID .)
+    MORE_EQUAL      reduce using rule 84 (idCall -> ID .)
+    LESS_EQUAL      reduce using rule 84 (idCall -> ID .)
+    EQUAL           reduce using rule 84 (idCall -> ID .)
+    NOT_EQUAL       reduce using rule 84 (idCall -> ID .)
+    AND             reduce using rule 84 (idCall -> ID .)
+    OR              reduce using rule 84 (idCall -> ID .)
+    R_PAR           reduce using rule 84 (idCall -> ID .)
+    COMMA           reduce using rule 84 (idCall -> ID .)
+    DOT_COMMA       reduce using rule 84 (idCall -> ID .)
+    L_KEY           shift and go to state 31
+    L_PAR           shift and go to state 77
+
+
+state 40
+
+    (85) idCall -> ID L_KEY exp . R_KEY
+
+    R_KEY           shift and go to state 78
+
+
+state 41
+
+    (70) exp -> term .
+    (71) exp -> term . PLUS term
+    (72) exp -> term . MINUS term
+
+    R_KEY           reduce using rule 70 (exp -> term .)
+    MORE_THAN       reduce using rule 70 (exp -> term .)
+    LESS_THAN       reduce using rule 70 (exp -> term .)
+    MORE_EQUAL      reduce using rule 70 (exp -> term .)
+    LESS_EQUAL      reduce using rule 70 (exp -> term .)
+    EQUAL           reduce using rule 70 (exp -> term .)
+    NOT_EQUAL       reduce using rule 70 (exp -> term .)
+    AND             reduce using rule 70 (exp -> term .)
+    OR              reduce using rule 70 (exp -> term .)
+    DOT_COMMA       reduce using rule 70 (exp -> term .)
+    R_PAR           reduce using rule 70 (exp -> term .)
+    COMMA           reduce using rule 70 (exp -> term .)
+    PLUS            shift and go to state 79
+    MINUS           shift and go to state 80
+
+
+state 42
+
+    (73) term -> factor .
+    (74) term -> factor . TIMES factor
+    (75) term -> factor . DIVIDE factor
+    (76) term -> factor . MOD factor
+
+    PLUS            reduce using rule 73 (term -> factor .)
+    MINUS           reduce using rule 73 (term -> factor .)
+    R_KEY           reduce using rule 73 (term -> factor .)
+    MORE_THAN       reduce using rule 73 (term -> factor .)
+    LESS_THAN       reduce using rule 73 (term -> factor .)
+    MORE_EQUAL      reduce using rule 73 (term -> factor .)
+    LESS_EQUAL      reduce using rule 73 (term -> factor .)
+    EQUAL           reduce using rule 73 (term -> factor .)
+    NOT_EQUAL       reduce using rule 73 (term -> factor .)
+    AND             reduce using rule 73 (term -> factor .)
+    OR              reduce using rule 73 (term -> factor .)
+    DOT_COMMA       reduce using rule 73 (term -> factor .)
+    R_PAR           reduce using rule 73 (term -> factor .)
+    COMMA           reduce using rule 73 (term -> factor .)
+    TIMES           shift and go to state 81
+    DIVIDE          shift and go to state 82
+    MOD             shift and go to state 83
+
+
+state 43
+
+    (77) factor -> NUMBER .
+
+    TIMES           reduce using rule 77 (factor -> NUMBER .)
+    DIVIDE          reduce using rule 77 (factor -> NUMBER .)
+    MOD             reduce using rule 77 (factor -> NUMBER .)
+    PLUS            reduce using rule 77 (factor -> NUMBER .)
+    MINUS           reduce using rule 77 (factor -> NUMBER .)
+    R_KEY           reduce using rule 77 (factor -> NUMBER .)
+    MORE_THAN       reduce using rule 77 (factor -> NUMBER .)
+    LESS_THAN       reduce using rule 77 (factor -> NUMBER .)
+    MORE_EQUAL      reduce using rule 77 (factor -> NUMBER .)
+    LESS_EQUAL      reduce using rule 77 (factor -> NUMBER .)
+    EQUAL           reduce using rule 77 (factor -> NUMBER .)
+    NOT_EQUAL       reduce using rule 77 (factor -> NUMBER .)
+    AND             reduce using rule 77 (factor -> NUMBER .)
+    OR              reduce using rule 77 (factor -> NUMBER .)
+    DOT_COMMA       reduce using rule 77 (factor -> NUMBER .)
+    R_PAR           reduce using rule 77 (factor -> NUMBER .)
+    COMMA           reduce using rule 77 (factor -> NUMBER .)
+
+
+state 44
+
+    (78) factor -> ALPHANUMERIC .
+
+    TIMES           reduce using rule 78 (factor -> ALPHANUMERIC .)
+    DIVIDE          reduce using rule 78 (factor -> ALPHANUMERIC .)
+    MOD             reduce using rule 78 (factor -> ALPHANUMERIC .)
+    PLUS            reduce using rule 78 (factor -> ALPHANUMERIC .)
+    MINUS           reduce using rule 78 (factor -> ALPHANUMERIC .)
+    R_KEY           reduce using rule 78 (factor -> ALPHANUMERIC .)
+    MORE_THAN       reduce using rule 78 (factor -> ALPHANUMERIC .)
+    LESS_THAN       reduce using rule 78 (factor -> ALPHANUMERIC .)
+    MORE_EQUAL      reduce using rule 78 (factor -> ALPHANUMERIC .)
+    LESS_EQUAL      reduce using rule 78 (factor -> ALPHANUMERIC .)
+    EQUAL           reduce using rule 78 (factor -> ALPHANUMERIC .)
+    NOT_EQUAL       reduce using rule 78 (factor -> ALPHANUMERIC .)
+    AND             reduce using rule 78 (factor -> ALPHANUMERIC .)
+    OR              reduce using rule 78 (factor -> ALPHANUMERIC .)
+    DOT_COMMA       reduce using rule 78 (factor -> ALPHANUMERIC .)
+    R_PAR           reduce using rule 78 (factor -> ALPHANUMERIC .)
+    COMMA           reduce using rule 78 (factor -> ALPHANUMERIC .)
+
+
+state 45
+
+    (79) factor -> CHARACTER .
+
+    TIMES           reduce using rule 79 (factor -> CHARACTER .)
+    DIVIDE          reduce using rule 79 (factor -> CHARACTER .)
+    MOD             reduce using rule 79 (factor -> CHARACTER .)
+    PLUS            reduce using rule 79 (factor -> CHARACTER .)
+    MINUS           reduce using rule 79 (factor -> CHARACTER .)
+    R_KEY           reduce using rule 79 (factor -> CHARACTER .)
+    MORE_THAN       reduce using rule 79 (factor -> CHARACTER .)
+    LESS_THAN       reduce using rule 79 (factor -> CHARACTER .)
+    MORE_EQUAL      reduce using rule 79 (factor -> CHARACTER .)
+    LESS_EQUAL      reduce using rule 79 (factor -> CHARACTER .)
+    EQUAL           reduce using rule 79 (factor -> CHARACTER .)
+    NOT_EQUAL       reduce using rule 79 (factor -> CHARACTER .)
+    AND             reduce using rule 79 (factor -> CHARACTER .)
+    OR              reduce using rule 79 (factor -> CHARACTER .)
+    DOT_COMMA       reduce using rule 79 (factor -> CHARACTER .)
+    R_PAR           reduce using rule 79 (factor -> CHARACTER .)
+    COMMA           reduce using rule 79 (factor -> CHARACTER .)
+
+
+state 46
+
+    (80) factor -> BOOLEAN .
+
+    TIMES           reduce using rule 80 (factor -> BOOLEAN .)
+    DIVIDE          reduce using rule 80 (factor -> BOOLEAN .)
+    MOD             reduce using rule 80 (factor -> BOOLEAN .)
+    PLUS            reduce using rule 80 (factor -> BOOLEAN .)
+    MINUS           reduce using rule 80 (factor -> BOOLEAN .)
+    R_KEY           reduce using rule 80 (factor -> BOOLEAN .)
+    MORE_THAN       reduce using rule 80 (factor -> BOOLEAN .)
+    LESS_THAN       reduce using rule 80 (factor -> BOOLEAN .)
+    MORE_EQUAL      reduce using rule 80 (factor -> BOOLEAN .)
+    LESS_EQUAL      reduce using rule 80 (factor -> BOOLEAN .)
+    EQUAL           reduce using rule 80 (factor -> BOOLEAN .)
+    NOT_EQUAL       reduce using rule 80 (factor -> BOOLEAN .)
+    AND             reduce using rule 80 (factor -> BOOLEAN .)
+    OR              reduce using rule 80 (factor -> BOOLEAN .)
+    DOT_COMMA       reduce using rule 80 (factor -> BOOLEAN .)
+    R_PAR           reduce using rule 80 (factor -> BOOLEAN .)
+    COMMA           reduce using rule 80 (factor -> BOOLEAN .)
+
+
+state 47
+
+    (81) factor -> idCall .
+
+    TIMES           reduce using rule 81 (factor -> idCall .)
+    DIVIDE          reduce using rule 81 (factor -> idCall .)
+    MOD             reduce using rule 81 (factor -> idCall .)
+    PLUS            reduce using rule 81 (factor -> idCall .)
+    MINUS           reduce using rule 81 (factor -> idCall .)
+    R_KEY           reduce using rule 81 (factor -> idCall .)
+    MORE_THAN       reduce using rule 81 (factor -> idCall .)
+    LESS_THAN       reduce using rule 81 (factor -> idCall .)
+    MORE_EQUAL      reduce using rule 81 (factor -> idCall .)
+    LESS_EQUAL      reduce using rule 81 (factor -> idCall .)
+    EQUAL           reduce using rule 81 (factor -> idCall .)
+    NOT_EQUAL       reduce using rule 81 (factor -> idCall .)
+    AND             reduce using rule 81 (factor -> idCall .)
+    OR              reduce using rule 81 (factor -> idCall .)
+    DOT_COMMA       reduce using rule 81 (factor -> idCall .)
+    R_PAR           reduce using rule 81 (factor -> idCall .)
+    COMMA           reduce using rule 81 (factor -> idCall .)
+
+
+state 48
+
+    (82) factor -> L_PAR . megaExp R_PAR
+    (60) megaExp -> . superExp
+    (61) megaExp -> . superExp AND superExp
+    (62) megaExp -> . superExp OR superExp
+    (63) superExp -> . exp
+    (64) superExp -> . exp MORE_THAN exp
+    (65) superExp -> . exp LESS_THAN exp
+    (66) superExp -> . exp MORE_EQUAL exp
+    (67) superExp -> . exp LESS_EQUAL exp
+    (68) superExp -> . exp EQUAL exp
+    (69) superExp -> . exp NOT_EQUAL exp
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    megaExp                        shift and go to state 84
+    superExp                       shift and go to state 53
+    exp                            shift and go to state 55
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 49
+
+    (83) factor -> functionCall .
+
+    TIMES           reduce using rule 83 (factor -> functionCall .)
+    DIVIDE          reduce using rule 83 (factor -> functionCall .)
+    MOD             reduce using rule 83 (factor -> functionCall .)
+    PLUS            reduce using rule 83 (factor -> functionCall .)
+    MINUS           reduce using rule 83 (factor -> functionCall .)
+    R_KEY           reduce using rule 83 (factor -> functionCall .)
+    MORE_THAN       reduce using rule 83 (factor -> functionCall .)
+    LESS_THAN       reduce using rule 83 (factor -> functionCall .)
+    MORE_EQUAL      reduce using rule 83 (factor -> functionCall .)
+    LESS_EQUAL      reduce using rule 83 (factor -> functionCall .)
+    EQUAL           reduce using rule 83 (factor -> functionCall .)
+    NOT_EQUAL       reduce using rule 83 (factor -> functionCall .)
+    AND             reduce using rule 83 (factor -> functionCall .)
+    OR              reduce using rule 83 (factor -> functionCall .)
+    R_PAR           reduce using rule 83 (factor -> functionCall .)
+    DOT_COMMA       reduce using rule 83 (factor -> functionCall .)
+    COMMA           reduce using rule 83 (factor -> functionCall .)
+
+
+state 50
+
+    (12) variables -> VAR type assignment DOT_COMMA variables .
+
+    FUNCTION        reduce using rule 12 (variables -> VAR type assignment DOT_COMMA variables .)
+    MAIN            reduce using rule 12 (variables -> VAR type assignment DOT_COMMA variables .)
+    ID              reduce using rule 12 (variables -> VAR type assignment DOT_COMMA variables .)
+    IF              reduce using rule 12 (variables -> VAR type assignment DOT_COMMA variables .)
+    WHILE           reduce using rule 12 (variables -> VAR type assignment DOT_COMMA variables .)
+    FOR             reduce using rule 12 (variables -> VAR type assignment DOT_COMMA variables .)
+    PRINT           reduce using rule 12 (variables -> VAR type assignment DOT_COMMA variables .)
+    READ            reduce using rule 12 (variables -> VAR type assignment DOT_COMMA variables .)
+    COMMENT_LINE    reduce using rule 12 (variables -> VAR type assignment DOT_COMMA variables .)
+    VAR             reduce using rule 12 (variables -> VAR type assignment DOT_COMMA variables .)
+    R_BRACK         reduce using rule 12 (variables -> VAR type assignment DOT_COMMA variables .)
+
+
+state 51
+
+    (37) assignment -> idCall ASSIGN megaExp .
+
+    DOT_COMMA       reduce using rule 37 (assignment -> idCall ASSIGN megaExp .)
+    R_PAR           reduce using rule 37 (assignment -> idCall ASSIGN megaExp .)
+
+
+state 52
+
+    (38) assignment -> idCall ASSIGN functionCall .
+    (83) factor -> functionCall .
+
+  ! reduce/reduce conflict for DOT_COMMA resolved using rule 38 (assignment -> idCall ASSIGN functionCall .)
+  ! reduce/reduce conflict for R_PAR resolved using rule 38 (assignment -> idCall ASSIGN functionCall .)
+    DOT_COMMA       reduce using rule 38 (assignment -> idCall ASSIGN functionCall .)
+    R_PAR           reduce using rule 38 (assignment -> idCall ASSIGN functionCall .)
+    TIMES           reduce using rule 83 (factor -> functionCall .)
+    DIVIDE          reduce using rule 83 (factor -> functionCall .)
+    MOD             reduce using rule 83 (factor -> functionCall .)
+    PLUS            reduce using rule 83 (factor -> functionCall .)
+    MINUS           reduce using rule 83 (factor -> functionCall .)
+    MORE_THAN       reduce using rule 83 (factor -> functionCall .)
+    LESS_THAN       reduce using rule 83 (factor -> functionCall .)
+    MORE_EQUAL      reduce using rule 83 (factor -> functionCall .)
+    LESS_EQUAL      reduce using rule 83 (factor -> functionCall .)
+    EQUAL           reduce using rule 83 (factor -> functionCall .)
+    NOT_EQUAL       reduce using rule 83 (factor -> functionCall .)
+    AND             reduce using rule 83 (factor -> functionCall .)
+    OR              reduce using rule 83 (factor -> functionCall .)
+
+  ! DOT_COMMA       [ reduce using rule 83 (factor -> functionCall .) ]
+  ! R_PAR           [ reduce using rule 83 (factor -> functionCall .) ]
+
+
+state 53
+
+    (60) megaExp -> superExp .
+    (61) megaExp -> superExp . AND superExp
+    (62) megaExp -> superExp . OR superExp
+
+    DOT_COMMA       reduce using rule 60 (megaExp -> superExp .)
+    R_PAR           reduce using rule 60 (megaExp -> superExp .)
+    COMMA           reduce using rule 60 (megaExp -> superExp .)
+    AND             shift and go to state 85
+    OR              shift and go to state 86
+
+
+state 54
+
+    (41) functionCall -> ID . L_PAR functionCallParams R_PAR
+    (84) idCall -> ID .
+    (85) idCall -> ID . L_KEY exp R_KEY
+
+    L_PAR           shift and go to state 77
+    TIMES           reduce using rule 84 (idCall -> ID .)
+    DIVIDE          reduce using rule 84 (idCall -> ID .)
+    MOD             reduce using rule 84 (idCall -> ID .)
+    PLUS            reduce using rule 84 (idCall -> ID .)
+    MINUS           reduce using rule 84 (idCall -> ID .)
+    MORE_THAN       reduce using rule 84 (idCall -> ID .)
+    LESS_THAN       reduce using rule 84 (idCall -> ID .)
+    MORE_EQUAL      reduce using rule 84 (idCall -> ID .)
+    LESS_EQUAL      reduce using rule 84 (idCall -> ID .)
+    EQUAL           reduce using rule 84 (idCall -> ID .)
+    NOT_EQUAL       reduce using rule 84 (idCall -> ID .)
+    AND             reduce using rule 84 (idCall -> ID .)
+    OR              reduce using rule 84 (idCall -> ID .)
+    DOT_COMMA       reduce using rule 84 (idCall -> ID .)
+    R_PAR           reduce using rule 84 (idCall -> ID .)
+    ASSIGN          reduce using rule 84 (idCall -> ID .)
+    INCREMENT       reduce using rule 84 (idCall -> ID .)
+    DECREMENT       reduce using rule 84 (idCall -> ID .)
+    L_KEY           shift and go to state 31
+
+
+state 55
+
+    (63) superExp -> exp .
+    (64) superExp -> exp . MORE_THAN exp
+    (65) superExp -> exp . LESS_THAN exp
+    (66) superExp -> exp . MORE_EQUAL exp
+    (67) superExp -> exp . LESS_EQUAL exp
+    (68) superExp -> exp . EQUAL exp
+    (69) superExp -> exp . NOT_EQUAL exp
+
+    AND             reduce using rule 63 (superExp -> exp .)
+    OR              reduce using rule 63 (superExp -> exp .)
+    DOT_COMMA       reduce using rule 63 (superExp -> exp .)
+    R_PAR           reduce using rule 63 (superExp -> exp .)
+    COMMA           reduce using rule 63 (superExp -> exp .)
+    MORE_THAN       shift and go to state 87
+    LESS_THAN       shift and go to state 88
+    MORE_EQUAL      shift and go to state 89
+    LESS_EQUAL      shift and go to state 90
+    EQUAL           shift and go to state 91
+    NOT_EQUAL       shift and go to state 92
+
+
+state 56
+
+    (18) functionsHelp -> type . ID
+    (19) functionsHelp -> type . ID COMMA functionsHelp2
+
+    ID              shift and go to state 93
+
+
+state 57
+
+    (14) functions -> FUNCTION type ID L_PAR functionsHelp . R_PAR L_BRACK variables statements R_BRACK
+    (15) functions -> FUNCTION type ID L_PAR functionsHelp . R_PAR L_BRACK statements R_BRACK
+    (16) functions -> FUNCTION type ID L_PAR functionsHelp . R_PAR L_BRACK R_BRACK
+
+    R_PAR           shift and go to state 94
+
+
+state 58
+
+    (6) mainBody -> MAIN L_PAR R_PAR L_BRACK variables . statements R_BRACK
+    (27) statements -> .
+    (28) statements -> . assignment DOT_COMMA
+    (29) statements -> . functionCall DOT_COMMA
+    (30) statements -> . ifBlock
+    (31) statements -> . whileBlock
+    (32) statements -> . forBlock
+    (33) statements -> . print DOT_COMMA
+    (34) statements -> . read DOT_COMMA
+    (35) statements -> . lineComment
+    (36) statements -> . arrays DOT_COMMA
+    (37) assignment -> . idCall ASSIGN megaExp
+    (38) assignment -> . idCall ASSIGN functionCall
+    (39) assignment -> . idCall INCREMENT
+    (40) assignment -> . idCall DECREMENT
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+    (53) ifBlock -> . IF L_PAR megaExp R_PAR body optionalElse
+    (56) whileBlock -> . WHILE L_PAR megaExp R_PAR body
+    (57) forBlock -> . FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+    (86) print -> . PRINT L_PAR print_help ALPHANUMERIC R_PAR
+    (91) read -> . READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR
+    (96) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
+    (13) arrays -> . VAR type ID L_KEY NUMBER R_KEY DOT_COMMA
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+
+    R_BRACK         reduce using rule 27 (statements -> .)
+    ID              shift and go to state 54
+    IF              shift and go to state 71
+    WHILE           shift and go to state 72
+    FOR             shift and go to state 73
+    PRINT           shift and go to state 74
+    READ            shift and go to state 75
+    COMMENT_LINE    shift and go to state 76
+    VAR             shift and go to state 96
+
+    statements                     shift and go to state 95
+    assignment                     shift and go to state 62
+    functionCall                   shift and go to state 63
+    ifBlock                        shift and go to state 64
+    whileBlock                     shift and go to state 65
+    forBlock                       shift and go to state 66
+    print                          shift and go to state 67
+    read                           shift and go to state 68
+    lineComment                    shift and go to state 69
+    arrays                         shift and go to state 70
+    idCall                         shift and go to state 27
+
+state 59
+
+    (7) mainBody -> MAIN L_PAR R_PAR L_BRACK statements . R_BRACK
+
+    R_BRACK         shift and go to state 97
+
+
+state 60
+
+    (8) mainBody -> MAIN L_PAR R_PAR L_BRACK R_BRACK .
+
+    R_BRACK         reduce using rule 8 (mainBody -> MAIN L_PAR R_PAR L_BRACK R_BRACK .)
+
+
+state 61
+
+    (11) variables -> VAR . type ID DOT_COMMA variables
+    (12) variables -> VAR . type assignment DOT_COMMA variables
+    (13) arrays -> VAR . type ID L_KEY NUMBER R_KEY DOT_COMMA
+    (22) type -> . INT
+    (23) type -> . DECIM
+    (24) type -> . BOOL
+    (25) type -> . CHAR
+    (26) type -> . STRING
+
+    INT             shift and go to state 17
+    DECIM           shift and go to state 18
+    BOOL            shift and go to state 19
+    CHAR            shift and go to state 20
+    STRING          shift and go to state 21
+
+    type                           shift and go to state 98
+
+state 62
+
+    (28) statements -> assignment . DOT_COMMA
+
+    DOT_COMMA       shift and go to state 99
+
+
+state 63
+
+    (29) statements -> functionCall . DOT_COMMA
+
+    DOT_COMMA       shift and go to state 100
+
+
+state 64
+
+    (30) statements -> ifBlock .
+
+    R_BRACK         reduce using rule 30 (statements -> ifBlock .)
+
+
+state 65
+
+    (31) statements -> whileBlock .
+
+    R_BRACK         reduce using rule 31 (statements -> whileBlock .)
+
+
+state 66
+
+    (32) statements -> forBlock .
+
+    R_BRACK         reduce using rule 32 (statements -> forBlock .)
+
+
+state 67
+
+    (33) statements -> print . DOT_COMMA
+
+    DOT_COMMA       shift and go to state 101
+
+
+state 68
+
+    (34) statements -> read . DOT_COMMA
+
+    DOT_COMMA       shift and go to state 102
+
+
+state 69
+
+    (35) statements -> lineComment .
+
+    R_BRACK         reduce using rule 35 (statements -> lineComment .)
+
+
+state 70
+
+    (36) statements -> arrays . DOT_COMMA
+
+    DOT_COMMA       shift and go to state 103
+
+
+state 71
+
+    (53) ifBlock -> IF . L_PAR megaExp R_PAR body optionalElse
+
+    L_PAR           shift and go to state 104
+
+
+state 72
+
+    (56) whileBlock -> WHILE . L_PAR megaExp R_PAR body
+
+    L_PAR           shift and go to state 105
+
+
+state 73
+
+    (57) forBlock -> FOR . L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+
+    L_PAR           shift and go to state 106
+
+
+state 74
+
+    (86) print -> PRINT . L_PAR print_help ALPHANUMERIC R_PAR
+
+    L_PAR           shift and go to state 107
+
+
+state 75
+
+    (91) read -> READ . L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR
+
+    L_PAR           shift and go to state 108
+
+
+state 76
+
+    (96) lineComment -> COMMENT_LINE . ALPHANUMERIC END_LINE
+
+    ALPHANUMERIC    shift and go to state 109
+
+
+state 77
+
+    (41) functionCall -> ID L_PAR . functionCallParams R_PAR
+    (42) functionCallParams -> . functionCallParamsOptional
+    (43) functionCallParams -> . functionCallParamsMultiple
+    (44) functionCallParamsOptional -> .
+    (45) functionCallParamsOptional -> . idCall
+    (46) functionCallParamsOptional -> . megaExp
+    (47) functionCallParamsOptional -> . functionCall
+    (48) functionCallParamsMultiple -> . functionCallParamsParam
+    (49) functionCallParamsMultiple -> . functionCallParamsParam COMMA functionCallParamsMultiple
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (60) megaExp -> . superExp
+    (61) megaExp -> . superExp AND superExp
+    (62) megaExp -> . superExp OR superExp
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+    (50) functionCallParamsParam -> . idCall
+    (51) functionCallParamsParam -> . megaExp
+    (52) functionCallParamsParam -> . functionCall
+    (63) superExp -> . exp
+    (64) superExp -> . exp MORE_THAN exp
+    (65) superExp -> . exp LESS_THAN exp
+    (66) superExp -> . exp MORE_EQUAL exp
+    (67) superExp -> . exp LESS_EQUAL exp
+    (68) superExp -> . exp EQUAL exp
+    (69) superExp -> . exp NOT_EQUAL exp
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+
+    R_PAR           reduce using rule 44 (functionCallParamsOptional -> .)
+    ID              shift and go to state 39
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+
+    functionCallParams             shift and go to state 110
+    functionCallParamsOptional     shift and go to state 111
+    functionCallParamsMultiple     shift and go to state 112
+    idCall                         shift and go to state 113
+    megaExp                        shift and go to state 114
+    functionCall                   shift and go to state 115
+    functionCallParamsParam        shift and go to state 116
+    exp                            shift and go to state 55
+    superExp                       shift and go to state 53
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+
+state 78
+
+    (85) idCall -> ID L_KEY exp R_KEY .
+
+    ASSIGN          reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    INCREMENT       reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    DECREMENT       reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    TIMES           reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    DIVIDE          reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    MOD             reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    PLUS            reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    MINUS           reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    R_KEY           reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    MORE_THAN       reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    LESS_THAN       reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    MORE_EQUAL      reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    LESS_EQUAL      reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    EQUAL           reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    NOT_EQUAL       reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    AND             reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    OR              reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    DOT_COMMA       reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    R_PAR           reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    COMMA           reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+    ALPHANUMERIC    reduce using rule 85 (idCall -> ID L_KEY exp R_KEY .)
+
+
+state 79
+
+    (71) exp -> term PLUS . term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    term                           shift and go to state 117
+    factor                         shift and go to state 42
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 80
+
+    (72) exp -> term MINUS . term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    term                           shift and go to state 118
+    factor                         shift and go to state 42
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 81
+
+    (74) term -> factor TIMES . factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    factor                         shift and go to state 119
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 82
+
+    (75) term -> factor DIVIDE . factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    factor                         shift and go to state 120
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 83
+
+    (76) term -> factor MOD . factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    factor                         shift and go to state 121
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 84
+
+    (82) factor -> L_PAR megaExp . R_PAR
+
+    R_PAR           shift and go to state 122
+
+
+state 85
+
+    (61) megaExp -> superExp AND . superExp
+    (63) superExp -> . exp
+    (64) superExp -> . exp MORE_THAN exp
+    (65) superExp -> . exp LESS_THAN exp
+    (66) superExp -> . exp MORE_EQUAL exp
+    (67) superExp -> . exp LESS_EQUAL exp
+    (68) superExp -> . exp EQUAL exp
+    (69) superExp -> . exp NOT_EQUAL exp
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    superExp                       shift and go to state 123
+    exp                            shift and go to state 55
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 86
+
+    (62) megaExp -> superExp OR . superExp
+    (63) superExp -> . exp
+    (64) superExp -> . exp MORE_THAN exp
+    (65) superExp -> . exp LESS_THAN exp
+    (66) superExp -> . exp MORE_EQUAL exp
+    (67) superExp -> . exp LESS_EQUAL exp
+    (68) superExp -> . exp EQUAL exp
+    (69) superExp -> . exp NOT_EQUAL exp
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    superExp                       shift and go to state 124
+    exp                            shift and go to state 55
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 87
+
+    (64) superExp -> exp MORE_THAN . exp
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    exp                            shift and go to state 125
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 88
+
+    (65) superExp -> exp LESS_THAN . exp
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    exp                            shift and go to state 126
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 89
+
+    (66) superExp -> exp MORE_EQUAL . exp
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    exp                            shift and go to state 127
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 90
+
+    (67) superExp -> exp LESS_EQUAL . exp
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    exp                            shift and go to state 128
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 91
+
+    (68) superExp -> exp EQUAL . exp
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    exp                            shift and go to state 129
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 92
+
+    (69) superExp -> exp NOT_EQUAL . exp
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    exp                            shift and go to state 130
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 93
+
+    (18) functionsHelp -> type ID .
+    (19) functionsHelp -> type ID . COMMA functionsHelp2
+
+    R_PAR           reduce using rule 18 (functionsHelp -> type ID .)
+    COMMA           shift and go to state 131
+
+
+state 94
+
+    (14) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR . L_BRACK variables statements R_BRACK
+    (15) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR . L_BRACK statements R_BRACK
+    (16) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR . L_BRACK R_BRACK
+
+    L_BRACK         shift and go to state 132
+
+
+state 95
+
+    (6) mainBody -> MAIN L_PAR R_PAR L_BRACK variables statements . R_BRACK
+
+    R_BRACK         shift and go to state 133
+
+
+state 96
+
+    (13) arrays -> VAR . type ID L_KEY NUMBER R_KEY DOT_COMMA
+    (22) type -> . INT
+    (23) type -> . DECIM
+    (24) type -> . BOOL
+    (25) type -> . CHAR
+    (26) type -> . STRING
+
+    INT             shift and go to state 17
+    DECIM           shift and go to state 18
+    BOOL            shift and go to state 19
+    CHAR            shift and go to state 20
+    STRING          shift and go to state 21
+
+    type                           shift and go to state 134
+
+state 97
+
+    (7) mainBody -> MAIN L_PAR R_PAR L_BRACK statements R_BRACK .
+
+    R_BRACK         reduce using rule 7 (mainBody -> MAIN L_PAR R_PAR L_BRACK statements R_BRACK .)
+
+
+state 98
+
+    (11) variables -> VAR type . ID DOT_COMMA variables
+    (12) variables -> VAR type . assignment DOT_COMMA variables
+    (13) arrays -> VAR type . ID L_KEY NUMBER R_KEY DOT_COMMA
+    (37) assignment -> . idCall ASSIGN megaExp
+    (38) assignment -> . idCall ASSIGN functionCall
+    (39) assignment -> . idCall INCREMENT
+    (40) assignment -> . idCall DECREMENT
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+
+    ID              shift and go to state 135
+
+    assignment                     shift and go to state 26
+    idCall                         shift and go to state 27
+
+state 99
+
+    (28) statements -> assignment DOT_COMMA .
+
+    R_BRACK         reduce using rule 28 (statements -> assignment DOT_COMMA .)
+
+
+state 100
+
+    (29) statements -> functionCall DOT_COMMA .
+
+    R_BRACK         reduce using rule 29 (statements -> functionCall DOT_COMMA .)
+
+
+state 101
+
+    (33) statements -> print DOT_COMMA .
+
+    R_BRACK         reduce using rule 33 (statements -> print DOT_COMMA .)
+
+
+state 102
+
+    (34) statements -> read DOT_COMMA .
+
+    R_BRACK         reduce using rule 34 (statements -> read DOT_COMMA .)
+
+
+state 103
+
+    (36) statements -> arrays DOT_COMMA .
+
+    R_BRACK         reduce using rule 36 (statements -> arrays DOT_COMMA .)
+
+
+state 104
+
+    (53) ifBlock -> IF L_PAR . megaExp R_PAR body optionalElse
+    (60) megaExp -> . superExp
+    (61) megaExp -> . superExp AND superExp
+    (62) megaExp -> . superExp OR superExp
+    (63) superExp -> . exp
+    (64) superExp -> . exp MORE_THAN exp
+    (65) superExp -> . exp LESS_THAN exp
+    (66) superExp -> . exp MORE_EQUAL exp
+    (67) superExp -> . exp LESS_EQUAL exp
+    (68) superExp -> . exp EQUAL exp
+    (69) superExp -> . exp NOT_EQUAL exp
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    megaExp                        shift and go to state 136
+    superExp                       shift and go to state 53
+    exp                            shift and go to state 55
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 105
+
+    (56) whileBlock -> WHILE L_PAR . megaExp R_PAR body
+    (60) megaExp -> . superExp
+    (61) megaExp -> . superExp AND superExp
+    (62) megaExp -> . superExp OR superExp
+    (63) superExp -> . exp
+    (64) superExp -> . exp MORE_THAN exp
+    (65) superExp -> . exp LESS_THAN exp
+    (66) superExp -> . exp MORE_EQUAL exp
+    (67) superExp -> . exp LESS_EQUAL exp
+    (68) superExp -> . exp EQUAL exp
+    (69) superExp -> . exp NOT_EQUAL exp
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    megaExp                        shift and go to state 137
+    superExp                       shift and go to state 53
+    exp                            shift and go to state 55
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 106
+
+    (57) forBlock -> FOR L_PAR . idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+
+    ID              shift and go to state 139
+
+    idCall                         shift and go to state 138
+
+state 107
+
+    (86) print -> PRINT L_PAR . print_help ALPHANUMERIC R_PAR
+    (87) print_help -> .
+    (88) print_help -> . MOD idCall print_help2
+
+    ALPHANUMERIC    reduce using rule 87 (print_help -> .)
+    MOD             shift and go to state 141
+
+    print_help                     shift and go to state 140
+
+state 108
+
+    (91) read -> READ L_PAR . MOD type COMMA readHelp idCall readHelp2 R_PAR
+
+    MOD             shift and go to state 142
+
+
+state 109
+
+    (96) lineComment -> COMMENT_LINE ALPHANUMERIC . END_LINE
+
+    END_LINE        shift and go to state 143
+
+
+state 110
+
+    (41) functionCall -> ID L_PAR functionCallParams . R_PAR
+
+    R_PAR           shift and go to state 144
+
+
+state 111
+
+    (42) functionCallParams -> functionCallParamsOptional .
+
+    R_PAR           reduce using rule 42 (functionCallParams -> functionCallParamsOptional .)
+
+
+state 112
+
+    (43) functionCallParams -> functionCallParamsMultiple .
+
+    R_PAR           reduce using rule 43 (functionCallParams -> functionCallParamsMultiple .)
+
+
+state 113
+
+    (45) functionCallParamsOptional -> idCall .
+    (50) functionCallParamsParam -> idCall .
+    (81) factor -> idCall .
+
+  ! reduce/reduce conflict for R_PAR resolved using rule 45 (functionCallParamsOptional -> idCall .)
+  ! reduce/reduce conflict for R_PAR resolved using rule 45 (functionCallParamsOptional -> idCall .)
+  ! reduce/reduce conflict for COMMA resolved using rule 50 (functionCallParamsParam -> idCall .)
+    R_PAR           reduce using rule 45 (functionCallParamsOptional -> idCall .)
+    COMMA           reduce using rule 50 (functionCallParamsParam -> idCall .)
+    TIMES           reduce using rule 81 (factor -> idCall .)
+    DIVIDE          reduce using rule 81 (factor -> idCall .)
+    MOD             reduce using rule 81 (factor -> idCall .)
+    PLUS            reduce using rule 81 (factor -> idCall .)
+    MINUS           reduce using rule 81 (factor -> idCall .)
+    MORE_THAN       reduce using rule 81 (factor -> idCall .)
+    LESS_THAN       reduce using rule 81 (factor -> idCall .)
+    MORE_EQUAL      reduce using rule 81 (factor -> idCall .)
+    LESS_EQUAL      reduce using rule 81 (factor -> idCall .)
+    EQUAL           reduce using rule 81 (factor -> idCall .)
+    NOT_EQUAL       reduce using rule 81 (factor -> idCall .)
+    AND             reduce using rule 81 (factor -> idCall .)
+    OR              reduce using rule 81 (factor -> idCall .)
+
+  ! R_PAR           [ reduce using rule 50 (functionCallParamsParam -> idCall .) ]
+  ! R_PAR           [ reduce using rule 81 (factor -> idCall .) ]
+  ! COMMA           [ reduce using rule 81 (factor -> idCall .) ]
+
+
+state 114
+
+    (46) functionCallParamsOptional -> megaExp .
+    (51) functionCallParamsParam -> megaExp .
+
+  ! reduce/reduce conflict for R_PAR resolved using rule 46 (functionCallParamsOptional -> megaExp .)
+    R_PAR           reduce using rule 46 (functionCallParamsOptional -> megaExp .)
+    COMMA           reduce using rule 51 (functionCallParamsParam -> megaExp .)
+
+  ! R_PAR           [ reduce using rule 51 (functionCallParamsParam -> megaExp .) ]
+
+
+state 115
+
+    (47) functionCallParamsOptional -> functionCall .
+    (52) functionCallParamsParam -> functionCall .
+    (83) factor -> functionCall .
+
+  ! reduce/reduce conflict for R_PAR resolved using rule 47 (functionCallParamsOptional -> functionCall .)
+  ! reduce/reduce conflict for R_PAR resolved using rule 47 (functionCallParamsOptional -> functionCall .)
+  ! reduce/reduce conflict for COMMA resolved using rule 52 (functionCallParamsParam -> functionCall .)
+    R_PAR           reduce using rule 47 (functionCallParamsOptional -> functionCall .)
+    COMMA           reduce using rule 52 (functionCallParamsParam -> functionCall .)
+    TIMES           reduce using rule 83 (factor -> functionCall .)
+    DIVIDE          reduce using rule 83 (factor -> functionCall .)
+    MOD             reduce using rule 83 (factor -> functionCall .)
+    PLUS            reduce using rule 83 (factor -> functionCall .)
+    MINUS           reduce using rule 83 (factor -> functionCall .)
+    MORE_THAN       reduce using rule 83 (factor -> functionCall .)
+    LESS_THAN       reduce using rule 83 (factor -> functionCall .)
+    MORE_EQUAL      reduce using rule 83 (factor -> functionCall .)
+    LESS_EQUAL      reduce using rule 83 (factor -> functionCall .)
+    EQUAL           reduce using rule 83 (factor -> functionCall .)
+    NOT_EQUAL       reduce using rule 83 (factor -> functionCall .)
+    AND             reduce using rule 83 (factor -> functionCall .)
+    OR              reduce using rule 83 (factor -> functionCall .)
+
+  ! R_PAR           [ reduce using rule 52 (functionCallParamsParam -> functionCall .) ]
+  ! R_PAR           [ reduce using rule 83 (factor -> functionCall .) ]
+  ! COMMA           [ reduce using rule 83 (factor -> functionCall .) ]
+
+
+state 116
+
+    (48) functionCallParamsMultiple -> functionCallParamsParam .
+    (49) functionCallParamsMultiple -> functionCallParamsParam . COMMA functionCallParamsMultiple
+
+    R_PAR           reduce using rule 48 (functionCallParamsMultiple -> functionCallParamsParam .)
+    COMMA           shift and go to state 145
+
+
+state 117
+
+    (71) exp -> term PLUS term .
+
+    R_KEY           reduce using rule 71 (exp -> term PLUS term .)
+    MORE_THAN       reduce using rule 71 (exp -> term PLUS term .)
+    LESS_THAN       reduce using rule 71 (exp -> term PLUS term .)
+    MORE_EQUAL      reduce using rule 71 (exp -> term PLUS term .)
+    LESS_EQUAL      reduce using rule 71 (exp -> term PLUS term .)
+    EQUAL           reduce using rule 71 (exp -> term PLUS term .)
+    NOT_EQUAL       reduce using rule 71 (exp -> term PLUS term .)
+    AND             reduce using rule 71 (exp -> term PLUS term .)
+    OR              reduce using rule 71 (exp -> term PLUS term .)
+    DOT_COMMA       reduce using rule 71 (exp -> term PLUS term .)
+    R_PAR           reduce using rule 71 (exp -> term PLUS term .)
+    COMMA           reduce using rule 71 (exp -> term PLUS term .)
+
+
+state 118
+
+    (72) exp -> term MINUS term .
+
+    R_KEY           reduce using rule 72 (exp -> term MINUS term .)
+    MORE_THAN       reduce using rule 72 (exp -> term MINUS term .)
+    LESS_THAN       reduce using rule 72 (exp -> term MINUS term .)
+    MORE_EQUAL      reduce using rule 72 (exp -> term MINUS term .)
+    LESS_EQUAL      reduce using rule 72 (exp -> term MINUS term .)
+    EQUAL           reduce using rule 72 (exp -> term MINUS term .)
+    NOT_EQUAL       reduce using rule 72 (exp -> term MINUS term .)
+    AND             reduce using rule 72 (exp -> term MINUS term .)
+    OR              reduce using rule 72 (exp -> term MINUS term .)
+    DOT_COMMA       reduce using rule 72 (exp -> term MINUS term .)
+    R_PAR           reduce using rule 72 (exp -> term MINUS term .)
+    COMMA           reduce using rule 72 (exp -> term MINUS term .)
+
+
+state 119
+
+    (74) term -> factor TIMES factor .
+
+    PLUS            reduce using rule 74 (term -> factor TIMES factor .)
+    MINUS           reduce using rule 74 (term -> factor TIMES factor .)
+    R_KEY           reduce using rule 74 (term -> factor TIMES factor .)
+    MORE_THAN       reduce using rule 74 (term -> factor TIMES factor .)
+    LESS_THAN       reduce using rule 74 (term -> factor TIMES factor .)
+    MORE_EQUAL      reduce using rule 74 (term -> factor TIMES factor .)
+    LESS_EQUAL      reduce using rule 74 (term -> factor TIMES factor .)
+    EQUAL           reduce using rule 74 (term -> factor TIMES factor .)
+    NOT_EQUAL       reduce using rule 74 (term -> factor TIMES factor .)
+    AND             reduce using rule 74 (term -> factor TIMES factor .)
+    OR              reduce using rule 74 (term -> factor TIMES factor .)
+    DOT_COMMA       reduce using rule 74 (term -> factor TIMES factor .)
+    R_PAR           reduce using rule 74 (term -> factor TIMES factor .)
+    COMMA           reduce using rule 74 (term -> factor TIMES factor .)
+
+
+state 120
+
+    (75) term -> factor DIVIDE factor .
+
+    PLUS            reduce using rule 75 (term -> factor DIVIDE factor .)
+    MINUS           reduce using rule 75 (term -> factor DIVIDE factor .)
+    R_KEY           reduce using rule 75 (term -> factor DIVIDE factor .)
+    MORE_THAN       reduce using rule 75 (term -> factor DIVIDE factor .)
+    LESS_THAN       reduce using rule 75 (term -> factor DIVIDE factor .)
+    MORE_EQUAL      reduce using rule 75 (term -> factor DIVIDE factor .)
+    LESS_EQUAL      reduce using rule 75 (term -> factor DIVIDE factor .)
+    EQUAL           reduce using rule 75 (term -> factor DIVIDE factor .)
+    NOT_EQUAL       reduce using rule 75 (term -> factor DIVIDE factor .)
+    AND             reduce using rule 75 (term -> factor DIVIDE factor .)
+    OR              reduce using rule 75 (term -> factor DIVIDE factor .)
+    DOT_COMMA       reduce using rule 75 (term -> factor DIVIDE factor .)
+    R_PAR           reduce using rule 75 (term -> factor DIVIDE factor .)
+    COMMA           reduce using rule 75 (term -> factor DIVIDE factor .)
+
+
+state 121
+
+    (76) term -> factor MOD factor .
+
+    PLUS            reduce using rule 76 (term -> factor MOD factor .)
+    MINUS           reduce using rule 76 (term -> factor MOD factor .)
+    R_KEY           reduce using rule 76 (term -> factor MOD factor .)
+    MORE_THAN       reduce using rule 76 (term -> factor MOD factor .)
+    LESS_THAN       reduce using rule 76 (term -> factor MOD factor .)
+    MORE_EQUAL      reduce using rule 76 (term -> factor MOD factor .)
+    LESS_EQUAL      reduce using rule 76 (term -> factor MOD factor .)
+    EQUAL           reduce using rule 76 (term -> factor MOD factor .)
+    NOT_EQUAL       reduce using rule 76 (term -> factor MOD factor .)
+    AND             reduce using rule 76 (term -> factor MOD factor .)
+    OR              reduce using rule 76 (term -> factor MOD factor .)
+    DOT_COMMA       reduce using rule 76 (term -> factor MOD factor .)
+    R_PAR           reduce using rule 76 (term -> factor MOD factor .)
+    COMMA           reduce using rule 76 (term -> factor MOD factor .)
+
+
+state 122
+
+    (82) factor -> L_PAR megaExp R_PAR .
+
+    TIMES           reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    DIVIDE          reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    MOD             reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    PLUS            reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    MINUS           reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    R_KEY           reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    MORE_THAN       reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    LESS_THAN       reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    MORE_EQUAL      reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    LESS_EQUAL      reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    EQUAL           reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    NOT_EQUAL       reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    AND             reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    OR              reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    DOT_COMMA       reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    R_PAR           reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+    COMMA           reduce using rule 82 (factor -> L_PAR megaExp R_PAR .)
+
+
+state 123
+
+    (61) megaExp -> superExp AND superExp .
+
+    DOT_COMMA       reduce using rule 61 (megaExp -> superExp AND superExp .)
+    R_PAR           reduce using rule 61 (megaExp -> superExp AND superExp .)
+    COMMA           reduce using rule 61 (megaExp -> superExp AND superExp .)
+
+
+state 124
+
+    (62) megaExp -> superExp OR superExp .
+
+    DOT_COMMA       reduce using rule 62 (megaExp -> superExp OR superExp .)
+    R_PAR           reduce using rule 62 (megaExp -> superExp OR superExp .)
+    COMMA           reduce using rule 62 (megaExp -> superExp OR superExp .)
+
+
+state 125
+
+    (64) superExp -> exp MORE_THAN exp .
+
+    AND             reduce using rule 64 (superExp -> exp MORE_THAN exp .)
+    OR              reduce using rule 64 (superExp -> exp MORE_THAN exp .)
+    DOT_COMMA       reduce using rule 64 (superExp -> exp MORE_THAN exp .)
+    R_PAR           reduce using rule 64 (superExp -> exp MORE_THAN exp .)
+    COMMA           reduce using rule 64 (superExp -> exp MORE_THAN exp .)
+
+
+state 126
+
+    (65) superExp -> exp LESS_THAN exp .
+
+    AND             reduce using rule 65 (superExp -> exp LESS_THAN exp .)
+    OR              reduce using rule 65 (superExp -> exp LESS_THAN exp .)
+    DOT_COMMA       reduce using rule 65 (superExp -> exp LESS_THAN exp .)
+    R_PAR           reduce using rule 65 (superExp -> exp LESS_THAN exp .)
+    COMMA           reduce using rule 65 (superExp -> exp LESS_THAN exp .)
+
+
+state 127
+
+    (66) superExp -> exp MORE_EQUAL exp .
+
+    AND             reduce using rule 66 (superExp -> exp MORE_EQUAL exp .)
+    OR              reduce using rule 66 (superExp -> exp MORE_EQUAL exp .)
+    DOT_COMMA       reduce using rule 66 (superExp -> exp MORE_EQUAL exp .)
+    R_PAR           reduce using rule 66 (superExp -> exp MORE_EQUAL exp .)
+    COMMA           reduce using rule 66 (superExp -> exp MORE_EQUAL exp .)
+
+
+state 128
+
+    (67) superExp -> exp LESS_EQUAL exp .
+
+    AND             reduce using rule 67 (superExp -> exp LESS_EQUAL exp .)
+    OR              reduce using rule 67 (superExp -> exp LESS_EQUAL exp .)
+    DOT_COMMA       reduce using rule 67 (superExp -> exp LESS_EQUAL exp .)
+    R_PAR           reduce using rule 67 (superExp -> exp LESS_EQUAL exp .)
+    COMMA           reduce using rule 67 (superExp -> exp LESS_EQUAL exp .)
+
+
+state 129
+
+    (68) superExp -> exp EQUAL exp .
+
+    AND             reduce using rule 68 (superExp -> exp EQUAL exp .)
+    OR              reduce using rule 68 (superExp -> exp EQUAL exp .)
+    DOT_COMMA       reduce using rule 68 (superExp -> exp EQUAL exp .)
+    R_PAR           reduce using rule 68 (superExp -> exp EQUAL exp .)
+    COMMA           reduce using rule 68 (superExp -> exp EQUAL exp .)
+
+
+state 130
+
+    (69) superExp -> exp NOT_EQUAL exp .
+
+    AND             reduce using rule 69 (superExp -> exp NOT_EQUAL exp .)
+    OR              reduce using rule 69 (superExp -> exp NOT_EQUAL exp .)
+    DOT_COMMA       reduce using rule 69 (superExp -> exp NOT_EQUAL exp .)
+    R_PAR           reduce using rule 69 (superExp -> exp NOT_EQUAL exp .)
+    COMMA           reduce using rule 69 (superExp -> exp NOT_EQUAL exp .)
+
+
+state 131
+
+    (19) functionsHelp -> type ID COMMA . functionsHelp2
+    (20) functionsHelp2 -> . type ID
+    (21) functionsHelp2 -> . type ID COMMA functionsHelp2
+    (22) type -> . INT
+    (23) type -> . DECIM
+    (24) type -> . BOOL
+    (25) type -> . CHAR
+    (26) type -> . STRING
+
+    INT             shift and go to state 17
+    DECIM           shift and go to state 18
+    BOOL            shift and go to state 19
+    CHAR            shift and go to state 20
+    STRING          shift and go to state 21
+
+    type                           shift and go to state 146
+    functionsHelp2                 shift and go to state 147
+
+state 132
+
+    (14) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK . variables statements R_BRACK
+    (15) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK . statements R_BRACK
+    (16) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK . R_BRACK
+    (10) variables -> .
+    (11) variables -> . VAR type ID DOT_COMMA variables
+    (12) variables -> . VAR type assignment DOT_COMMA variables
+    (27) statements -> .
+    (28) statements -> . assignment DOT_COMMA
+    (29) statements -> . functionCall DOT_COMMA
+    (30) statements -> . ifBlock
+    (31) statements -> . whileBlock
+    (32) statements -> . forBlock
+    (33) statements -> . print DOT_COMMA
+    (34) statements -> . read DOT_COMMA
+    (35) statements -> . lineComment
+    (36) statements -> . arrays DOT_COMMA
+    (37) assignment -> . idCall ASSIGN megaExp
+    (38) assignment -> . idCall ASSIGN functionCall
+    (39) assignment -> . idCall INCREMENT
+    (40) assignment -> . idCall DECREMENT
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+    (53) ifBlock -> . IF L_PAR megaExp R_PAR body optionalElse
+    (56) whileBlock -> . WHILE L_PAR megaExp R_PAR body
+    (57) forBlock -> . FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+    (86) print -> . PRINT L_PAR print_help ALPHANUMERIC R_PAR
+    (91) read -> . READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR
+    (96) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
+    (13) arrays -> . VAR type ID L_KEY NUMBER R_KEY DOT_COMMA
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+
+  ! shift/reduce conflict for R_BRACK resolved as shift
+  ! shift/reduce conflict for VAR resolved as shift
+  ! shift/reduce conflict for R_BRACK resolved as shift
+  ! shift/reduce conflict for ID resolved as shift
+  ! shift/reduce conflict for IF resolved as shift
+  ! shift/reduce conflict for WHILE resolved as shift
+  ! shift/reduce conflict for FOR resolved as shift
+  ! shift/reduce conflict for PRINT resolved as shift
+  ! shift/reduce conflict for READ resolved as shift
+  ! shift/reduce conflict for COMMENT_LINE resolved as shift
+    R_BRACK         shift and go to state 150
+    VAR             shift and go to state 61
+    ID              shift and go to state 54
+    IF              shift and go to state 71
+    WHILE           shift and go to state 72
+    FOR             shift and go to state 73
+    PRINT           shift and go to state 74
+    READ            shift and go to state 75
+    COMMENT_LINE    shift and go to state 76
+
+  ! ID              [ reduce using rule 10 (variables -> .) ]
+  ! IF              [ reduce using rule 10 (variables -> .) ]
+  ! WHILE           [ reduce using rule 10 (variables -> .) ]
+  ! FOR             [ reduce using rule 10 (variables -> .) ]
+  ! PRINT           [ reduce using rule 10 (variables -> .) ]
+  ! READ            [ reduce using rule 10 (variables -> .) ]
+  ! COMMENT_LINE    [ reduce using rule 10 (variables -> .) ]
+  ! VAR             [ reduce using rule 10 (variables -> .) ]
+  ! R_BRACK         [ reduce using rule 10 (variables -> .) ]
+  ! R_BRACK         [ reduce using rule 27 (statements -> .) ]
+
+    variables                      shift and go to state 148
+    statements                     shift and go to state 149
+    assignment                     shift and go to state 62
+    functionCall                   shift and go to state 63
+    ifBlock                        shift and go to state 64
+    whileBlock                     shift and go to state 65
+    forBlock                       shift and go to state 66
+    print                          shift and go to state 67
+    read                           shift and go to state 68
+    lineComment                    shift and go to state 69
+    arrays                         shift and go to state 70
+    idCall                         shift and go to state 27
+
+state 133
+
+    (6) mainBody -> MAIN L_PAR R_PAR L_BRACK variables statements R_BRACK .
+
+    R_BRACK         reduce using rule 6 (mainBody -> MAIN L_PAR R_PAR L_BRACK variables statements R_BRACK .)
+
+
+state 134
+
+    (13) arrays -> VAR type . ID L_KEY NUMBER R_KEY DOT_COMMA
+
+    ID              shift and go to state 151
+
+
+state 135
+
+    (11) variables -> VAR type ID . DOT_COMMA variables
+    (13) arrays -> VAR type ID . L_KEY NUMBER R_KEY DOT_COMMA
+    (84) idCall -> ID .
+    (85) idCall -> ID . L_KEY exp R_KEY
+
+    DOT_COMMA       shift and go to state 30
+    L_KEY           shift and go to state 152
+    ASSIGN          reduce using rule 84 (idCall -> ID .)
+    INCREMENT       reduce using rule 84 (idCall -> ID .)
+    DECREMENT       reduce using rule 84 (idCall -> ID .)
+
+
+state 136
+
+    (53) ifBlock -> IF L_PAR megaExp . R_PAR body optionalElse
+
+    R_PAR           shift and go to state 153
+
+
+state 137
+
+    (56) whileBlock -> WHILE L_PAR megaExp . R_PAR body
+
+    R_PAR           shift and go to state 154
+
+
+state 138
+
+    (57) forBlock -> FOR L_PAR idCall . DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+
+    DOT_COMMA       shift and go to state 155
+
+
+state 139
+
+    (84) idCall -> ID .
+    (85) idCall -> ID . L_KEY exp R_KEY
+
+    DOT_COMMA       reduce using rule 84 (idCall -> ID .)
+    COMMA           reduce using rule 84 (idCall -> ID .)
+    ALPHANUMERIC    reduce using rule 84 (idCall -> ID .)
+    ASSIGN          reduce using rule 84 (idCall -> ID .)
+    INCREMENT       reduce using rule 84 (idCall -> ID .)
+    DECREMENT       reduce using rule 84 (idCall -> ID .)
+    R_PAR           reduce using rule 84 (idCall -> ID .)
+    L_KEY           shift and go to state 31
+
+
+state 140
+
+    (86) print -> PRINT L_PAR print_help . ALPHANUMERIC R_PAR
+
+    ALPHANUMERIC    shift and go to state 156
+
+
+state 141
+
+    (88) print_help -> MOD . idCall print_help2
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+
+    ID              shift and go to state 139
+
+    idCall                         shift and go to state 157
+
+state 142
+
+    (91) read -> READ L_PAR MOD . type COMMA readHelp idCall readHelp2 R_PAR
+    (22) type -> . INT
+    (23) type -> . DECIM
+    (24) type -> . BOOL
+    (25) type -> . CHAR
+    (26) type -> . STRING
+
+    INT             shift and go to state 17
+    DECIM           shift and go to state 18
+    BOOL            shift and go to state 19
+    CHAR            shift and go to state 20
+    STRING          shift and go to state 21
+
+    type                           shift and go to state 158
+
+state 143
+
+    (96) lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .
+
+    R_BRACK         reduce using rule 96 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
+
+
+state 144
+
+    (41) functionCall -> ID L_PAR functionCallParams R_PAR .
+
+    TIMES           reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    DIVIDE          reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    MOD             reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    PLUS            reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    MINUS           reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    R_KEY           reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    DOT_COMMA       reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    MORE_THAN       reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    LESS_THAN       reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    MORE_EQUAL      reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    LESS_EQUAL      reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    EQUAL           reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    NOT_EQUAL       reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    AND             reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    OR              reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    R_PAR           reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+    COMMA           reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
+
+
+state 145
+
+    (49) functionCallParamsMultiple -> functionCallParamsParam COMMA . functionCallParamsMultiple
+    (48) functionCallParamsMultiple -> . functionCallParamsParam
+    (49) functionCallParamsMultiple -> . functionCallParamsParam COMMA functionCallParamsMultiple
+    (50) functionCallParamsParam -> . idCall
+    (51) functionCallParamsParam -> . megaExp
+    (52) functionCallParamsParam -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (60) megaExp -> . superExp
+    (61) megaExp -> . superExp AND superExp
+    (62) megaExp -> . superExp OR superExp
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+    (63) superExp -> . exp
+    (64) superExp -> . exp MORE_THAN exp
+    (65) superExp -> . exp LESS_THAN exp
+    (66) superExp -> . exp MORE_EQUAL exp
+    (67) superExp -> . exp LESS_EQUAL exp
+    (68) superExp -> . exp EQUAL exp
+    (69) superExp -> . exp NOT_EQUAL exp
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+
+    ID              shift and go to state 39
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+
+    functionCallParamsParam        shift and go to state 116
+    functionCallParamsMultiple     shift and go to state 159
+    idCall                         shift and go to state 160
+    megaExp                        shift and go to state 161
+    functionCall                   shift and go to state 162
+    exp                            shift and go to state 55
+    superExp                       shift and go to state 53
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+
+state 146
+
+    (20) functionsHelp2 -> type . ID
+    (21) functionsHelp2 -> type . ID COMMA functionsHelp2
+
+    ID              shift and go to state 163
+
+
+state 147
+
+    (19) functionsHelp -> type ID COMMA functionsHelp2 .
+
+    R_PAR           reduce using rule 19 (functionsHelp -> type ID COMMA functionsHelp2 .)
+
+
+state 148
+
+    (14) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables . statements R_BRACK
+    (27) statements -> .
+    (28) statements -> . assignment DOT_COMMA
+    (29) statements -> . functionCall DOT_COMMA
+    (30) statements -> . ifBlock
+    (31) statements -> . whileBlock
+    (32) statements -> . forBlock
+    (33) statements -> . print DOT_COMMA
+    (34) statements -> . read DOT_COMMA
+    (35) statements -> . lineComment
+    (36) statements -> . arrays DOT_COMMA
+    (37) assignment -> . idCall ASSIGN megaExp
+    (38) assignment -> . idCall ASSIGN functionCall
+    (39) assignment -> . idCall INCREMENT
+    (40) assignment -> . idCall DECREMENT
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+    (53) ifBlock -> . IF L_PAR megaExp R_PAR body optionalElse
+    (56) whileBlock -> . WHILE L_PAR megaExp R_PAR body
+    (57) forBlock -> . FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+    (86) print -> . PRINT L_PAR print_help ALPHANUMERIC R_PAR
+    (91) read -> . READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR
+    (96) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
+    (13) arrays -> . VAR type ID L_KEY NUMBER R_KEY DOT_COMMA
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+
+    R_BRACK         reduce using rule 27 (statements -> .)
+    ID              shift and go to state 54
+    IF              shift and go to state 71
+    WHILE           shift and go to state 72
+    FOR             shift and go to state 73
+    PRINT           shift and go to state 74
+    READ            shift and go to state 75
+    COMMENT_LINE    shift and go to state 76
+    VAR             shift and go to state 96
+
+    statements                     shift and go to state 164
+    assignment                     shift and go to state 62
+    functionCall                   shift and go to state 63
+    ifBlock                        shift and go to state 64
+    whileBlock                     shift and go to state 65
+    forBlock                       shift and go to state 66
+    print                          shift and go to state 67
+    read                           shift and go to state 68
+    lineComment                    shift and go to state 69
+    arrays                         shift and go to state 70
+    idCall                         shift and go to state 27
+
+state 149
+
+    (15) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK statements . R_BRACK
+
+    R_BRACK         shift and go to state 165
+
+
+state 150
+
+    (16) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK R_BRACK .
+
+    MAIN            reduce using rule 16 (functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK R_BRACK .)
+
+
+state 151
+
+    (13) arrays -> VAR type ID . L_KEY NUMBER R_KEY DOT_COMMA
+
+    L_KEY           shift and go to state 166
+
+
+state 152
+
+    (13) arrays -> VAR type ID L_KEY . NUMBER R_KEY DOT_COMMA
+    (85) idCall -> ID L_KEY . exp R_KEY
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 167
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    exp                            shift and go to state 40
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+    idCall                         shift and go to state 47
+    functionCall                   shift and go to state 49
+
+state 153
+
+    (53) ifBlock -> IF L_PAR megaExp R_PAR . body optionalElse
+    (9) body -> . L_BRACK statements R_BRACK
+
+    L_BRACK         shift and go to state 169
+
+    body                           shift and go to state 168
+
+state 154
+
+    (56) whileBlock -> WHILE L_PAR megaExp R_PAR . body
+    (9) body -> . L_BRACK statements R_BRACK
+
+    L_BRACK         shift and go to state 169
+
+    body                           shift and go to state 170
+
+state 155
+
+    (57) forBlock -> FOR L_PAR idCall DOT_COMMA . megaExp DOT_COMMA optionalAssign R_PAR body
+    (60) megaExp -> . superExp
+    (61) megaExp -> . superExp AND superExp
+    (62) megaExp -> . superExp OR superExp
+    (63) superExp -> . exp
+    (64) superExp -> . exp MORE_THAN exp
+    (65) superExp -> . exp LESS_THAN exp
+    (66) superExp -> . exp MORE_EQUAL exp
+    (67) superExp -> . exp LESS_EQUAL exp
+    (68) superExp -> . exp EQUAL exp
+    (69) superExp -> . exp NOT_EQUAL exp
+    (70) exp -> . term
+    (71) exp -> . term PLUS term
+    (72) exp -> . term MINUS term
+    (73) term -> . factor
+    (74) term -> . factor TIMES factor
+    (75) term -> . factor DIVIDE factor
+    (76) term -> . factor MOD factor
+    (77) factor -> . NUMBER
+    (78) factor -> . ALPHANUMERIC
+    (79) factor -> . CHARACTER
+    (80) factor -> . BOOLEAN
+    (81) factor -> . idCall
+    (82) factor -> . L_PAR megaExp R_PAR
+    (83) factor -> . functionCall
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+
+    NUMBER          shift and go to state 43
+    ALPHANUMERIC    shift and go to state 44
+    CHARACTER       shift and go to state 45
+    BOOLEAN         shift and go to state 46
+    L_PAR           shift and go to state 48
+    ID              shift and go to state 39
+
+    idCall                         shift and go to state 47
+    megaExp                        shift and go to state 171
+    superExp                       shift and go to state 53
+    exp                            shift and go to state 55
+    term                           shift and go to state 41
+    factor                         shift and go to state 42
+    functionCall                   shift and go to state 49
+
+state 156
+
+    (86) print -> PRINT L_PAR print_help ALPHANUMERIC . R_PAR
+
+    R_PAR           shift and go to state 172
+
+
+state 157
+
+    (88) print_help -> MOD idCall . print_help2
+    (89) print_help2 -> .
+    (90) print_help2 -> . COMMA MOD idCall print_help2
+
+    ALPHANUMERIC    reduce using rule 89 (print_help2 -> .)
+    COMMA           shift and go to state 174
+
+    print_help2                    shift and go to state 173
+
+state 158
+
+    (91) read -> READ L_PAR MOD type . COMMA readHelp idCall readHelp2 R_PAR
+
+    COMMA           shift and go to state 175
+
+
+state 159
+
+    (49) functionCallParamsMultiple -> functionCallParamsParam COMMA functionCallParamsMultiple .
+
+    R_PAR           reduce using rule 49 (functionCallParamsMultiple -> functionCallParamsParam COMMA functionCallParamsMultiple .)
+
+
+state 160
+
+    (50) functionCallParamsParam -> idCall .
+    (81) factor -> idCall .
+
+  ! reduce/reduce conflict for COMMA resolved using rule 50 (functionCallParamsParam -> idCall .)
+  ! reduce/reduce conflict for R_PAR resolved using rule 50 (functionCallParamsParam -> idCall .)
+    COMMA           reduce using rule 50 (functionCallParamsParam -> idCall .)
+    R_PAR           reduce using rule 50 (functionCallParamsParam -> idCall .)
+    TIMES           reduce using rule 81 (factor -> idCall .)
+    DIVIDE          reduce using rule 81 (factor -> idCall .)
+    MOD             reduce using rule 81 (factor -> idCall .)
+    PLUS            reduce using rule 81 (factor -> idCall .)
+    MINUS           reduce using rule 81 (factor -> idCall .)
+    MORE_THAN       reduce using rule 81 (factor -> idCall .)
+    LESS_THAN       reduce using rule 81 (factor -> idCall .)
+    MORE_EQUAL      reduce using rule 81 (factor -> idCall .)
+    LESS_EQUAL      reduce using rule 81 (factor -> idCall .)
+    EQUAL           reduce using rule 81 (factor -> idCall .)
+    NOT_EQUAL       reduce using rule 81 (factor -> idCall .)
+    AND             reduce using rule 81 (factor -> idCall .)
+    OR              reduce using rule 81 (factor -> idCall .)
+
+  ! COMMA           [ reduce using rule 81 (factor -> idCall .) ]
+  ! R_PAR           [ reduce using rule 81 (factor -> idCall .) ]
+
+
+state 161
+
+    (51) functionCallParamsParam -> megaExp .
+
+    COMMA           reduce using rule 51 (functionCallParamsParam -> megaExp .)
+    R_PAR           reduce using rule 51 (functionCallParamsParam -> megaExp .)
+
+
+state 162
+
+    (52) functionCallParamsParam -> functionCall .
+    (83) factor -> functionCall .
+
+  ! reduce/reduce conflict for COMMA resolved using rule 52 (functionCallParamsParam -> functionCall .)
+  ! reduce/reduce conflict for R_PAR resolved using rule 52 (functionCallParamsParam -> functionCall .)
+    COMMA           reduce using rule 52 (functionCallParamsParam -> functionCall .)
+    R_PAR           reduce using rule 52 (functionCallParamsParam -> functionCall .)
+    TIMES           reduce using rule 83 (factor -> functionCall .)
+    DIVIDE          reduce using rule 83 (factor -> functionCall .)
+    MOD             reduce using rule 83 (factor -> functionCall .)
+    PLUS            reduce using rule 83 (factor -> functionCall .)
+    MINUS           reduce using rule 83 (factor -> functionCall .)
+    MORE_THAN       reduce using rule 83 (factor -> functionCall .)
+    LESS_THAN       reduce using rule 83 (factor -> functionCall .)
+    MORE_EQUAL      reduce using rule 83 (factor -> functionCall .)
+    LESS_EQUAL      reduce using rule 83 (factor -> functionCall .)
+    EQUAL           reduce using rule 83 (factor -> functionCall .)
+    NOT_EQUAL       reduce using rule 83 (factor -> functionCall .)
+    AND             reduce using rule 83 (factor -> functionCall .)
+    OR              reduce using rule 83 (factor -> functionCall .)
+
+  ! COMMA           [ reduce using rule 83 (factor -> functionCall .) ]
+  ! R_PAR           [ reduce using rule 83 (factor -> functionCall .) ]
+
+
+state 163
+
+    (20) functionsHelp2 -> type ID .
+    (21) functionsHelp2 -> type ID . COMMA functionsHelp2
+
+    R_PAR           reduce using rule 20 (functionsHelp2 -> type ID .)
+    COMMA           shift and go to state 176
+
+
+state 164
+
+    (14) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements . R_BRACK
+
+    R_BRACK         shift and go to state 177
+
+
+state 165
+
+    (15) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK statements R_BRACK .
+
+    MAIN            reduce using rule 15 (functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK statements R_BRACK .)
+
+
+state 166
+
+    (13) arrays -> VAR type ID L_KEY . NUMBER R_KEY DOT_COMMA
+
+    NUMBER          shift and go to state 178
+
+
+state 167
+
+    (13) arrays -> VAR type ID L_KEY NUMBER . R_KEY DOT_COMMA
+    (77) factor -> NUMBER .
+
+  ! shift/reduce conflict for R_KEY resolved as shift
+    R_KEY           shift and go to state 179
+    TIMES           reduce using rule 77 (factor -> NUMBER .)
+    DIVIDE          reduce using rule 77 (factor -> NUMBER .)
+    MOD             reduce using rule 77 (factor -> NUMBER .)
+    PLUS            reduce using rule 77 (factor -> NUMBER .)
+    MINUS           reduce using rule 77 (factor -> NUMBER .)
+
+  ! R_KEY           [ reduce using rule 77 (factor -> NUMBER .) ]
+
+
+state 168
+
+    (53) ifBlock -> IF L_PAR megaExp R_PAR body . optionalElse
+    (54) optionalElse -> .
+    (55) optionalElse -> . ELSE body
+
+    R_BRACK         reduce using rule 54 (optionalElse -> .)
+    ELSE            shift and go to state 181
+
+    optionalElse                   shift and go to state 180
+
+state 169
+
+    (9) body -> L_BRACK . statements R_BRACK
+    (27) statements -> .
+    (28) statements -> . assignment DOT_COMMA
+    (29) statements -> . functionCall DOT_COMMA
+    (30) statements -> . ifBlock
+    (31) statements -> . whileBlock
+    (32) statements -> . forBlock
+    (33) statements -> . print DOT_COMMA
+    (34) statements -> . read DOT_COMMA
+    (35) statements -> . lineComment
+    (36) statements -> . arrays DOT_COMMA
+    (37) assignment -> . idCall ASSIGN megaExp
+    (38) assignment -> . idCall ASSIGN functionCall
+    (39) assignment -> . idCall INCREMENT
+    (40) assignment -> . idCall DECREMENT
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
+    (53) ifBlock -> . IF L_PAR megaExp R_PAR body optionalElse
+    (56) whileBlock -> . WHILE L_PAR megaExp R_PAR body
+    (57) forBlock -> . FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+    (86) print -> . PRINT L_PAR print_help ALPHANUMERIC R_PAR
+    (91) read -> . READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR
+    (96) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
+    (13) arrays -> . VAR type ID L_KEY NUMBER R_KEY DOT_COMMA
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+
+    R_BRACK         reduce using rule 27 (statements -> .)
+    ID              shift and go to state 54
+    IF              shift and go to state 71
+    WHILE           shift and go to state 72
+    FOR             shift and go to state 73
+    PRINT           shift and go to state 74
+    READ            shift and go to state 75
+    COMMENT_LINE    shift and go to state 76
+    VAR             shift and go to state 96
+
+    statements                     shift and go to state 182
+    assignment                     shift and go to state 62
+    functionCall                   shift and go to state 63
+    ifBlock                        shift and go to state 64
+    whileBlock                     shift and go to state 65
+    forBlock                       shift and go to state 66
+    print                          shift and go to state 67
+    read                           shift and go to state 68
+    lineComment                    shift and go to state 69
+    arrays                         shift and go to state 70
+    idCall                         shift and go to state 27
+
+state 170
+
+    (56) whileBlock -> WHILE L_PAR megaExp R_PAR body .
+
+    R_BRACK         reduce using rule 56 (whileBlock -> WHILE L_PAR megaExp R_PAR body .)
+
+
+state 171
+
+    (57) forBlock -> FOR L_PAR idCall DOT_COMMA megaExp . DOT_COMMA optionalAssign R_PAR body
+
+    DOT_COMMA       shift and go to state 183
+
+
+state 172
+
+    (86) print -> PRINT L_PAR print_help ALPHANUMERIC R_PAR .
+
+    DOT_COMMA       reduce using rule 86 (print -> PRINT L_PAR print_help ALPHANUMERIC R_PAR .)
+
+
+state 173
+
+    (88) print_help -> MOD idCall print_help2 .
+
+    ALPHANUMERIC    reduce using rule 88 (print_help -> MOD idCall print_help2 .)
+
+
+state 174
+
+    (90) print_help2 -> COMMA . MOD idCall print_help2
+
+    MOD             shift and go to state 184
+
+
+state 175
+
+    (91) read -> READ L_PAR MOD type COMMA . readHelp idCall readHelp2 R_PAR
+    (92) readHelp -> .
+    (93) readHelp -> . MOD type readHelp
+
+    ID              reduce using rule 92 (readHelp -> .)
+    MOD             shift and go to state 185
+
+    readHelp                       shift and go to state 186
+
+state 176
+
+    (21) functionsHelp2 -> type ID COMMA . functionsHelp2
+    (20) functionsHelp2 -> . type ID
+    (21) functionsHelp2 -> . type ID COMMA functionsHelp2
+    (22) type -> . INT
+    (23) type -> . DECIM
+    (24) type -> . BOOL
+    (25) type -> . CHAR
+    (26) type -> . STRING
+
+    INT             shift and go to state 17
+    DECIM           shift and go to state 18
+    BOOL            shift and go to state 19
+    CHAR            shift and go to state 20
+    STRING          shift and go to state 21
+
+    type                           shift and go to state 146
+    functionsHelp2                 shift and go to state 187
+
+state 177
+
+    (14) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK .
+
+    MAIN            reduce using rule 14 (functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK .)
+
+
+state 178
+
+    (13) arrays -> VAR type ID L_KEY NUMBER . R_KEY DOT_COMMA
+
+    R_KEY           shift and go to state 179
+
+
+state 179
+
+    (13) arrays -> VAR type ID L_KEY NUMBER R_KEY . DOT_COMMA
+
+    DOT_COMMA       shift and go to state 188
+
+
+state 180
+
+    (53) ifBlock -> IF L_PAR megaExp R_PAR body optionalElse .
+
+    R_BRACK         reduce using rule 53 (ifBlock -> IF L_PAR megaExp R_PAR body optionalElse .)
+
+
+state 181
+
+    (55) optionalElse -> ELSE . body
+    (9) body -> . L_BRACK statements R_BRACK
+
+    L_BRACK         shift and go to state 169
+
+    body                           shift and go to state 189
+
+state 182
+
+    (9) body -> L_BRACK statements . R_BRACK
+
+    R_BRACK         shift and go to state 190
+
+
+state 183
+
+    (57) forBlock -> FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA . optionalAssign R_PAR body
+    (58) optionalAssign -> .
+    (59) optionalAssign -> . assignment
+    (37) assignment -> . idCall ASSIGN megaExp
+    (38) assignment -> . idCall ASSIGN functionCall
+    (39) assignment -> . idCall INCREMENT
+    (40) assignment -> . idCall DECREMENT
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+
+    R_PAR           reduce using rule 58 (optionalAssign -> .)
+    ID              shift and go to state 139
+
+    idCall                         shift and go to state 27
+    optionalAssign                 shift and go to state 191
+    assignment                     shift and go to state 192
+
+state 184
+
+    (90) print_help2 -> COMMA MOD . idCall print_help2
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+
+    ID              shift and go to state 139
+
+    idCall                         shift and go to state 193
+
+state 185
+
+    (93) readHelp -> MOD . type readHelp
+    (22) type -> . INT
+    (23) type -> . DECIM
+    (24) type -> . BOOL
+    (25) type -> . CHAR
+    (26) type -> . STRING
+
+    INT             shift and go to state 17
+    DECIM           shift and go to state 18
+    BOOL            shift and go to state 19
+    CHAR            shift and go to state 20
+    STRING          shift and go to state 21
+
+    type                           shift and go to state 194
+
+state 186
+
+    (91) read -> READ L_PAR MOD type COMMA readHelp . idCall readHelp2 R_PAR
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+
+    ID              shift and go to state 139
+
+    idCall                         shift and go to state 195
+
+state 187
+
+    (21) functionsHelp2 -> type ID COMMA functionsHelp2 .
+
+    R_PAR           reduce using rule 21 (functionsHelp2 -> type ID COMMA functionsHelp2 .)
+
+
+state 188
+
+    (13) arrays -> VAR type ID L_KEY NUMBER R_KEY DOT_COMMA .
+
+    DOT_COMMA       reduce using rule 13 (arrays -> VAR type ID L_KEY NUMBER R_KEY DOT_COMMA .)
+
+
+state 189
+
+    (55) optionalElse -> ELSE body .
+
+    R_BRACK         reduce using rule 55 (optionalElse -> ELSE body .)
+
+
+state 190
+
+    (9) body -> L_BRACK statements R_BRACK .
+
+    ELSE            reduce using rule 9 (body -> L_BRACK statements R_BRACK .)
+    R_BRACK         reduce using rule 9 (body -> L_BRACK statements R_BRACK .)
+
+
+state 191
+
+    (57) forBlock -> FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign . R_PAR body
+
+    R_PAR           shift and go to state 196
+
+
+state 192
+
+    (59) optionalAssign -> assignment .
+
+    R_PAR           reduce using rule 59 (optionalAssign -> assignment .)
+
+
+state 193
+
+    (90) print_help2 -> COMMA MOD idCall . print_help2
+    (89) print_help2 -> .
+    (90) print_help2 -> . COMMA MOD idCall print_help2
+
+    ALPHANUMERIC    reduce using rule 89 (print_help2 -> .)
+    COMMA           shift and go to state 174
+
+    print_help2                    shift and go to state 197
+
+state 194
+
+    (93) readHelp -> MOD type . readHelp
+    (92) readHelp -> .
+    (93) readHelp -> . MOD type readHelp
+
+    ID              reduce using rule 92 (readHelp -> .)
+    MOD             shift and go to state 185
+
+    readHelp                       shift and go to state 198
+
+state 195
+
+    (91) read -> READ L_PAR MOD type COMMA readHelp idCall . readHelp2 R_PAR
+    (94) readHelp2 -> .
+    (95) readHelp2 -> . COMMA idCall readHelp2
+
+    R_PAR           reduce using rule 94 (readHelp2 -> .)
+    COMMA           shift and go to state 199
+
+    readHelp2                      shift and go to state 200
+
+state 196
+
+    (57) forBlock -> FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR . body
+    (9) body -> . L_BRACK statements R_BRACK
+
+    L_BRACK         shift and go to state 169
+
+    body                           shift and go to state 201
+
+state 197
+
+    (90) print_help2 -> COMMA MOD idCall print_help2 .
+
+    ALPHANUMERIC    reduce using rule 90 (print_help2 -> COMMA MOD idCall print_help2 .)
+
+
+state 198
+
+    (93) readHelp -> MOD type readHelp .
+
+    ID              reduce using rule 93 (readHelp -> MOD type readHelp .)
+
+
+state 199
+
+    (95) readHelp2 -> COMMA . idCall readHelp2
+    (84) idCall -> . ID
+    (85) idCall -> . ID L_KEY exp R_KEY
+
+    ID              shift and go to state 139
+
+    idCall                         shift and go to state 202
+
+state 200
+
+    (91) read -> READ L_PAR MOD type COMMA readHelp idCall readHelp2 . R_PAR
+
+    R_PAR           shift and go to state 203
+
+
+state 201
+
+    (57) forBlock -> FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body .
+
+    R_BRACK         reduce using rule 57 (forBlock -> FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body .)
+
+
+state 202
+
+    (95) readHelp2 -> COMMA idCall . readHelp2
+    (94) readHelp2 -> .
+    (95) readHelp2 -> . COMMA idCall readHelp2
+
+    R_PAR           reduce using rule 94 (readHelp2 -> .)
+    COMMA           shift and go to state 199
+
+    readHelp2                      shift and go to state 204
+
+state 203
+
+    (91) read -> READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR .
+
+    DOT_COMMA       reduce using rule 91 (read -> READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR .)
+
+
+state 204
+
+    (95) readHelp2 -> COMMA idCall readHelp2 .
+
+    R_PAR           reduce using rule 95 (readHelp2 -> COMMA idCall readHelp2 .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for FUNCTION in state 4 resolved as shift
+WARNING: shift/reduce conflict for MAIN in state 4 resolved as shift
+WARNING: shift/reduce conflict for VAR in state 30 resolved as shift
+WARNING: shift/reduce conflict for VAR in state 32 resolved as shift
+WARNING: shift/reduce conflict for R_BRACK in state 37 resolved as shift
+WARNING: shift/reduce conflict for VAR in state 37 resolved as shift
+WARNING: shift/reduce conflict for R_BRACK in state 37 resolved as shift
+WARNING: shift/reduce conflict for ID in state 37 resolved as shift
+WARNING: shift/reduce conflict for IF in state 37 resolved as shift
+WARNING: shift/reduce conflict for WHILE in state 37 resolved as shift
+WARNING: shift/reduce conflict for FOR in state 37 resolved as shift
+WARNING: shift/reduce conflict for PRINT in state 37 resolved as shift
+WARNING: shift/reduce conflict for READ in state 37 resolved as shift
+WARNING: shift/reduce conflict for COMMENT_LINE in state 37 resolved as shift
+WARNING: shift/reduce conflict for R_BRACK in state 132 resolved as shift
+WARNING: shift/reduce conflict for VAR in state 132 resolved as shift
+WARNING: shift/reduce conflict for R_BRACK in state 132 resolved as shift
+WARNING: shift/reduce conflict for ID in state 132 resolved as shift
+WARNING: shift/reduce conflict for IF in state 132 resolved as shift
+WARNING: shift/reduce conflict for WHILE in state 132 resolved as shift
+WARNING: shift/reduce conflict for FOR in state 132 resolved as shift
+WARNING: shift/reduce conflict for PRINT in state 132 resolved as shift
+WARNING: shift/reduce conflict for READ in state 132 resolved as shift
+WARNING: shift/reduce conflict for COMMENT_LINE in state 132 resolved as shift
+WARNING: shift/reduce conflict for R_KEY in state 167 resolved as shift
+WARNING: reduce/reduce conflict in state 52 resolved using rule (assignment -> idCall ASSIGN functionCall)
+WARNING: rejected rule (factor -> functionCall) in state 52
+WARNING: reduce/reduce conflict in state 113 resolved using rule (functionCallParamsOptional -> idCall)
+WARNING: rejected rule (functionCallParamsParam -> idCall) in state 113
+WARNING: reduce/reduce conflict in state 113 resolved using rule (functionCallParamsOptional -> idCall)
+WARNING: rejected rule (factor -> idCall) in state 113
+WARNING: reduce/reduce conflict in state 113 resolved using rule (functionCallParamsParam -> idCall)
+WARNING: rejected rule (factor -> idCall) in state 113
+WARNING: reduce/reduce conflict in state 114 resolved using rule (functionCallParamsOptional -> megaExp)
+WARNING: rejected rule (functionCallParamsParam -> megaExp) in state 114
+WARNING: reduce/reduce conflict in state 115 resolved using rule (functionCallParamsOptional -> functionCall)
+WARNING: rejected rule (functionCallParamsParam -> functionCall) in state 115
+WARNING: reduce/reduce conflict in state 115 resolved using rule (functionCallParamsOptional -> functionCall)
+WARNING: rejected rule (factor -> functionCall) in state 115
+WARNING: reduce/reduce conflict in state 115 resolved using rule (functionCallParamsParam -> functionCall)
+WARNING: rejected rule (factor -> functionCall) in state 115
+WARNING: reduce/reduce conflict in state 160 resolved using rule (functionCallParamsParam -> idCall)
+WARNING: rejected rule (factor -> idCall) in state 160
+WARNING: reduce/reduce conflict in state 162 resolved using rule (functionCallParamsParam -> functionCall)
+WARNING: rejected rule (factor -> functionCall) in state 162
