@@ -57,7 +57,7 @@ def t_NUMBER(t):
  	return t
 # FALTA ALPHANUMERIC ////////////////////FALTA ESTO//////////////////////
 t_CHARACTER = r'[a-zA-Z_]'
-t_ALPHANUMERIC = r'\"[a-zA-Z_\s]*\"'
+t_ALPHANUMERIC = r'\"[a-zA-Z_0-9\s]*\"'
 # FALTA BOOLEAN ////////////////////FALTA ESTO//////////////////////
 
 # Arithmetic operators

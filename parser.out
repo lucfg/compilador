@@ -54,7 +54,7 @@ Rule 48    ifBlock -> IF L_PAR megaExp R_PAR body optionalElse
 Rule 49    optionalElse -> <empty>
 Rule 50    optionalElse -> ELSE body
 Rule 51    whileBlock -> WHILE L_PAR megaExp R_PAR body
-Rule 52    forBlock -> FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+Rule 52    forBlock -> FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
 Rule 53    optionalAssign -> <empty>
 Rule 54    optionalAssign -> assignment
 Rule 55    megaExp -> superExp
@@ -83,35 +83,31 @@ Rule 77    factor -> L_PAR megaExp R_PAR
 Rule 78    factor -> functionCall
 Rule 79    idCall -> ID
 Rule 80    idCall -> ID L_KEY exp R_KEY
-Rule 81    print -> PRINT L_PAR print_help ALPHANUMERIC R_PAR
+Rule 81    print -> PRINT L_PAR print_help R_PAR
 Rule 82    print_help -> <empty>
-Rule 83    print_help -> MOD idCall print_help2
-Rule 84    print_help2 -> <empty>
-Rule 85    print_help2 -> COMMA MOD idCall print_help2
-Rule 86    read -> READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR
-Rule 87    readHelp -> <empty>
-Rule 88    readHelp -> MOD type readHelp
-Rule 89    readHelp2 -> <empty>
-Rule 90    readHelp2 -> COMMA idCall readHelp2
-Rule 91    lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE
+Rule 83    print_help -> ALPHANUMERIC
+Rule 84    print_help -> idCall
+Rule 85    print_help -> functionCall
+Rule 86    read -> READ L_PAR idCall R_PAR
+Rule 87    lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE
 
 Terminals, with rules where they appear
 
-ALPHANUMERIC         : 73 81 91
+ALPHANUMERIC         : 73 83 87
 AND                  : 56
 ASSIGN               : 37 38
 BOOL                 : 24
 BOOLEAN              : 75
 CHAR                 : 25
 CHARACTER            : 74
-COMMA                : 19 21 47 85 86 90
-COMMENT_LINE         : 91
+COMMA                : 19 21 47
+COMMENT_LINE         : 87
 DECIM                : 23
 DECREMENT            : 40
 DIVIDE               : 70
 DOT_COMMA            : 11 12 13 28 29 33 34 36 52 52
 ELSE                 : 50
-END_LINE             : 91
+END_LINE             : 87
 EQUAL                : 63
 FOR                  : 52
 FUNCTION             : 14 15 16
@@ -126,7 +122,7 @@ L_KEY                : 13 80
 L_PAR                : 6 7 8 14 15 16 41 48 51 52 77 81 86
 MAIN                 : 6 7 8
 MINUS                : 67
-MOD                  : 71 83 85 86 88
+MOD                  : 71
 MORE_EQUAL           : 61
 MORE_THAN            : 59
 NOT_EQUAL            : 64
@@ -148,20 +144,20 @@ error                :
 Nonterminals, with rules where they appear
 
 arrays               : 36
-assignment           : 12 28 54
+assignment           : 12 28 52 54
 body                 : 48 50 51 52
 codeBlock            : 1
 exp                  : 58 59 59 60 60 61 61 62 62 63 63 64 64 80
 factor               : 68 69 69 70 70 71 71
 forBlock             : 32
-functionCall         : 29 38 78
+functionCall         : 29 38 78 85
 functionCallParams   : 41
 functionCallParamsMultiple : 43 47
 functionCallParamsOptional : 42
 functions            : 2 4
 functionsHelp        : 14 15 16
 functionsHelp2       : 19 21
-idCall               : 37 38 39 40 52 76 83 85 86 90
+idCall               : 37 38 39 40 76 84 86
 ifBlock              : 30
 lineComment          : 35
 mainBody             : 2 3 4 5
@@ -170,15 +166,12 @@ optionalAssign       : 52
 optionalElse         : 48
 print                : 33
 print_help           : 81
-print_help2          : 83 85
 program              : 0
 read                 : 34
-readHelp             : 86 88
-readHelp2            : 86 90
 statements           : 6 7 9 14 15
 superExp             : 55 56 56 57 57
 term                 : 65 66 66 67 67
-type                 : 11 12 13 14 15 16 18 19 20 21 86 88
+type                 : 11 12 13 14 15 16 18 19 20 21
 variables            : 2 3 6 11 12 14
 whileBlock           : 31
 
@@ -385,8 +378,6 @@ state 17
     (22) type -> INT .
 
     ID              reduce using rule 22 (type -> INT .)
-    COMMA           reduce using rule 22 (type -> INT .)
-    MOD             reduce using rule 22 (type -> INT .)
 
 
 state 18
@@ -394,8 +385,6 @@ state 18
     (23) type -> DECIM .
 
     ID              reduce using rule 23 (type -> DECIM .)
-    COMMA           reduce using rule 23 (type -> DECIM .)
-    MOD             reduce using rule 23 (type -> DECIM .)
 
 
 state 19
@@ -403,8 +392,6 @@ state 19
     (24) type -> BOOL .
 
     ID              reduce using rule 24 (type -> BOOL .)
-    COMMA           reduce using rule 24 (type -> BOOL .)
-    MOD             reduce using rule 24 (type -> BOOL .)
 
 
 state 20
@@ -412,8 +399,6 @@ state 20
     (25) type -> CHAR .
 
     ID              reduce using rule 25 (type -> CHAR .)
-    COMMA           reduce using rule 25 (type -> CHAR .)
-    MOD             reduce using rule 25 (type -> CHAR .)
 
 
 state 21
@@ -421,8 +406,6 @@ state 21
     (26) type -> STRING .
 
     ID              reduce using rule 26 (type -> STRING .)
-    COMMA           reduce using rule 26 (type -> STRING .)
-    MOD             reduce using rule 26 (type -> STRING .)
 
 
 state 22
@@ -694,10 +677,10 @@ state 37
     (41) functionCall -> . ID L_PAR functionCallParams R_PAR
     (48) ifBlock -> . IF L_PAR megaExp R_PAR body optionalElse
     (51) whileBlock -> . WHILE L_PAR megaExp R_PAR body
-    (52) forBlock -> . FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
-    (81) print -> . PRINT L_PAR print_help ALPHANUMERIC R_PAR
-    (86) read -> . READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR
-    (91) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
+    (52) forBlock -> . FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+    (81) print -> . PRINT L_PAR print_help R_PAR
+    (86) read -> . READ L_PAR idCall R_PAR
+    (87) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
     (13) arrays -> . VAR type ID L_KEY NUMBER R_KEY DOT_COMMA
     (79) idCall -> . ID
     (80) idCall -> . ID L_KEY exp R_KEY
@@ -1182,10 +1165,10 @@ state 58
     (41) functionCall -> . ID L_PAR functionCallParams R_PAR
     (48) ifBlock -> . IF L_PAR megaExp R_PAR body optionalElse
     (51) whileBlock -> . WHILE L_PAR megaExp R_PAR body
-    (52) forBlock -> . FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
-    (81) print -> . PRINT L_PAR print_help ALPHANUMERIC R_PAR
-    (86) read -> . READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR
-    (91) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
+    (52) forBlock -> . FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+    (81) print -> . PRINT L_PAR print_help R_PAR
+    (86) read -> . READ L_PAR idCall R_PAR
+    (87) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
     (13) arrays -> . VAR type ID L_KEY NUMBER R_KEY DOT_COMMA
     (79) idCall -> . ID
     (80) idCall -> . ID L_KEY exp R_KEY
@@ -1324,28 +1307,28 @@ state 72
 
 state 73
 
-    (52) forBlock -> FOR . L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+    (52) forBlock -> FOR . L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
 
     L_PAR           shift and go to state 106
 
 
 state 74
 
-    (81) print -> PRINT . L_PAR print_help ALPHANUMERIC R_PAR
+    (81) print -> PRINT . L_PAR print_help R_PAR
 
     L_PAR           shift and go to state 107
 
 
 state 75
 
-    (86) read -> READ . L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR
+    (86) read -> READ . L_PAR idCall R_PAR
 
     L_PAR           shift and go to state 108
 
 
 state 76
 
-    (91) lineComment -> COMMENT_LINE . ALPHANUMERIC END_LINE
+    (87) lineComment -> COMMENT_LINE . ALPHANUMERIC END_LINE
 
     ALPHANUMERIC    shift and go to state 109
 
@@ -1430,7 +1413,6 @@ state 78
     DOT_COMMA       reduce using rule 80 (idCall -> ID L_KEY exp R_KEY .)
     R_PAR           reduce using rule 80 (idCall -> ID L_KEY exp R_KEY .)
     COMMA           reduce using rule 80 (idCall -> ID L_KEY exp R_KEY .)
-    ALPHANUMERIC    reduce using rule 80 (idCall -> ID L_KEY exp R_KEY .)
 
 
 state 79
@@ -2058,44 +2040,60 @@ state 105
 
 state 106
 
-    (52) forBlock -> FOR L_PAR . idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+    (52) forBlock -> FOR L_PAR . assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+    (37) assignment -> . idCall ASSIGN megaExp
+    (38) assignment -> . idCall ASSIGN functionCall
+    (39) assignment -> . idCall INCREMENT
+    (40) assignment -> . idCall DECREMENT
     (79) idCall -> . ID
     (80) idCall -> . ID L_KEY exp R_KEY
 
     ID              shift and go to state 136
 
-    idCall                         shift and go to state 135
+    assignment                     shift and go to state 135
+    idCall                         shift and go to state 27
 
 state 107
 
-    (81) print -> PRINT L_PAR . print_help ALPHANUMERIC R_PAR
+    (81) print -> PRINT L_PAR . print_help R_PAR
     (82) print_help -> .
-    (83) print_help -> . MOD idCall print_help2
+    (83) print_help -> . ALPHANUMERIC
+    (84) print_help -> . idCall
+    (85) print_help -> . functionCall
+    (79) idCall -> . ID
+    (80) idCall -> . ID L_KEY exp R_KEY
+    (41) functionCall -> . ID L_PAR functionCallParams R_PAR
 
-    ALPHANUMERIC    reduce using rule 82 (print_help -> .)
-    MOD             shift and go to state 138
+    R_PAR           reduce using rule 82 (print_help -> .)
+    ALPHANUMERIC    shift and go to state 138
+    ID              shift and go to state 39
 
     print_help                     shift and go to state 137
+    idCall                         shift and go to state 139
+    functionCall                   shift and go to state 140
 
 state 108
 
-    (86) read -> READ L_PAR . MOD type COMMA readHelp idCall readHelp2 R_PAR
+    (86) read -> READ L_PAR . idCall R_PAR
+    (79) idCall -> . ID
+    (80) idCall -> . ID L_KEY exp R_KEY
 
-    MOD             shift and go to state 139
+    ID              shift and go to state 136
 
+    idCall                         shift and go to state 141
 
 state 109
 
-    (91) lineComment -> COMMENT_LINE ALPHANUMERIC . END_LINE
+    (87) lineComment -> COMMENT_LINE ALPHANUMERIC . END_LINE
 
-    END_LINE        shift and go to state 140
+    END_LINE        shift and go to state 142
 
 
 state 110
 
     (41) functionCall -> ID L_PAR functionCallParams . R_PAR
 
-    R_PAR           shift and go to state 141
+    R_PAR           shift and go to state 143
 
 
 state 111
@@ -2120,7 +2118,7 @@ state 113
 
   ! reduce/reduce conflict for R_PAR resolved using rule 45 (functionCallParamsOptional -> megaExp .)
     R_PAR           reduce using rule 45 (functionCallParamsOptional -> megaExp .)
-    COMMA           shift and go to state 142
+    COMMA           shift and go to state 144
 
   ! R_PAR           [ reduce using rule 46 (functionCallParamsMultiple -> megaExp .) ]
 
@@ -2345,8 +2343,8 @@ state 128
     CHAR            shift and go to state 20
     STRING          shift and go to state 21
 
-    type                           shift and go to state 143
-    functionsHelp2                 shift and go to state 144
+    type                           shift and go to state 145
+    functionsHelp2                 shift and go to state 146
 
 state 129
 
@@ -2373,10 +2371,10 @@ state 129
     (41) functionCall -> . ID L_PAR functionCallParams R_PAR
     (48) ifBlock -> . IF L_PAR megaExp R_PAR body optionalElse
     (51) whileBlock -> . WHILE L_PAR megaExp R_PAR body
-    (52) forBlock -> . FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
-    (81) print -> . PRINT L_PAR print_help ALPHANUMERIC R_PAR
-    (86) read -> . READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR
-    (91) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
+    (52) forBlock -> . FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+    (81) print -> . PRINT L_PAR print_help R_PAR
+    (86) read -> . READ L_PAR idCall R_PAR
+    (87) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
     (13) arrays -> . VAR type ID L_KEY NUMBER R_KEY DOT_COMMA
     (79) idCall -> . ID
     (80) idCall -> . ID L_KEY exp R_KEY
@@ -2391,7 +2389,7 @@ state 129
   ! shift/reduce conflict for PRINT resolved as shift
   ! shift/reduce conflict for READ resolved as shift
   ! shift/reduce conflict for COMMENT_LINE resolved as shift
-    R_BRACK         shift and go to state 147
+    R_BRACK         shift and go to state 149
     VAR             shift and go to state 61
     ID              shift and go to state 54
     IF              shift and go to state 71
@@ -2412,8 +2410,8 @@ state 129
   ! R_BRACK         [ reduce using rule 10 (variables -> .) ]
   ! R_BRACK         [ reduce using rule 27 (statements -> .) ]
 
-    variables                      shift and go to state 145
-    statements                     shift and go to state 146
+    variables                      shift and go to state 147
+    statements                     shift and go to state 148
     assignment                     shift and go to state 62
     functionCall                   shift and go to state 63
     ifBlock                        shift and go to state 64
@@ -2436,7 +2434,7 @@ state 131
 
     (13) arrays -> VAR type . ID L_KEY NUMBER R_KEY DOT_COMMA
 
-    ID              shift and go to state 148
+    ID              shift and go to state 150
 
 
 state 132
@@ -2447,7 +2445,7 @@ state 132
     (80) idCall -> ID . L_KEY exp R_KEY
 
     DOT_COMMA       shift and go to state 30
-    L_KEY           shift and go to state 149
+    L_KEY           shift and go to state 151
     ASSIGN          reduce using rule 79 (idCall -> ID .)
     INCREMENT       reduce using rule 79 (idCall -> ID .)
     DECREMENT       reduce using rule 79 (idCall -> ID .)
@@ -2457,21 +2455,21 @@ state 133
 
     (48) ifBlock -> IF L_PAR megaExp . R_PAR body optionalElse
 
-    R_PAR           shift and go to state 150
+    R_PAR           shift and go to state 152
 
 
 state 134
 
     (51) whileBlock -> WHILE L_PAR megaExp . R_PAR body
 
-    R_PAR           shift and go to state 151
+    R_PAR           shift and go to state 153
 
 
 state 135
 
-    (52) forBlock -> FOR L_PAR idCall . DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+    (52) forBlock -> FOR L_PAR assignment . DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
 
-    DOT_COMMA       shift and go to state 152
+    DOT_COMMA       shift and go to state 154
 
 
 state 136
@@ -2479,9 +2477,6 @@ state 136
     (79) idCall -> ID .
     (80) idCall -> ID . L_KEY exp R_KEY
 
-    DOT_COMMA       reduce using rule 79 (idCall -> ID .)
-    COMMA           reduce using rule 79 (idCall -> ID .)
-    ALPHANUMERIC    reduce using rule 79 (idCall -> ID .)
     ASSIGN          reduce using rule 79 (idCall -> ID .)
     INCREMENT       reduce using rule 79 (idCall -> ID .)
     DECREMENT       reduce using rule 79 (idCall -> ID .)
@@ -2491,46 +2486,47 @@ state 136
 
 state 137
 
-    (81) print -> PRINT L_PAR print_help . ALPHANUMERIC R_PAR
+    (81) print -> PRINT L_PAR print_help . R_PAR
 
-    ALPHANUMERIC    shift and go to state 153
+    R_PAR           shift and go to state 155
 
 
 state 138
 
-    (83) print_help -> MOD . idCall print_help2
-    (79) idCall -> . ID
-    (80) idCall -> . ID L_KEY exp R_KEY
+    (83) print_help -> ALPHANUMERIC .
 
-    ID              shift and go to state 136
+    R_PAR           reduce using rule 83 (print_help -> ALPHANUMERIC .)
 
-    idCall                         shift and go to state 154
 
 state 139
 
-    (86) read -> READ L_PAR MOD . type COMMA readHelp idCall readHelp2 R_PAR
-    (22) type -> . INT
-    (23) type -> . DECIM
-    (24) type -> . BOOL
-    (25) type -> . CHAR
-    (26) type -> . STRING
+    (84) print_help -> idCall .
 
-    INT             shift and go to state 17
-    DECIM           shift and go to state 18
-    BOOL            shift and go to state 19
-    CHAR            shift and go to state 20
-    STRING          shift and go to state 21
+    R_PAR           reduce using rule 84 (print_help -> idCall .)
 
-    type                           shift and go to state 155
 
 state 140
 
-    (91) lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .
+    (85) print_help -> functionCall .
 
-    R_BRACK         reduce using rule 91 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
+    R_PAR           reduce using rule 85 (print_help -> functionCall .)
 
 
 state 141
+
+    (86) read -> READ L_PAR idCall . R_PAR
+
+    R_PAR           shift and go to state 156
+
+
+state 142
+
+    (87) lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .
+
+    R_BRACK         reduce using rule 87 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
+
+
+state 143
 
     (41) functionCall -> ID L_PAR functionCallParams R_PAR .
 
@@ -2553,7 +2549,7 @@ state 141
     COMMA           reduce using rule 41 (functionCall -> ID L_PAR functionCallParams R_PAR .)
 
 
-state 142
+state 144
 
     (47) functionCallParamsMultiple -> megaExp COMMA . functionCallParamsMultiple
     (46) functionCallParamsMultiple -> . megaExp
@@ -2593,8 +2589,8 @@ state 142
     L_PAR           shift and go to state 48
     ID              shift and go to state 39
 
-    megaExp                        shift and go to state 156
-    functionCallParamsMultiple     shift and go to state 157
+    megaExp                        shift and go to state 157
+    functionCallParamsMultiple     shift and go to state 158
     superExp                       shift and go to state 53
     exp                            shift and go to state 55
     term                           shift and go to state 41
@@ -2602,22 +2598,22 @@ state 142
     idCall                         shift and go to state 47
     functionCall                   shift and go to state 49
 
-state 143
+state 145
 
     (20) functionsHelp2 -> type . ID
     (21) functionsHelp2 -> type . ID COMMA functionsHelp2
 
-    ID              shift and go to state 158
+    ID              shift and go to state 159
 
 
-state 144
+state 146
 
     (19) functionsHelp -> type ID COMMA functionsHelp2 .
 
     R_PAR           reduce using rule 19 (functionsHelp -> type ID COMMA functionsHelp2 .)
 
 
-state 145
+state 147
 
     (14) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables . statements R_BRACK
     (27) statements -> .
@@ -2637,10 +2633,10 @@ state 145
     (41) functionCall -> . ID L_PAR functionCallParams R_PAR
     (48) ifBlock -> . IF L_PAR megaExp R_PAR body optionalElse
     (51) whileBlock -> . WHILE L_PAR megaExp R_PAR body
-    (52) forBlock -> . FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
-    (81) print -> . PRINT L_PAR print_help ALPHANUMERIC R_PAR
-    (86) read -> . READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR
-    (91) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
+    (52) forBlock -> . FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+    (81) print -> . PRINT L_PAR print_help R_PAR
+    (86) read -> . READ L_PAR idCall R_PAR
+    (87) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
     (13) arrays -> . VAR type ID L_KEY NUMBER R_KEY DOT_COMMA
     (79) idCall -> . ID
     (80) idCall -> . ID L_KEY exp R_KEY
@@ -2655,7 +2651,7 @@ state 145
     COMMENT_LINE    shift and go to state 76
     VAR             shift and go to state 96
 
-    statements                     shift and go to state 159
+    statements                     shift and go to state 160
     assignment                     shift and go to state 62
     functionCall                   shift and go to state 63
     ifBlock                        shift and go to state 64
@@ -2667,28 +2663,28 @@ state 145
     arrays                         shift and go to state 70
     idCall                         shift and go to state 27
 
-state 146
+state 148
 
     (15) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK statements . R_BRACK
 
-    R_BRACK         shift and go to state 160
+    R_BRACK         shift and go to state 161
 
 
-state 147
+state 149
 
     (16) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK R_BRACK .
 
     MAIN            reduce using rule 16 (functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK R_BRACK .)
 
 
-state 148
+state 150
 
     (13) arrays -> VAR type ID . L_KEY NUMBER R_KEY DOT_COMMA
 
-    L_KEY           shift and go to state 161
+    L_KEY           shift and go to state 162
 
 
-state 149
+state 151
 
     (13) arrays -> VAR type ID L_KEY . NUMBER R_KEY DOT_COMMA
     (80) idCall -> ID L_KEY . exp R_KEY
@@ -2710,7 +2706,7 @@ state 149
     (80) idCall -> . ID L_KEY exp R_KEY
     (41) functionCall -> . ID L_PAR functionCallParams R_PAR
 
-    NUMBER          shift and go to state 162
+    NUMBER          shift and go to state 163
     ALPHANUMERIC    shift and go to state 44
     CHARACTER       shift and go to state 45
     BOOLEAN         shift and go to state 46
@@ -2723,27 +2719,27 @@ state 149
     idCall                         shift and go to state 47
     functionCall                   shift and go to state 49
 
-state 150
+state 152
 
     (48) ifBlock -> IF L_PAR megaExp R_PAR . body optionalElse
     (9) body -> . L_BRACK statements R_BRACK
 
-    L_BRACK         shift and go to state 164
+    L_BRACK         shift and go to state 165
 
-    body                           shift and go to state 163
+    body                           shift and go to state 164
 
-state 151
+state 153
 
     (51) whileBlock -> WHILE L_PAR megaExp R_PAR . body
     (9) body -> . L_BRACK statements R_BRACK
 
-    L_BRACK         shift and go to state 164
+    L_BRACK         shift and go to state 165
 
-    body                           shift and go to state 165
+    body                           shift and go to state 166
 
-state 152
+state 154
 
-    (52) forBlock -> FOR L_PAR idCall DOT_COMMA . megaExp DOT_COMMA optionalAssign R_PAR body
+    (52) forBlock -> FOR L_PAR assignment DOT_COMMA . megaExp DOT_COMMA optionalAssign R_PAR body
     (55) megaExp -> . superExp
     (56) megaExp -> . superExp AND superExp
     (57) megaExp -> . superExp OR superExp
@@ -2779,92 +2775,81 @@ state 152
     L_PAR           shift and go to state 48
     ID              shift and go to state 39
 
-    idCall                         shift and go to state 47
-    megaExp                        shift and go to state 166
+    megaExp                        shift and go to state 167
     superExp                       shift and go to state 53
     exp                            shift and go to state 55
     term                           shift and go to state 41
     factor                         shift and go to state 42
+    idCall                         shift and go to state 47
     functionCall                   shift and go to state 49
-
-state 153
-
-    (81) print -> PRINT L_PAR print_help ALPHANUMERIC . R_PAR
-
-    R_PAR           shift and go to state 167
-
-
-state 154
-
-    (83) print_help -> MOD idCall . print_help2
-    (84) print_help2 -> .
-    (85) print_help2 -> . COMMA MOD idCall print_help2
-
-    ALPHANUMERIC    reduce using rule 84 (print_help2 -> .)
-    COMMA           shift and go to state 169
-
-    print_help2                    shift and go to state 168
 
 state 155
 
-    (86) read -> READ L_PAR MOD type . COMMA readHelp idCall readHelp2 R_PAR
+    (81) print -> PRINT L_PAR print_help R_PAR .
 
-    COMMA           shift and go to state 170
+    DOT_COMMA       reduce using rule 81 (print -> PRINT L_PAR print_help R_PAR .)
 
 
 state 156
+
+    (86) read -> READ L_PAR idCall R_PAR .
+
+    DOT_COMMA       reduce using rule 86 (read -> READ L_PAR idCall R_PAR .)
+
+
+state 157
 
     (46) functionCallParamsMultiple -> megaExp .
     (47) functionCallParamsMultiple -> megaExp . COMMA functionCallParamsMultiple
 
     R_PAR           reduce using rule 46 (functionCallParamsMultiple -> megaExp .)
-    COMMA           shift and go to state 142
+    COMMA           shift and go to state 144
 
 
-state 157
+state 158
 
     (47) functionCallParamsMultiple -> megaExp COMMA functionCallParamsMultiple .
 
     R_PAR           reduce using rule 47 (functionCallParamsMultiple -> megaExp COMMA functionCallParamsMultiple .)
 
 
-state 158
+state 159
 
     (20) functionsHelp2 -> type ID .
     (21) functionsHelp2 -> type ID . COMMA functionsHelp2
 
     R_PAR           reduce using rule 20 (functionsHelp2 -> type ID .)
-    COMMA           shift and go to state 171
-
-
-state 159
-
-    (14) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements . R_BRACK
-
-    R_BRACK         shift and go to state 172
+    COMMA           shift and go to state 168
 
 
 state 160
+
+    (14) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements . R_BRACK
+
+    R_BRACK         shift and go to state 169
+
+
+state 161
 
     (15) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK statements R_BRACK .
 
     MAIN            reduce using rule 15 (functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK statements R_BRACK .)
 
 
-state 161
+state 162
 
     (13) arrays -> VAR type ID L_KEY . NUMBER R_KEY DOT_COMMA
 
-    NUMBER          shift and go to state 173
+    NUMBER          shift and go to state 170
 
 
-state 162
+state 163
 
     (13) arrays -> VAR type ID L_KEY NUMBER . R_KEY DOT_COMMA
     (72) factor -> NUMBER .
 
   ! shift/reduce conflict for R_KEY resolved as shift
-    R_KEY           shift and go to state 174
+    R_KEY           shift and go to state 171
     TIMES           reduce using rule 72 (factor -> NUMBER .)
     DIVIDE          reduce using rule 72 (factor -> NUMBER .)
     MOD             reduce using rule 72 (factor -> NUMBER .)
@@ -2874,18 +2859,18 @@ state 162
   ! R_KEY           [ reduce using rule 72 (factor -> NUMBER .) ]
 
 
-state 163
+state 164
 
     (48) ifBlock -> IF L_PAR megaExp R_PAR body . optionalElse
     (49) optionalElse -> .
     (50) optionalElse -> . ELSE body
 
     R_BRACK         reduce using rule 49 (optionalElse -> .)
-    ELSE            shift and go to state 176
+    ELSE            shift and go to state 173
 
-    optionalElse                   shift and go to state 175
+    optionalElse                   shift and go to state 172
 
-state 164
+state 165
 
     (9) body -> L_BRACK . statements R_BRACK
     (27) statements -> .
@@ -2905,10 +2890,10 @@ state 164
     (41) functionCall -> . ID L_PAR functionCallParams R_PAR
     (48) ifBlock -> . IF L_PAR megaExp R_PAR body optionalElse
     (51) whileBlock -> . WHILE L_PAR megaExp R_PAR body
-    (52) forBlock -> . FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
-    (81) print -> . PRINT L_PAR print_help ALPHANUMERIC R_PAR
-    (86) read -> . READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR
-    (91) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
+    (52) forBlock -> . FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
+    (81) print -> . PRINT L_PAR print_help R_PAR
+    (86) read -> . READ L_PAR idCall R_PAR
+    (87) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
     (13) arrays -> . VAR type ID L_KEY NUMBER R_KEY DOT_COMMA
     (79) idCall -> . ID
     (80) idCall -> . ID L_KEY exp R_KEY
@@ -2923,7 +2908,7 @@ state 164
     COMMENT_LINE    shift and go to state 76
     VAR             shift and go to state 96
 
-    statements                     shift and go to state 177
+    statements                     shift and go to state 174
     assignment                     shift and go to state 62
     functionCall                   shift and go to state 63
     ifBlock                        shift and go to state 64
@@ -2935,53 +2920,21 @@ state 164
     arrays                         shift and go to state 70
     idCall                         shift and go to state 27
 
-state 165
+state 166
 
     (51) whileBlock -> WHILE L_PAR megaExp R_PAR body .
 
     R_BRACK         reduce using rule 51 (whileBlock -> WHILE L_PAR megaExp R_PAR body .)
 
 
-state 166
-
-    (52) forBlock -> FOR L_PAR idCall DOT_COMMA megaExp . DOT_COMMA optionalAssign R_PAR body
-
-    DOT_COMMA       shift and go to state 178
-
-
 state 167
 
-    (81) print -> PRINT L_PAR print_help ALPHANUMERIC R_PAR .
+    (52) forBlock -> FOR L_PAR assignment DOT_COMMA megaExp . DOT_COMMA optionalAssign R_PAR body
 
-    DOT_COMMA       reduce using rule 81 (print -> PRINT L_PAR print_help ALPHANUMERIC R_PAR .)
+    DOT_COMMA       shift and go to state 175
 
 
 state 168
-
-    (83) print_help -> MOD idCall print_help2 .
-
-    ALPHANUMERIC    reduce using rule 83 (print_help -> MOD idCall print_help2 .)
-
-
-state 169
-
-    (85) print_help2 -> COMMA . MOD idCall print_help2
-
-    MOD             shift and go to state 179
-
-
-state 170
-
-    (86) read -> READ L_PAR MOD type COMMA . readHelp idCall readHelp2 R_PAR
-    (87) readHelp -> .
-    (88) readHelp -> . MOD type readHelp
-
-    ID              reduce using rule 87 (readHelp -> .)
-    MOD             shift and go to state 180
-
-    readHelp                       shift and go to state 181
-
-state 171
 
     (21) functionsHelp2 -> type ID COMMA . functionsHelp2
     (20) functionsHelp2 -> . type ID
@@ -2998,56 +2951,56 @@ state 171
     CHAR            shift and go to state 20
     STRING          shift and go to state 21
 
-    type                           shift and go to state 143
-    functionsHelp2                 shift and go to state 182
+    type                           shift and go to state 145
+    functionsHelp2                 shift and go to state 176
 
-state 172
+state 169
 
     (14) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK .
 
     MAIN            reduce using rule 14 (functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK .)
 
 
-state 173
+state 170
 
     (13) arrays -> VAR type ID L_KEY NUMBER . R_KEY DOT_COMMA
 
-    R_KEY           shift and go to state 174
+    R_KEY           shift and go to state 171
 
 
-state 174
+state 171
 
     (13) arrays -> VAR type ID L_KEY NUMBER R_KEY . DOT_COMMA
 
-    DOT_COMMA       shift and go to state 183
+    DOT_COMMA       shift and go to state 177
 
 
-state 175
+state 172
 
     (48) ifBlock -> IF L_PAR megaExp R_PAR body optionalElse .
 
     R_BRACK         reduce using rule 48 (ifBlock -> IF L_PAR megaExp R_PAR body optionalElse .)
 
 
-state 176
+state 173
 
     (50) optionalElse -> ELSE . body
     (9) body -> . L_BRACK statements R_BRACK
 
-    L_BRACK         shift and go to state 164
+    L_BRACK         shift and go to state 165
 
-    body                           shift and go to state 184
+    body                           shift and go to state 178
 
-state 177
+state 174
 
     (9) body -> L_BRACK statements . R_BRACK
 
-    R_BRACK         shift and go to state 185
+    R_BRACK         shift and go to state 179
 
 
-state 178
+state 175
 
-    (52) forBlock -> FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA . optionalAssign R_PAR body
+    (52) forBlock -> FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA . optionalAssign R_PAR body
     (53) optionalAssign -> .
     (54) optionalAssign -> . assignment
     (37) assignment -> . idCall ASSIGN megaExp
@@ -3060,69 +3013,32 @@ state 178
     R_PAR           reduce using rule 53 (optionalAssign -> .)
     ID              shift and go to state 136
 
+    assignment                     shift and go to state 180
+    optionalAssign                 shift and go to state 181
     idCall                         shift and go to state 27
-    optionalAssign                 shift and go to state 186
-    assignment                     shift and go to state 187
 
-state 179
-
-    (85) print_help2 -> COMMA MOD . idCall print_help2
-    (79) idCall -> . ID
-    (80) idCall -> . ID L_KEY exp R_KEY
-
-    ID              shift and go to state 136
-
-    idCall                         shift and go to state 188
-
-state 180
-
-    (88) readHelp -> MOD . type readHelp
-    (22) type -> . INT
-    (23) type -> . DECIM
-    (24) type -> . BOOL
-    (25) type -> . CHAR
-    (26) type -> . STRING
-
-    INT             shift and go to state 17
-    DECIM           shift and go to state 18
-    BOOL            shift and go to state 19
-    CHAR            shift and go to state 20
-    STRING          shift and go to state 21
-
-    type                           shift and go to state 189
-
-state 181
-
-    (86) read -> READ L_PAR MOD type COMMA readHelp . idCall readHelp2 R_PAR
-    (79) idCall -> . ID
-    (80) idCall -> . ID L_KEY exp R_KEY
-
-    ID              shift and go to state 136
-
-    idCall                         shift and go to state 190
-
-state 182
+state 176
 
     (21) functionsHelp2 -> type ID COMMA functionsHelp2 .
 
     R_PAR           reduce using rule 21 (functionsHelp2 -> type ID COMMA functionsHelp2 .)
 
 
-state 183
+state 177
 
     (13) arrays -> VAR type ID L_KEY NUMBER R_KEY DOT_COMMA .
 
     DOT_COMMA       reduce using rule 13 (arrays -> VAR type ID L_KEY NUMBER R_KEY DOT_COMMA .)
 
 
-state 184
+state 178
 
     (50) optionalElse -> ELSE body .
 
     R_BRACK         reduce using rule 50 (optionalElse -> ELSE body .)
 
 
-state 185
+state 179
 
     (9) body -> L_BRACK statements R_BRACK .
 
@@ -3130,123 +3046,34 @@ state 185
     R_BRACK         reduce using rule 9 (body -> L_BRACK statements R_BRACK .)
 
 
-state 186
-
-    (52) forBlock -> FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign . R_PAR body
-
-    R_PAR           shift and go to state 191
-
-
-state 187
+state 180
 
     (54) optionalAssign -> assignment .
 
     R_PAR           reduce using rule 54 (optionalAssign -> assignment .)
 
 
-state 188
+state 181
 
-    (85) print_help2 -> COMMA MOD idCall . print_help2
-    (84) print_help2 -> .
-    (85) print_help2 -> . COMMA MOD idCall print_help2
+    (52) forBlock -> FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign . R_PAR body
 
-    ALPHANUMERIC    reduce using rule 84 (print_help2 -> .)
-    COMMA           shift and go to state 169
+    R_PAR           shift and go to state 182
 
-    print_help2                    shift and go to state 192
 
-state 189
+state 182
 
-    (88) readHelp -> MOD type . readHelp
-    (87) readHelp -> .
-    (88) readHelp -> . MOD type readHelp
-
-    ID              reduce using rule 87 (readHelp -> .)
-    MOD             shift and go to state 180
-
-    readHelp                       shift and go to state 193
-
-state 190
-
-    (86) read -> READ L_PAR MOD type COMMA readHelp idCall . readHelp2 R_PAR
-    (89) readHelp2 -> .
-    (90) readHelp2 -> . COMMA idCall readHelp2
-
-    R_PAR           reduce using rule 89 (readHelp2 -> .)
-    COMMA           shift and go to state 194
-
-    readHelp2                      shift and go to state 195
-
-state 191
-
-    (52) forBlock -> FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR . body
+    (52) forBlock -> FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR . body
     (9) body -> . L_BRACK statements R_BRACK
 
-    L_BRACK         shift and go to state 164
+    L_BRACK         shift and go to state 165
 
-    body                           shift and go to state 196
+    body                           shift and go to state 183
 
-state 192
+state 183
 
-    (85) print_help2 -> COMMA MOD idCall print_help2 .
+    (52) forBlock -> FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body .
 
-    ALPHANUMERIC    reduce using rule 85 (print_help2 -> COMMA MOD idCall print_help2 .)
-
-
-state 193
-
-    (88) readHelp -> MOD type readHelp .
-
-    ID              reduce using rule 88 (readHelp -> MOD type readHelp .)
-
-
-state 194
-
-    (90) readHelp2 -> COMMA . idCall readHelp2
-    (79) idCall -> . ID
-    (80) idCall -> . ID L_KEY exp R_KEY
-
-    ID              shift and go to state 136
-
-    idCall                         shift and go to state 197
-
-state 195
-
-    (86) read -> READ L_PAR MOD type COMMA readHelp idCall readHelp2 . R_PAR
-
-    R_PAR           shift and go to state 198
-
-
-state 196
-
-    (52) forBlock -> FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body .
-
-    R_BRACK         reduce using rule 52 (forBlock -> FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body .)
-
-
-state 197
-
-    (90) readHelp2 -> COMMA idCall . readHelp2
-    (89) readHelp2 -> .
-    (90) readHelp2 -> . COMMA idCall readHelp2
-
-    R_PAR           reduce using rule 89 (readHelp2 -> .)
-    COMMA           shift and go to state 194
-
-    readHelp2                      shift and go to state 199
-
-state 198
-
-    (86) read -> READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR .
-
-    DOT_COMMA       reduce using rule 86 (read -> READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR .)
-
-
-state 199
-
-    (90) readHelp2 -> COMMA idCall readHelp2 .
-
-    R_PAR           reduce using rule 90 (readHelp2 -> COMMA idCall readHelp2 .)
+    R_BRACK         reduce using rule 52 (forBlock -> FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body .)
 
 WARNING: 
 WARNING: Conflicts:
@@ -3275,7 +3102,7 @@ WARNING: shift/reduce conflict for FOR in state 129 resolved as shift
 WARNING: shift/reduce conflict for PRINT in state 129 resolved as shift
 WARNING: shift/reduce conflict for READ in state 129 resolved as shift
 WARNING: shift/reduce conflict for COMMENT_LINE in state 129 resolved as shift
-WARNING: shift/reduce conflict for R_KEY in state 162 resolved as shift
+WARNING: shift/reduce conflict for R_KEY in state 163 resolved as shift
 WARNING: reduce/reduce conflict in state 52 resolved using rule (assignment -> idCall ASSIGN functionCall)
 WARNING: rejected rule (factor -> functionCall) in state 52
 WARNING: reduce/reduce conflict in state 113 resolved using rule (functionCallParamsOptional -> megaExp)

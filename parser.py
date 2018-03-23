@@ -120,7 +120,7 @@ def p_whileBlock(p):
   '''whileBlock : WHILE L_PAR megaExp R_PAR body'''
   
 def p_forBlock(p): 
-  '''forBlock : FOR L_PAR idCall DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body'''
+  '''forBlock : FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body'''
 def p_optionalAssign(p):
   '''optionalAssign : 
   		    | assignment'''
@@ -173,22 +173,15 @@ def p_idCall(p):
 ## INPUT AND OUTPUT
 # ---------------------------------------------------------------------------
 def p_print(p):
-  '''print : PRINT L_PAR print_help ALPHANUMERIC R_PAR'''
+  '''print : PRINT L_PAR print_help R_PAR'''
 def p_print_help(p):
   '''print_help : 
-  		| MOD idCall print_help2'''
-def p_print_help2(p):
-  '''print_help2 : 
-  		 | COMMA MOD idCall print_help2'''
+  		| ALPHANUMERIC
+  		| idCall
+  		| functionCall'''
 
 def p_read(p):
-  '''read : READ L_PAR MOD type COMMA readHelp idCall readHelp2 R_PAR'''
-def p_readHelp(p):
-  '''readHelp : 
-  	      | MOD type readHelp'''
-def p_readHelp2(p):
-  '''readHelp2 : 
-  	       | COMMA idCall readHelp2'''
+  '''read : READ L_PAR idCall R_PAR'''
 # ---------------------------------------------------------------------------
 
 ## COMMENTS
