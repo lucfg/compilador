@@ -102,17 +102,12 @@ def p_functionCallParams(p):
   '''functionCallParams : functionCallParamsOptional
                         | functionCallParamsMultiple'''
 def p_functionCallParamsOptional(p):
-  '''functionCallParamsOptional : 
-                                | idCall
-                                | megaExp
-                                | functionCall'''
+  '''functionCallParamsOptional :
+                                | megaExp'''
 def p_functionCallParamsMultiple(p):
-  '''functionCallParamsMultiple : functionCallParamsParam
-                                | functionCallParamsParam COMMA functionCallParamsMultiple'''
-def p_functionCallParamsParam(p):
-  '''functionCallParamsParam : idCall
-                             | megaExp
-                             | functionCall'''
+  '''functionCallParamsMultiple : megaExp
+                                | megaExp COMMA functionCallParamsMultiple'''
+
   
 # If block
 def p_ifBlock(p):
