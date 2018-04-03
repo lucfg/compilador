@@ -1,7 +1,7 @@
 import sys
 import ply.yacc as yacc
 import lexer
-import symTable
+from semantics import FuncNode
 tokens = lexer.tokens
 
 actualFunc = 'program'
@@ -11,53 +11,55 @@ actualFunc = 'program'
 # ---------------------------------------------------------------------------
 # Program declaration
 def p_program(p):
-  '''program : PROGRAM ID L_BRACK codeBlock R_BRACK'''
- # symTable.addFuncKey(p[1], 'NP')
-
-# Code block
-def p_codeBlock(p):
-  '''codeBlock : variables functions mainBody
-  	       | variables mainBody
-               | functions mainBody
-               | mainBody'''
+  '''program : PROGRAM ID L_BRACK variables functions mainBody R_BRACK'''
+  p[0] = FuncNode('program', p[2], p[4], p[5], p[6])
 
 # Main body (with variable declaration)
 def p_mainBody(p):
-  '''mainBody : MAIN L_PAR R_PAR L_BRACK variables statements R_BRACK
-  	      | MAIN L_PAR R_PAR L_BRACK statements R_BRACK
-  	      | MAIN L_PAR R_PAR L_BRACK R_BRACK'''
+  '''mainBody : MAIN L_PAR R_PAR L_BRACK variables statements R_BRACK'''
+  p[0] = FuncNode('main', 'void', p[5], p[6])
 
 # Body (without variable declaration)
 def p_body(p):
   '''body : L_BRACK statements R_BRACK'''
+  p[0] = p[2]
   
 # Variable declaration
 def p_variables(p):
   '''variables :
                | VAR type ID DOT_COMMA variables
   	       | VAR type assignment DOT_COMMA variables'''
- # symTable.symbolTable[actualFunc].addVarKey(p[3], p[2])
-
+  if len(p) > 2 :
+    p[0] = FuncNode('var', p[3], p[2], p[5])  
+  #TODO: Revisar ID y assignment en punto neuralgico
   
 # Variable array declaration
 def p_arrays(p):
   '''arrays : VAR type ID L_KEY NUMBER R_KEY DOT_COMMA'''
+  p[0] = FuncNode('arrVar', p[3], p[2], p[5])
 
 # Function declaration
 def p_functions(p):
-  '''functions : FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK
-  	       | FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK statements R_BRACK
-  	       | FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK R_BRACK'''
- # actualFunc = p[3]
- # symTable.addFuncKey(p[3], p[2])
+  '''functions :
+               | FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK'''
+  p[0] = FuncNode('function', p[3], p[2], p[5], p[8], p[9])
+
 def p_functionsHelp(p):
   '''functionsHelp :
   		   | type ID
   		   | type ID COMMA functionsHelp2'''
+  if len(p) > 3 :
+    p[0] = FuncNode('params', (p[1], p[2]) + p[4].args[0])
+  else :
+    p[0] = FuncNode('params', (p[1], p[2]))
  
 def p_functionsHelp2(p):
   '''functionsHelp2 : type ID
                     | type ID COMMA functionsHelp2'''
+  if len(p) > 3 :
+    p[0] = (p[1], p[2]) + p[4].args[0]
+  else :
+    p[0] = (p[1], p[2])
 # ---------------------------------------------------------------------------
   
 ## Data Types
@@ -73,7 +75,11 @@ def p_type(p):
 ## STATEMENTS
 # ---------------------------------------------------------------------------
 def p_statements(p):
-  '''statements :
+  '''statements:
+               | statement statements'''
+
+def p_statement(p):
+  '''statement :
                 | assignment DOT_COMMA
   		| functionCall DOT_COMMA
                 | ifBlock

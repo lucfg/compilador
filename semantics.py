@@ -7,7 +7,7 @@ localTable = VarTable(15001, 20001, 25001)
 auxTable = VarTable(30001, 35001, 40001)
 quadruples = []
 
-class funcNode(object):
+class FuncNode(object):
   def __init__(self, t, *args):
     self.type = t
     self.args = args
