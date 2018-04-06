@@ -70,6 +70,7 @@ def p_type(p):
           | BOOL
           | CHAR
           | STRING'''
+  p[0] = p[1]
 # ---------------------------------------------------------------------------
 
 ## STATEMENTS
@@ -77,6 +78,10 @@ def p_type(p):
 def p_statements(p):
   '''statements:
                | statement statements'''
+  if p[2] is None:
+    p[0] = FuncNode('statement', p[1])
+  else:
+    p[0] = FuncNode('statement', p[2][0], p[1], p[2][1])
 
 def p_statement(p):
   '''statement :
@@ -89,6 +94,7 @@ def p_statement(p):
                 | read DOT_COMMA
                 | lineComment
                 | arrays DOT_COMMA'''
+  p[0] = p[1]
   
 # Assignment
 def p_assignment(p):
@@ -96,40 +102,67 @@ def p_assignment(p):
                 | idCall ASSIGN functionCall
                 | idCall INCREMENT 
                 | idCall DECREMENT'''
-
-#def p_optionalArrInd(p):
-#  '''optionalArrInd : 
-#  		    | L_BRACK exp R_BRACK'''
+  if len(p) > 3:
+    p[0] = FuncNode('assignment', p[1], p[2], p[3])
+  else:
+    p[0] = FuncNode('assignment', p[1], p[2])
   
 # Function call
 def p_functionCall(p):
   '''functionCall : ID L_PAR functionCallParams R_PAR'''
+  p[0] = FuncNode('functionCall', p[1])
+  
 def p_functionCallParams(p):
-  '''functionCallParams : functionCallParamsOptional
-                        | functionCallParamsMultiple'''
+  '''functionCallParams : functionCallParamsOptional'''
+  p[0] = p[1]
+  
 def p_functionCallParamsOptional(p):
   '''functionCallParamsOptional :
-                                | megaExp'''
+                                | megaExp functionCallParamsMultiple'''
+  if len(p) > 2:
+    p[0] = FuncNode('params', p[1] + p[2].args[0])
+
+#TODO: Revisar punto neuralgico para FunctionCall
 def p_functionCallParamsMultiple(p):
-  '''functionCallParamsMultiple : megaExp
-                                | megaExp COMMA functionCallParamsMultiple'''
+  '''functionCallParamsMultiple :
+                                | COMMA functionCallParamsOptional'''
+  if len(p) > 2:
+    p[0] = p[1]
+  
+#def p_functionCallParamsMultiple(p):
+ # '''functionCallParamsMultiple : megaExp
+#                                | megaExp COMMA functionCallParamsMultiple'''
 
   
 # If block
 def p_ifBlock(p):
   '''ifBlock : IF L_PAR megaExp R_PAR body optionalElse'''
+  if p[6] is None:
+    p[0] = FuncNode('if', p[3], p[5])
+  else:
+    p[0] = FuncNode('if', p[3], p[5], p[6])
+  
 def p_optionalElse(p):
   '''optionalElse : 
   		  | ELSE body'''
+  if len(p) > 2:
+    p[0] = p[2]
   
 def p_whileBlock(p): 
   '''whileBlock : WHILE L_PAR megaExp R_PAR body'''
+  p[0] = FuncNode('while', p[3], p[5])
   
 def p_forBlock(p): 
   '''forBlock : FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body'''
+  if p[7] is None:
+    FuncNode('for', p[3], p[5], p[9])
+  else:
+    FuncNode('for', p[3], p[5], p[7], p[9])
+  
 def p_optionalAssign(p):
   '''optionalAssign : 
   		    | assignment'''
+  p[0] = p[1]
 # ---------------------------------------------------------------------------
 
 ## OPERATIONS
@@ -138,6 +171,10 @@ def p_megaExp(p):
   '''megaExp : superExp
              | superExp AND superExp
              | superExp OR superExp'''
+  if len(p) > 2:
+     p[0] = FuncNode('megaExp', p[1], p[2], p[3])
+   else:
+     p[0] = FuncNode('megaExp', p[1])
   
 def p_superExp(p):
   '''superExp : exp
@@ -147,17 +184,29 @@ def p_superExp(p):
               | exp LESS_EQUAL exp
               | exp EQUAL exp
               | exp NOT_EQUAL exp'''
+  if len(p) > 2:
+     p[0] = FuncNode('superExp', p[1], p[2], p[3])
+   else:
+     p[0] = FuncNode('superExp', p[1])
   
 def p_exp(p):
    '''exp : term
           | term PLUS term
           | term MINUS term'''
+   if len(p) > 2:
+     p[0] = FuncNode('exp', p[1], p[2], p[3])
+   else:
+     p[0] = FuncNode('exp', p[1])
     
 def p_term(p):
    '''term : factor
            | factor TIMES factor
            | factor DIVIDE factor
            | factor MOD factor'''
+   if len(p) > 2:
+     p[0] = FuncNode('term', p[1], p[2], p[3])
+   else:
+     p[0] = FuncNode('term', p[1])
     
 def p_factor(p): 
    '''factor : NUMBER 
@@ -167,33 +216,48 @@ def p_factor(p):
              | idCall
              | L_PAR megaExp R_PAR
              | functionCall'''
+   if len(p) > 2:
+     p[0] = p[2]
+   else:
+     p[0] = p[1]
 # ---------------------------------------------------------------------------
 
 ## OTHERS
 def p_idCall(p):
   '''idCall : ID
   	    | ID L_KEY exp R_KEY'''
- # symTable.symbolTable[actualFunc].findVarKey(p[1])
+  if len(p) > 2:
+    p[0] = FuncNode('idCall', p[1], p[3])
+  else:
+    p[0] = p[1]
 # ---------------------------------------------------------------------------
 
 ## INPUT AND OUTPUT
 # ---------------------------------------------------------------------------
 def p_print(p):
   '''print : PRINT L_PAR print_help R_PAR'''
+  if p[3] is None:
+    p[0] = FuncNode('print', ' ')
+  else:
+    p[0] = FuncNode('print', p[3])
+    
 def p_print_help(p):
   '''print_help : 
   		| ALPHANUMERIC
   		| idCall
   		| functionCall'''
+  p[0] = p[1]
 
 def p_read(p):
   '''read : READ L_PAR idCall R_PAR'''
+  p[0] = FuncNode('read', p[3])
 # ---------------------------------------------------------------------------
 
 ## COMMENTS
 # ---------------------------------------------------------------------------
 def p_lineComment(p):
   '''lineComment : COMMENT_LINE ALPHANUMERIC END_LINE'''
+  p[0] = p[2]
 # ---------------------------------------------------------------------------
 
 # Syntax Error
