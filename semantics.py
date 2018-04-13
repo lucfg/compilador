@@ -95,6 +95,12 @@ class FuncNode(object):
 
 # -------------------------------------------------------------
 
+    elif self.type == "read":
+      resultType, address = self.args[0].expression(funcName, result)
+      quadruples.append(["read", "TO_READ", "", address]) # TODO: cómo manejar el read
+
+# -------------------------------------------------------------
+
   # TODO: Por especificar
   #elif self.type == "assignment":
 
