@@ -17,7 +17,7 @@ def p_program(p):
 # Main body (with variable declaration)
 def p_mainBody(p):
   '''mainBody : MAIN L_PAR R_PAR L_BRACK variables statements R_BRACK'''
-  p[0] = FuncNode('main', 'void', p[5], p[6])
+  p[0] = FuncNode('void', 'main', p[5], p[6])
 
 # Body (without variable declaration)
 def p_body(p):
@@ -79,10 +79,11 @@ def p_type(p):
 def p_statements(p):
   '''statements :
                 | statement statements'''
-  if p[2] is None:
-    p[0] = FuncNode('statement', p[1])
-  else:
-    p[0] = FuncNode('statement', p[2][0], p[1], p[2][1])
+  if len(p) > 2:
+    if p[2] is None:
+      p[0] = FuncNode('statement', p[1])
+    else:
+      p[0] = FuncNode('statement', p[2][0], p[1], p[2][1])
 
 def p_statement(p):
   '''statement :

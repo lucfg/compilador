@@ -18,7 +18,7 @@ class FuncNode(object):
   def show(self, iN = 0):
     sS = " "* iN + "type: " + str(self.type) + "\n"
     for iI in self.args:
-      if not isinstance(iI, funcNode):
+      if not isinstance(iI, FuncNode):
         sS += str(iI)
       else:
         sS += iI.show(iN + 1)
