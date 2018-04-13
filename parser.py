@@ -17,7 +17,7 @@ def p_program(p):
 # Main body (with variable declaration)
 def p_mainBody(p):
   '''mainBody : MAIN L_PAR R_PAR L_BRACK variables statements R_BRACK'''
-  p[0] = FuncNode('void', 'main', p[5], p[6])
+  p[0] = FuncNode('main', 'void', p[5], p[6])
 
 # Body (without variable declaration)
 def p_body(p):
@@ -30,7 +30,7 @@ def p_variables(p):
                | VAR type ID DOT_COMMA variables
   	       | VAR type assignment DOT_COMMA variables'''
   if len(p) > 2 :
-    p[0] = FuncNode('var', p[3], p[2], p[5].args[0])  
+    p[0] = FuncNode('var', p[3], p[2], p[5])  
   #TODO: Revisar ID y assignment en punto neuralgico
   
 # Variable array declaration
@@ -194,8 +194,8 @@ def p_superExp(p):
   
 def p_exp(p):
    '''exp : term
-          | term PLUS term
-          | term MINUS term'''
+          | term PLUS exp
+          | term MINUS exp'''
    if len(p) > 2:
      p[0] = FuncNode('exp', p[1], p[2], p[3])
    else:
@@ -203,9 +203,9 @@ def p_exp(p):
     
 def p_term(p):
    '''term : factor
-           | factor TIMES factor
-           | factor DIVIDE factor
-           | factor MOD factor'''
+           | factor TIMES term
+           | factor DIVIDE term
+           | factor MOD term'''
    if len(p) > 2:
      p[0] = FuncNode('term', p[1], p[2], p[3])
    else:
@@ -248,7 +248,8 @@ def p_print_help(p):
   '''print_help : 
   		| ALPHANUMERIC
   		| idCall
-  		| functionCall'''
+  		| functionCall
+  		| megaExp'''
   p[0] = p[1]
 
 def p_read(p):
