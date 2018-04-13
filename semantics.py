@@ -73,7 +73,7 @@ class FuncNode(object):
       #print self.args[0]
       for i in self.args[0]:
         #print i[0], i[1]
-	currenttable.add(function_name, i[0], i[1])
+        currentTable.add(function_name, i[0], i[1])
 
 # -------------------------------------------------------------
 
@@ -92,9 +92,6 @@ class FuncNode(object):
     elif self.type == "print":
       resultType, address = self.args[0].expression(funcName, result)
       quadruples.append(["print", address, "", ""])
-      
-    else:
-      print("Error. Type not found")
 
 # -------------------------------------------------------------
 
@@ -123,8 +120,8 @@ class FuncNode(object):
 
       if self.args[2] is not None:
         lenelsea = len(quadruples)
-	result = self.args[2].semantic(funcName, result)
-	goto[3] = len(quadruples) - lenelsea
+        result = self.args[2].semantic(funcName, result)
+        goto[3] = len(quadruples) - lenelsea
 
       #print (quadruples)
 
@@ -145,9 +142,9 @@ class FuncNode(object):
       for key in currentTable[funcName]:
         if self.args[2] in currentTable[funcName][key].keys():
           saveLength = auxTable.add("Aux", "int", "aux")
-	  quadruples.append(['length', currentTable[funcName][key][self.args[2]], "",saveLength])
-	else:
-	  raise Exception("The array is not defined")
+          quadruples.append(['length', currentTable[funcName][key][self.args[2]], "",saveLength])
+        else:
+          raise Exception("The array is not defined")
 
       saveBool = auxTable.add("Aux", "int", "aux")
       quadruples.append(['<',currentTable[funcName]['int'][self.args[0]] ,currentTable[funcName][key][self.args[2]], saveBool])
@@ -163,6 +160,9 @@ class FuncNode(object):
       
       gotof[3] = len(quadruples) - lena
       #print quadruples
+
+    else:
+      print("Error. Type not found")
 
 # -------------------------------------------------------------
 # -------------------------------------------------------------
@@ -182,95 +182,95 @@ class FuncNode(object):
       varName = self.args[1].args[0]
       resultType, address = self.args[2][0].expression(funcName, result)
       
-    for key in currentTable[funcName]:
-    #verifies that the variable has been declared
-      if self.args[1].args[0] in currentTable[funcName][key].keys():
-        if resultType == key:
-          quadruples.append([self.args[0], address, "", currentTable[funcName][resultType][varName]])
-          break
+      for key in currentTable[funcName]:
+      #verifies that the variable has been declared
+        if self.args[1].args[0] in currentTable[funcName][key].keys():
+          if resultType == key:
+            quadruples.append([self.args[0], address, "", currentTable[funcName][resultType][varName]])
+            break
+          else:
+            raise Exception("Cannot assign a value of different type to the variable " + self.args[1].args[0] + ".")
         else:
-          raise Exception("Cannot assign a value of different type to the variable " + self.args[1].args[0] + ".")
-      else:
-        print self.args[1].args[0], currentTable[funcName][key].keys()
-        raise Exception("Variable '" + self.args[1].args[0] + "' has not been declared. Cannot assign value.")
+          print (self.args[1].args[0], currentTable[funcName][key].keys())
+          raise Exception("Variable '" + self.args[1].args[0] + "' has not been declared. Cannot assign value.")
 
 # -------------------------------------------------------------
 
-      elif self.type == "expressions":
-        result = self.args[0].semantic(funcName, result)
-        
-	if self.args[1] is not None:
-          result = self.args[1].semantic(funcName, result)
+    elif self.type == "expressions":
+      result = self.args[0].semantic(funcName, result)
+
+      if self.args[1] is not None:
+        result = self.args[1].semantic(funcName, result)
 
 # -------------------------------------------------------------
           
-      # Handles an expression
-      elif self.type == "expression":
-        #left operator type
-	leftType, leftAddress = self.args[1].expression(funcName, result)
+    # Handles an expression
+    elif self.type == "expression":
+      #left operator type
+      leftType, leftAddress = self.args[1].expression(funcName, result)
 	
-	#right operator type
-	rightType, rightAddress = self.args[2].expression(funcName, result)
+      #right operator type
+      rightType, rightAddress = self.args[2].expression(funcName, result)
 
-	#result type
-	resultType = semanticCube[leftType][rightType][self.args[0]]
+      #result type
+      resultType = semanticCube[leftType][rightType][self.args[0]]
 
-	#temp addresses
-	resultAddress = auxTable.add("Aux", resultType, "aux")
-	quadruples.append([self.args[0], leftAddress, rightAddress, resultAddress])
+      #temp addresses
+      resultAddress = auxTable.add("Aux", resultType, "aux")
+      quadruples.append([self.args[0], leftAddress, rightAddress, resultAddress])
 
-	return resultType, resultAddress
-
-# -------------------------------------------------------------
-
-      elif self.type == "int" :
-        return "int", currentTable.add(funcName, "int", self.args[0])
+      return resultType, resultAddress
 
 # -------------------------------------------------------------
 
-      elif self.type == "decim" :
-	return "decim", currentTable.add(funcName, "decim", self.args[0])
+    elif self.type == "int" :
+      return "int", currentTable.add(funcName, "int", self.args[0])
 
 # -------------------------------------------------------------
 
-      elif self.type == "bool" :
-	return "bool", currentTable.add(funcName, "int", self.args[0])
+    elif self.type == "decim" :
+      return "decim", currentTable.add(funcName, "decim", self.args[0])
 
 # -------------------------------------------------------------
 
-      elif self.type == "id":
-	table = currentTable[funcName]
-
-	for i in table:
-          for j in table[i]:
-            if j == self.args[0]:
-              return i, table[i][j]
-            
-	raise Exception("Variable does not exist: " + self.args[0])
+    elif self.type == "bool" :
+      return "bool", currentTable.add(funcName, "int", self.args[0])
 
 # -------------------------------------------------------------
 
-      #call function. Receives id(params)
-      elif self.type == "functionCall" :
-	global nextReturn
+    elif self.type == "id":
+      table = currentTable[funcName]
 
-	#separates a space for the function call
-	quadruples.append(["ERA", self.args[0], "",""])
-	contp = 1
+      for i in table:
+        for j in table[i]:
+          if j == self.args[0]:
+            return i, table[i][j]
 
-	for i in self.args[1]:
-          resultType, resultAddress = i.expression(funcName, result)
-	  quadruples.append(["Param", resultAddress, "", "param"+str(contp)])
-	  
+      raise Exception("Variable does not exist: " + self.args[0])
+
+# -------------------------------------------------------------
+
+    #call function. Receives id(params)
+    elif self.type == "functionCall" :
+      global nextReturn
+
+      #separates a space for the function call
+      quadruples.append(["ERA", self.args[0], "",""])
+      contp = 1
+
+      for i in self.args[1]:
+        resultType, resultAddress = i.expression(funcName, result)
+        quadruples.append(["Param", resultAddress, "", "param"+str(contp)])
+
         contp += 1
 
-	quadruples.append(["Gosub", self.args[0], "", ""])
-	funcType = localTable[self.args[0]]["funcType"]["return"]
+        quadruples.append(["Gosub", self.args[0], "", ""])
+        funcType = localTable[self.args[0]]["funcType"]["return"]
 
-	auxAddress = auxTable.add("Aux", funcType, "aux")
-	nextReturn = ["=", localTable[self.args[0]][funcType]["return"], "", auxAddress]
-	quadruples.append(nextReturn)
+        auxAddress = auxTable.add("Aux", funcType, "aux")
+        nextReturn = ["=", localTable[self.args[0]][funcType]["return"], "", auxAddress]
+        quadruples.append(nextReturn)
 
-	return funcType, auxAddress
+      return funcType, auxAddress
 
-  return result
+    return result

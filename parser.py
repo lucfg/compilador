@@ -30,7 +30,7 @@ def p_variables(p):
                | VAR type ID DOT_COMMA variables
   	       | VAR type assignment DOT_COMMA variables'''
   if len(p) > 2 :
-    p[0] = FuncNode('var', p[3], p[2], p[5])  
+    p[0] = FuncNode('var', p[3], p[2], p[5].args[0])  
   #TODO: Revisar ID y assignment en punto neuralgico
   
 # Variable array declaration
@@ -42,16 +42,17 @@ def p_arrays(p):
 def p_functions(p):
   '''functions :
                | FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK'''
-  p[0] = FuncNode('function', p[3], p[2], p[5], p[8], p[9])
+  if len(p) > 2:
+    p[0] = FuncNode('function', p[3], p[2], p[5], p[8], p[9])
 
 def p_functionsHelp(p):
   '''functionsHelp :
   		   | type ID
   		   | type ID COMMA functionsHelp2'''
-  if len(p) > 3 :
-    p[0] = FuncNode('params', (p[1], p[2]) + p[4].args[0])
-  else :
+  if len(p) == 3 :
     p[0] = FuncNode('params', (p[1], p[2]))
+  elif len(p) >= 3 :
+    p[0] = FuncNode('params', (p[1], p[2]) + p[4].args[0])
  
 def p_functionsHelp2(p):
   '''functionsHelp2 : type ID
@@ -76,8 +77,8 @@ def p_type(p):
 ## STATEMENTS
 # ---------------------------------------------------------------------------
 def p_statements(p):
-  '''statements:
-               | statement statements'''
+  '''statements :
+                | statement statements'''
   if p[2] is None:
     p[0] = FuncNode('statement', p[1])
   else:
@@ -114,13 +115,14 @@ def p_functionCall(p):
   
 def p_functionCallParams(p):
   '''functionCallParams : functionCallParamsOptional'''
-  p[0] = p[1]
+  p[0] = FuncNode('params', p[1].args[0])
   
 def p_functionCallParamsOptional(p):
   '''functionCallParamsOptional :
                                 | megaExp functionCallParamsMultiple'''
   if len(p) > 2:
-    p[0] = FuncNode('params', p[1] + p[2].args[0])
+    #p[0] = FuncNode('params', p[1] + p[2].args[0])
+    p[0] = p[1] + p[2].args[0]
 
 #TODO: Revisar punto neuralgico para FunctionCall
 def p_functionCallParamsMultiple(p):
@@ -173,7 +175,7 @@ def p_megaExp(p):
              | superExp OR superExp'''
   if len(p) > 2:
      p[0] = FuncNode('megaExp', p[1], p[2], p[3])
-   else:
+  else:
      p[0] = FuncNode('megaExp', p[1])
   
 def p_superExp(p):
@@ -186,7 +188,7 @@ def p_superExp(p):
               | exp NOT_EQUAL exp'''
   if len(p) > 2:
      p[0] = FuncNode('superExp', p[1], p[2], p[3])
-   else:
+  else:
      p[0] = FuncNode('superExp', p[1])
   
 def p_exp(p):
