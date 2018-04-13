@@ -62,12 +62,12 @@ Rule 56    superExp -> exp LESS_EQUAL exp
 Rule 57    superExp -> exp EQUAL exp
 Rule 58    superExp -> exp NOT_EQUAL exp
 Rule 59    exp -> term
-Rule 60    exp -> term PLUS term
-Rule 61    exp -> term MINUS term
+Rule 60    exp -> term PLUS exp
+Rule 61    exp -> term MINUS exp
 Rule 62    term -> factor
-Rule 63    term -> factor TIMES factor
-Rule 64    term -> factor DIVIDE factor
-Rule 65    term -> factor MOD factor
+Rule 63    term -> factor TIMES term
+Rule 64    term -> factor DIVIDE term
+Rule 65    term -> factor MOD term
 Rule 66    factor -> NUMBER
 Rule 67    factor -> ALPHANUMERIC
 Rule 68    factor -> CHARACTER
@@ -82,12 +82,13 @@ Rule 76    print_help -> <empty>
 Rule 77    print_help -> ALPHANUMERIC
 Rule 78    print_help -> idCall
 Rule 79    print_help -> functionCall
-Rule 80    read -> READ L_PAR idCall R_PAR
-Rule 81    lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE
+Rule 80    print_help -> megaExp
+Rule 81    read -> READ L_PAR idCall R_PAR
+Rule 82    lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE
 
 Terminals, with rules where they appear
 
-ALPHANUMERIC         : 67 77 81
+ALPHANUMERIC         : 67 77 82
 AND                  : 50
 ASSIGN               : 32 33
 BOOL                 : 17
@@ -95,13 +96,13 @@ BOOLEAN              : 69
 CHAR                 : 18
 CHARACTER            : 68
 COMMA                : 12 14 41
-COMMENT_LINE         : 81
+COMMENT_LINE         : 82
 DECIM                : 16
 DECREMENT            : 35
 DIVIDE               : 64
 DOT_COMMA            : 5 6 7 23 24 28 29 31 46 46
 ELSE                 : 44
-END_LINE             : 81
+END_LINE             : 82
 EQUAL                : 57
 FOR                  : 46
 FUNCTION             : 9
@@ -113,7 +114,7 @@ LESS_EQUAL           : 56
 LESS_THAN            : 54
 L_BRACK              : 1 2 3 9
 L_KEY                : 7 74
-L_PAR                : 2 9 36 42 45 46 71 75 80
+L_PAR                : 2 9 36 42 45 46 71 75 81
 MAIN                 : 2
 MINUS                : 61
 MOD                  : 65
@@ -125,10 +126,10 @@ OR                   : 51
 PLUS                 : 60
 PRINT                : 75
 PROGRAM              : 1
-READ                 : 80
+READ                 : 81
 R_BRACK              : 1 2 3 9
 R_KEY                : 7 74
-R_PAR                : 2 9 36 42 45 46 71 75 80
+R_PAR                : 2 9 36 42 45 46 71 75 81
 STRING               : 19
 TIMES                : 63
 VAR                  : 5 6 7
@@ -140,8 +141,8 @@ Nonterminals, with rules where they appear
 arrays               : 31
 assignment           : 6 23 46 48
 body                 : 42 44 45 46
-exp                  : 52 53 53 54 54 55 55 56 56 57 57 58 58 74
-factor               : 62 63 63 64 64 65 65
+exp                  : 52 53 53 54 54 55 55 56 56 57 57 58 58 60 61 74
+factor               : 62 63 64 65
 forBlock             : 27
 functionCall         : 24 33 72 79
 functionCallParams   : 36
@@ -150,11 +151,11 @@ functionCallParamsOptional : 37 41
 functions            : 1
 functionsHelp        : 9
 functionsHelp2       : 12 14
-idCall               : 32 33 34 35 70 78 80
+idCall               : 32 33 34 35 70 78 81
 ifBlock              : 25
 lineComment          : 30
 mainBody             : 1
-megaExp              : 32 39 42 45 46 71
+megaExp              : 32 39 42 45 46 71 80
 optionalAssign       : 46
 optionalElse         : 42
 print                : 28
@@ -164,7 +165,7 @@ read                 : 29
 statement            : 21
 statements           : 2 3 9 21
 superExp             : 49 50 50 51 51
-term                 : 59 60 60 61 61
+term                 : 59 60 61 63 64 65
 type                 : 5 6 7 9 11 12 13 14
 variables            : 1 2 5 6 9
 whileBlock           : 26
@@ -421,12 +422,12 @@ state 25
 
     (74) idCall -> ID L_KEY . exp R_KEY
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -491,12 +492,12 @@ state 27
     (57) superExp -> . exp EQUAL exp
     (58) superExp -> . exp NOT_EQUAL exp
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -621,8 +622,8 @@ state 34
 state 35
 
     (59) exp -> term .
-    (60) exp -> term . PLUS term
-    (61) exp -> term . MINUS term
+    (60) exp -> term . PLUS exp
+    (61) exp -> term . MINUS exp
 
     R_KEY           reduce using rule 59 (exp -> term .)
     MORE_THAN       reduce using rule 59 (exp -> term .)
@@ -643,9 +644,9 @@ state 35
 state 36
 
     (62) term -> factor .
-    (63) term -> factor . TIMES factor
-    (64) term -> factor . DIVIDE factor
-    (65) term -> factor . MOD factor
+    (63) term -> factor . TIMES term
+    (64) term -> factor . DIVIDE term
+    (65) term -> factor . MOD term
 
     PLUS            reduce using rule 62 (term -> factor .)
     MINUS           reduce using rule 62 (term -> factor .)
@@ -795,12 +796,12 @@ state 42
     (57) superExp -> . exp EQUAL exp
     (58) superExp -> . exp NOT_EQUAL exp
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -1020,12 +1021,12 @@ state 53
     (57) superExp -> . exp EQUAL exp
     (58) superExp -> . exp NOT_EQUAL exp
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -1083,11 +1084,14 @@ state 54
 
 state 55
 
-    (60) exp -> term PLUS . term
+    (60) exp -> term PLUS . exp
+    (59) exp -> . term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -1106,18 +1110,22 @@ state 55
     L_PAR           shift and go to state 42
     ID              shift and go to state 33
 
-    term                           shift and go to state 75
+    term                           shift and go to state 35
+    exp                            shift and go to state 75
     factor                         shift and go to state 36
     idCall                         shift and go to state 41
     functionCall                   shift and go to state 43
 
 state 56
 
-    (61) exp -> term MINUS . term
+    (61) exp -> term MINUS . exp
+    (59) exp -> . term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -1136,14 +1144,19 @@ state 56
     L_PAR           shift and go to state 42
     ID              shift and go to state 33
 
-    term                           shift and go to state 76
+    term                           shift and go to state 35
+    exp                            shift and go to state 76
     factor                         shift and go to state 36
     idCall                         shift and go to state 41
     functionCall                   shift and go to state 43
 
 state 57
 
-    (63) term -> factor TIMES . factor
+    (63) term -> factor TIMES . term
+    (62) term -> . factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -1162,13 +1175,18 @@ state 57
     L_PAR           shift and go to state 42
     ID              shift and go to state 33
 
-    factor                         shift and go to state 77
+    factor                         shift and go to state 36
+    term                           shift and go to state 77
     idCall                         shift and go to state 41
     functionCall                   shift and go to state 43
 
 state 58
 
-    (64) term -> factor DIVIDE . factor
+    (64) term -> factor DIVIDE . term
+    (62) term -> . factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -1187,13 +1205,18 @@ state 58
     L_PAR           shift and go to state 42
     ID              shift and go to state 33
 
-    factor                         shift and go to state 78
+    factor                         shift and go to state 36
+    term                           shift and go to state 78
     idCall                         shift and go to state 41
     functionCall                   shift and go to state 43
 
 state 59
 
-    (65) term -> factor MOD . factor
+    (65) term -> factor MOD . term
+    (62) term -> . factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -1212,7 +1235,8 @@ state 59
     L_PAR           shift and go to state 42
     ID              shift and go to state 33
 
-    factor                         shift and go to state 79
+    factor                         shift and go to state 36
+    term                           shift and go to state 79
     idCall                         shift and go to state 41
     functionCall                   shift and go to state 43
 
@@ -1234,12 +1258,12 @@ state 61
     (57) superExp -> . exp EQUAL exp
     (58) superExp -> . exp NOT_EQUAL exp
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -1276,12 +1300,12 @@ state 62
     (57) superExp -> . exp EQUAL exp
     (58) superExp -> . exp NOT_EQUAL exp
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -1311,12 +1335,12 @@ state 63
 
     (53) superExp -> exp MORE_THAN . exp
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -1345,12 +1369,12 @@ state 64
 
     (54) superExp -> exp LESS_THAN . exp
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -1379,12 +1403,12 @@ state 65
 
     (55) superExp -> exp MORE_EQUAL . exp
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -1413,12 +1437,12 @@ state 66
 
     (56) superExp -> exp LESS_EQUAL . exp
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -1447,12 +1471,12 @@ state 67
 
     (57) superExp -> exp EQUAL . exp
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -1481,12 +1505,12 @@ state 68
 
     (58) superExp -> exp NOT_EQUAL . exp
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -1535,8 +1559,8 @@ state 69
     (45) whileBlock -> . WHILE L_PAR megaExp R_PAR body
     (46) forBlock -> . FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
     (75) print -> . PRINT L_PAR print_help R_PAR
-    (80) read -> . READ L_PAR idCall R_PAR
-    (81) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
+    (81) read -> . READ L_PAR idCall R_PAR
+    (82) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
     (7) arrays -> . VAR type ID L_KEY NUMBER R_KEY DOT_COMMA
     (73) idCall -> . ID
     (74) idCall -> . ID L_KEY exp R_KEY
@@ -1626,98 +1650,98 @@ state 74
 
 state 75
 
-    (60) exp -> term PLUS term .
+    (60) exp -> term PLUS exp .
 
-    R_KEY           reduce using rule 60 (exp -> term PLUS term .)
-    MORE_THAN       reduce using rule 60 (exp -> term PLUS term .)
-    LESS_THAN       reduce using rule 60 (exp -> term PLUS term .)
-    MORE_EQUAL      reduce using rule 60 (exp -> term PLUS term .)
-    LESS_EQUAL      reduce using rule 60 (exp -> term PLUS term .)
-    EQUAL           reduce using rule 60 (exp -> term PLUS term .)
-    NOT_EQUAL       reduce using rule 60 (exp -> term PLUS term .)
-    AND             reduce using rule 60 (exp -> term PLUS term .)
-    OR              reduce using rule 60 (exp -> term PLUS term .)
-    DOT_COMMA       reduce using rule 60 (exp -> term PLUS term .)
-    R_PAR           reduce using rule 60 (exp -> term PLUS term .)
-    COMMA           reduce using rule 60 (exp -> term PLUS term .)
+    R_KEY           reduce using rule 60 (exp -> term PLUS exp .)
+    MORE_THAN       reduce using rule 60 (exp -> term PLUS exp .)
+    LESS_THAN       reduce using rule 60 (exp -> term PLUS exp .)
+    MORE_EQUAL      reduce using rule 60 (exp -> term PLUS exp .)
+    LESS_EQUAL      reduce using rule 60 (exp -> term PLUS exp .)
+    EQUAL           reduce using rule 60 (exp -> term PLUS exp .)
+    NOT_EQUAL       reduce using rule 60 (exp -> term PLUS exp .)
+    AND             reduce using rule 60 (exp -> term PLUS exp .)
+    OR              reduce using rule 60 (exp -> term PLUS exp .)
+    DOT_COMMA       reduce using rule 60 (exp -> term PLUS exp .)
+    R_PAR           reduce using rule 60 (exp -> term PLUS exp .)
+    COMMA           reduce using rule 60 (exp -> term PLUS exp .)
 
 
 state 76
 
-    (61) exp -> term MINUS term .
+    (61) exp -> term MINUS exp .
 
-    R_KEY           reduce using rule 61 (exp -> term MINUS term .)
-    MORE_THAN       reduce using rule 61 (exp -> term MINUS term .)
-    LESS_THAN       reduce using rule 61 (exp -> term MINUS term .)
-    MORE_EQUAL      reduce using rule 61 (exp -> term MINUS term .)
-    LESS_EQUAL      reduce using rule 61 (exp -> term MINUS term .)
-    EQUAL           reduce using rule 61 (exp -> term MINUS term .)
-    NOT_EQUAL       reduce using rule 61 (exp -> term MINUS term .)
-    AND             reduce using rule 61 (exp -> term MINUS term .)
-    OR              reduce using rule 61 (exp -> term MINUS term .)
-    DOT_COMMA       reduce using rule 61 (exp -> term MINUS term .)
-    R_PAR           reduce using rule 61 (exp -> term MINUS term .)
-    COMMA           reduce using rule 61 (exp -> term MINUS term .)
+    R_KEY           reduce using rule 61 (exp -> term MINUS exp .)
+    MORE_THAN       reduce using rule 61 (exp -> term MINUS exp .)
+    LESS_THAN       reduce using rule 61 (exp -> term MINUS exp .)
+    MORE_EQUAL      reduce using rule 61 (exp -> term MINUS exp .)
+    LESS_EQUAL      reduce using rule 61 (exp -> term MINUS exp .)
+    EQUAL           reduce using rule 61 (exp -> term MINUS exp .)
+    NOT_EQUAL       reduce using rule 61 (exp -> term MINUS exp .)
+    AND             reduce using rule 61 (exp -> term MINUS exp .)
+    OR              reduce using rule 61 (exp -> term MINUS exp .)
+    DOT_COMMA       reduce using rule 61 (exp -> term MINUS exp .)
+    R_PAR           reduce using rule 61 (exp -> term MINUS exp .)
+    COMMA           reduce using rule 61 (exp -> term MINUS exp .)
 
 
 state 77
 
-    (63) term -> factor TIMES factor .
+    (63) term -> factor TIMES term .
 
-    PLUS            reduce using rule 63 (term -> factor TIMES factor .)
-    MINUS           reduce using rule 63 (term -> factor TIMES factor .)
-    R_KEY           reduce using rule 63 (term -> factor TIMES factor .)
-    MORE_THAN       reduce using rule 63 (term -> factor TIMES factor .)
-    LESS_THAN       reduce using rule 63 (term -> factor TIMES factor .)
-    MORE_EQUAL      reduce using rule 63 (term -> factor TIMES factor .)
-    LESS_EQUAL      reduce using rule 63 (term -> factor TIMES factor .)
-    EQUAL           reduce using rule 63 (term -> factor TIMES factor .)
-    NOT_EQUAL       reduce using rule 63 (term -> factor TIMES factor .)
-    AND             reduce using rule 63 (term -> factor TIMES factor .)
-    OR              reduce using rule 63 (term -> factor TIMES factor .)
-    DOT_COMMA       reduce using rule 63 (term -> factor TIMES factor .)
-    R_PAR           reduce using rule 63 (term -> factor TIMES factor .)
-    COMMA           reduce using rule 63 (term -> factor TIMES factor .)
+    PLUS            reduce using rule 63 (term -> factor TIMES term .)
+    MINUS           reduce using rule 63 (term -> factor TIMES term .)
+    R_KEY           reduce using rule 63 (term -> factor TIMES term .)
+    MORE_THAN       reduce using rule 63 (term -> factor TIMES term .)
+    LESS_THAN       reduce using rule 63 (term -> factor TIMES term .)
+    MORE_EQUAL      reduce using rule 63 (term -> factor TIMES term .)
+    LESS_EQUAL      reduce using rule 63 (term -> factor TIMES term .)
+    EQUAL           reduce using rule 63 (term -> factor TIMES term .)
+    NOT_EQUAL       reduce using rule 63 (term -> factor TIMES term .)
+    AND             reduce using rule 63 (term -> factor TIMES term .)
+    OR              reduce using rule 63 (term -> factor TIMES term .)
+    DOT_COMMA       reduce using rule 63 (term -> factor TIMES term .)
+    R_PAR           reduce using rule 63 (term -> factor TIMES term .)
+    COMMA           reduce using rule 63 (term -> factor TIMES term .)
 
 
 state 78
 
-    (64) term -> factor DIVIDE factor .
+    (64) term -> factor DIVIDE term .
 
-    PLUS            reduce using rule 64 (term -> factor DIVIDE factor .)
-    MINUS           reduce using rule 64 (term -> factor DIVIDE factor .)
-    R_KEY           reduce using rule 64 (term -> factor DIVIDE factor .)
-    MORE_THAN       reduce using rule 64 (term -> factor DIVIDE factor .)
-    LESS_THAN       reduce using rule 64 (term -> factor DIVIDE factor .)
-    MORE_EQUAL      reduce using rule 64 (term -> factor DIVIDE factor .)
-    LESS_EQUAL      reduce using rule 64 (term -> factor DIVIDE factor .)
-    EQUAL           reduce using rule 64 (term -> factor DIVIDE factor .)
-    NOT_EQUAL       reduce using rule 64 (term -> factor DIVIDE factor .)
-    AND             reduce using rule 64 (term -> factor DIVIDE factor .)
-    OR              reduce using rule 64 (term -> factor DIVIDE factor .)
-    DOT_COMMA       reduce using rule 64 (term -> factor DIVIDE factor .)
-    R_PAR           reduce using rule 64 (term -> factor DIVIDE factor .)
-    COMMA           reduce using rule 64 (term -> factor DIVIDE factor .)
+    PLUS            reduce using rule 64 (term -> factor DIVIDE term .)
+    MINUS           reduce using rule 64 (term -> factor DIVIDE term .)
+    R_KEY           reduce using rule 64 (term -> factor DIVIDE term .)
+    MORE_THAN       reduce using rule 64 (term -> factor DIVIDE term .)
+    LESS_THAN       reduce using rule 64 (term -> factor DIVIDE term .)
+    MORE_EQUAL      reduce using rule 64 (term -> factor DIVIDE term .)
+    LESS_EQUAL      reduce using rule 64 (term -> factor DIVIDE term .)
+    EQUAL           reduce using rule 64 (term -> factor DIVIDE term .)
+    NOT_EQUAL       reduce using rule 64 (term -> factor DIVIDE term .)
+    AND             reduce using rule 64 (term -> factor DIVIDE term .)
+    OR              reduce using rule 64 (term -> factor DIVIDE term .)
+    DOT_COMMA       reduce using rule 64 (term -> factor DIVIDE term .)
+    R_PAR           reduce using rule 64 (term -> factor DIVIDE term .)
+    COMMA           reduce using rule 64 (term -> factor DIVIDE term .)
 
 
 state 79
 
-    (65) term -> factor MOD factor .
+    (65) term -> factor MOD term .
 
-    PLUS            reduce using rule 65 (term -> factor MOD factor .)
-    MINUS           reduce using rule 65 (term -> factor MOD factor .)
-    R_KEY           reduce using rule 65 (term -> factor MOD factor .)
-    MORE_THAN       reduce using rule 65 (term -> factor MOD factor .)
-    LESS_THAN       reduce using rule 65 (term -> factor MOD factor .)
-    MORE_EQUAL      reduce using rule 65 (term -> factor MOD factor .)
-    LESS_EQUAL      reduce using rule 65 (term -> factor MOD factor .)
-    EQUAL           reduce using rule 65 (term -> factor MOD factor .)
-    NOT_EQUAL       reduce using rule 65 (term -> factor MOD factor .)
-    AND             reduce using rule 65 (term -> factor MOD factor .)
-    OR              reduce using rule 65 (term -> factor MOD factor .)
-    DOT_COMMA       reduce using rule 65 (term -> factor MOD factor .)
-    R_PAR           reduce using rule 65 (term -> factor MOD factor .)
-    COMMA           reduce using rule 65 (term -> factor MOD factor .)
+    PLUS            reduce using rule 65 (term -> factor MOD term .)
+    MINUS           reduce using rule 65 (term -> factor MOD term .)
+    R_KEY           reduce using rule 65 (term -> factor MOD term .)
+    MORE_THAN       reduce using rule 65 (term -> factor MOD term .)
+    LESS_THAN       reduce using rule 65 (term -> factor MOD term .)
+    MORE_EQUAL      reduce using rule 65 (term -> factor MOD term .)
+    LESS_EQUAL      reduce using rule 65 (term -> factor MOD term .)
+    EQUAL           reduce using rule 65 (term -> factor MOD term .)
+    NOT_EQUAL       reduce using rule 65 (term -> factor MOD term .)
+    AND             reduce using rule 65 (term -> factor MOD term .)
+    OR              reduce using rule 65 (term -> factor MOD term .)
+    DOT_COMMA       reduce using rule 65 (term -> factor MOD term .)
+    R_PAR           reduce using rule 65 (term -> factor MOD term .)
+    COMMA           reduce using rule 65 (term -> factor MOD term .)
 
 
 state 80
@@ -1858,8 +1882,8 @@ state 90
     (45) whileBlock -> . WHILE L_PAR megaExp R_PAR body
     (46) forBlock -> . FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
     (75) print -> . PRINT L_PAR print_help R_PAR
-    (80) read -> . READ L_PAR idCall R_PAR
-    (81) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
+    (81) read -> . READ L_PAR idCall R_PAR
+    (82) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
     (7) arrays -> . VAR type ID L_KEY NUMBER R_KEY DOT_COMMA
     (73) idCall -> . ID
     (74) idCall -> . ID L_KEY exp R_KEY
@@ -2031,14 +2055,14 @@ state 103
 
 state 104
 
-    (80) read -> READ . L_PAR idCall R_PAR
+    (81) read -> READ . L_PAR idCall R_PAR
 
     L_PAR           shift and go to state 123
 
 
 state 105
 
-    (81) lineComment -> COMMENT_LINE . ALPHANUMERIC END_LINE
+    (82) lineComment -> COMMENT_LINE . ALPHANUMERIC END_LINE
 
     ALPHANUMERIC    shift and go to state 124
 
@@ -2148,12 +2172,12 @@ state 111
     (57) superExp -> . exp EQUAL exp
     (58) superExp -> . exp NOT_EQUAL exp
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -2285,12 +2309,12 @@ state 119
     (57) superExp -> . exp EQUAL exp
     (58) superExp -> . exp NOT_EQUAL exp
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -2331,12 +2355,12 @@ state 120
     (57) superExp -> . exp EQUAL exp
     (58) superExp -> . exp NOT_EQUAL exp
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -2385,40 +2409,74 @@ state 122
     (77) print_help -> . ALPHANUMERIC
     (78) print_help -> . idCall
     (79) print_help -> . functionCall
+    (80) print_help -> . megaExp
     (73) idCall -> . ID
     (74) idCall -> . ID L_KEY exp R_KEY
     (36) functionCall -> . ID L_PAR functionCallParams R_PAR
+    (49) megaExp -> . superExp
+    (50) megaExp -> . superExp AND superExp
+    (51) megaExp -> . superExp OR superExp
+    (52) superExp -> . exp
+    (53) superExp -> . exp MORE_THAN exp
+    (54) superExp -> . exp LESS_THAN exp
+    (55) superExp -> . exp MORE_EQUAL exp
+    (56) superExp -> . exp LESS_EQUAL exp
+    (57) superExp -> . exp EQUAL exp
+    (58) superExp -> . exp NOT_EQUAL exp
+    (59) exp -> . term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
+    (62) term -> . factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
+    (66) factor -> . NUMBER
+    (67) factor -> . ALPHANUMERIC
+    (68) factor -> . CHARACTER
+    (69) factor -> . BOOLEAN
+    (70) factor -> . idCall
+    (71) factor -> . L_PAR megaExp R_PAR
+    (72) factor -> . functionCall
 
     R_PAR           reduce using rule 76 (print_help -> .)
     ALPHANUMERIC    shift and go to state 135
     ID              shift and go to state 33
+    NUMBER          shift and go to state 37
+    CHARACTER       shift and go to state 39
+    BOOLEAN         shift and go to state 40
+    L_PAR           shift and go to state 42
 
     print_help                     shift and go to state 134
     idCall                         shift and go to state 136
     functionCall                   shift and go to state 137
+    megaExp                        shift and go to state 138
+    exp                            shift and go to state 49
+    superExp                       shift and go to state 47
+    term                           shift and go to state 35
+    factor                         shift and go to state 36
 
 state 123
 
-    (80) read -> READ L_PAR . idCall R_PAR
+    (81) read -> READ L_PAR . idCall R_PAR
     (73) idCall -> . ID
     (74) idCall -> . ID L_KEY exp R_KEY
 
     ID              shift and go to state 133
 
-    idCall                         shift and go to state 138
+    idCall                         shift and go to state 139
 
 state 124
 
-    (81) lineComment -> COMMENT_LINE ALPHANUMERIC . END_LINE
+    (82) lineComment -> COMMENT_LINE ALPHANUMERIC . END_LINE
 
-    END_LINE        shift and go to state 139
+    END_LINE        shift and go to state 140
 
 
 state 125
 
     (7) arrays -> VAR type . ID L_KEY NUMBER R_KEY DOT_COMMA
 
-    ID              shift and go to state 140
+    ID              shift and go to state 141
 
 
 state 126
@@ -2426,7 +2484,7 @@ state 126
     (13) functionsHelp2 -> type . ID
     (14) functionsHelp2 -> type . ID COMMA functionsHelp2
 
-    ID              shift and go to state 141
+    ID              shift and go to state 142
 
 
 state 127
@@ -2460,8 +2518,8 @@ state 128
     (45) whileBlock -> . WHILE L_PAR megaExp R_PAR body
     (46) forBlock -> . FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
     (75) print -> . PRINT L_PAR print_help R_PAR
-    (80) read -> . READ L_PAR idCall R_PAR
-    (81) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
+    (81) read -> . READ L_PAR idCall R_PAR
+    (82) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
     (7) arrays -> . VAR type ID L_KEY NUMBER R_KEY DOT_COMMA
     (73) idCall -> . ID
     (74) idCall -> . ID L_KEY exp R_KEY
@@ -2495,7 +2553,7 @@ state 128
   ! VAR             [ reduce using rule 22 (statement -> .) ]
   ! R_BRACK         [ reduce using rule 22 (statement -> .) ]
 
-    statements                     shift and go to state 142
+    statements                     shift and go to state 143
     statement                      shift and go to state 90
     assignment                     shift and go to state 91
     functionCall                   shift and go to state 92
@@ -2519,21 +2577,21 @@ state 130
 
     (42) ifBlock -> IF L_PAR megaExp . R_PAR body optionalElse
 
-    R_PAR           shift and go to state 143
+    R_PAR           shift and go to state 144
 
 
 state 131
 
     (45) whileBlock -> WHILE L_PAR megaExp . R_PAR body
 
-    R_PAR           shift and go to state 144
+    R_PAR           shift and go to state 145
 
 
 state 132
 
     (46) forBlock -> FOR L_PAR assignment . DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
 
-    DOT_COMMA       shift and go to state 145
+    DOT_COMMA       shift and go to state 146
 
 
 state 133
@@ -2552,94 +2610,152 @@ state 134
 
     (75) print -> PRINT L_PAR print_help . R_PAR
 
-    R_PAR           shift and go to state 146
+    R_PAR           shift and go to state 147
 
 
 state 135
 
     (77) print_help -> ALPHANUMERIC .
+    (67) factor -> ALPHANUMERIC .
 
-    R_PAR           reduce using rule 77 (print_help -> ALPHANUMERIC .)
+  ! reduce/reduce conflict for R_PAR resolved using rule 67 (factor -> ALPHANUMERIC .)
+    TIMES           reduce using rule 67 (factor -> ALPHANUMERIC .)
+    DIVIDE          reduce using rule 67 (factor -> ALPHANUMERIC .)
+    MOD             reduce using rule 67 (factor -> ALPHANUMERIC .)
+    PLUS            reduce using rule 67 (factor -> ALPHANUMERIC .)
+    MINUS           reduce using rule 67 (factor -> ALPHANUMERIC .)
+    MORE_THAN       reduce using rule 67 (factor -> ALPHANUMERIC .)
+    LESS_THAN       reduce using rule 67 (factor -> ALPHANUMERIC .)
+    MORE_EQUAL      reduce using rule 67 (factor -> ALPHANUMERIC .)
+    LESS_EQUAL      reduce using rule 67 (factor -> ALPHANUMERIC .)
+    EQUAL           reduce using rule 67 (factor -> ALPHANUMERIC .)
+    NOT_EQUAL       reduce using rule 67 (factor -> ALPHANUMERIC .)
+    AND             reduce using rule 67 (factor -> ALPHANUMERIC .)
+    OR              reduce using rule 67 (factor -> ALPHANUMERIC .)
+    R_PAR           reduce using rule 67 (factor -> ALPHANUMERIC .)
+
+  ! R_PAR           [ reduce using rule 77 (print_help -> ALPHANUMERIC .) ]
 
 
 state 136
 
     (78) print_help -> idCall .
+    (70) factor -> idCall .
 
-    R_PAR           reduce using rule 78 (print_help -> idCall .)
+  ! reduce/reduce conflict for R_PAR resolved using rule 70 (factor -> idCall .)
+    TIMES           reduce using rule 70 (factor -> idCall .)
+    DIVIDE          reduce using rule 70 (factor -> idCall .)
+    MOD             reduce using rule 70 (factor -> idCall .)
+    PLUS            reduce using rule 70 (factor -> idCall .)
+    MINUS           reduce using rule 70 (factor -> idCall .)
+    MORE_THAN       reduce using rule 70 (factor -> idCall .)
+    LESS_THAN       reduce using rule 70 (factor -> idCall .)
+    MORE_EQUAL      reduce using rule 70 (factor -> idCall .)
+    LESS_EQUAL      reduce using rule 70 (factor -> idCall .)
+    EQUAL           reduce using rule 70 (factor -> idCall .)
+    NOT_EQUAL       reduce using rule 70 (factor -> idCall .)
+    AND             reduce using rule 70 (factor -> idCall .)
+    OR              reduce using rule 70 (factor -> idCall .)
+    R_PAR           reduce using rule 70 (factor -> idCall .)
+
+  ! R_PAR           [ reduce using rule 78 (print_help -> idCall .) ]
 
 
 state 137
 
     (79) print_help -> functionCall .
+    (72) factor -> functionCall .
 
-    R_PAR           reduce using rule 79 (print_help -> functionCall .)
+  ! reduce/reduce conflict for R_PAR resolved using rule 72 (factor -> functionCall .)
+    TIMES           reduce using rule 72 (factor -> functionCall .)
+    DIVIDE          reduce using rule 72 (factor -> functionCall .)
+    MOD             reduce using rule 72 (factor -> functionCall .)
+    PLUS            reduce using rule 72 (factor -> functionCall .)
+    MINUS           reduce using rule 72 (factor -> functionCall .)
+    MORE_THAN       reduce using rule 72 (factor -> functionCall .)
+    LESS_THAN       reduce using rule 72 (factor -> functionCall .)
+    MORE_EQUAL      reduce using rule 72 (factor -> functionCall .)
+    LESS_EQUAL      reduce using rule 72 (factor -> functionCall .)
+    EQUAL           reduce using rule 72 (factor -> functionCall .)
+    NOT_EQUAL       reduce using rule 72 (factor -> functionCall .)
+    AND             reduce using rule 72 (factor -> functionCall .)
+    OR              reduce using rule 72 (factor -> functionCall .)
+    R_PAR           reduce using rule 72 (factor -> functionCall .)
+
+  ! R_PAR           [ reduce using rule 79 (print_help -> functionCall .) ]
 
 
 state 138
 
-    (80) read -> READ L_PAR idCall . R_PAR
+    (80) print_help -> megaExp .
 
-    R_PAR           shift and go to state 147
+    R_PAR           reduce using rule 80 (print_help -> megaExp .)
 
 
 state 139
 
-    (81) lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .
+    (81) read -> READ L_PAR idCall . R_PAR
 
-    ID              reduce using rule 81 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
-    IF              reduce using rule 81 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
-    WHILE           reduce using rule 81 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
-    FOR             reduce using rule 81 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
-    PRINT           reduce using rule 81 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
-    READ            reduce using rule 81 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
-    COMMENT_LINE    reduce using rule 81 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
-    VAR             reduce using rule 81 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
-    R_BRACK         reduce using rule 81 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
+    R_PAR           shift and go to state 148
 
 
 state 140
 
-    (7) arrays -> VAR type ID . L_KEY NUMBER R_KEY DOT_COMMA
+    (82) lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .
 
-    L_KEY           shift and go to state 148
+    ID              reduce using rule 82 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
+    IF              reduce using rule 82 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
+    WHILE           reduce using rule 82 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
+    FOR             reduce using rule 82 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
+    PRINT           reduce using rule 82 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
+    READ            reduce using rule 82 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
+    COMMENT_LINE    reduce using rule 82 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
+    VAR             reduce using rule 82 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
+    R_BRACK         reduce using rule 82 (lineComment -> COMMENT_LINE ALPHANUMERIC END_LINE .)
 
 
 state 141
+
+    (7) arrays -> VAR type ID . L_KEY NUMBER R_KEY DOT_COMMA
+
+    L_KEY           shift and go to state 149
+
+
+state 142
 
     (13) functionsHelp2 -> type ID .
     (14) functionsHelp2 -> type ID . COMMA functionsHelp2
 
     R_PAR           reduce using rule 13 (functionsHelp2 -> type ID .)
-    COMMA           shift and go to state 149
-
-
-state 142
-
-    (9) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements . R_BRACK
-
-    R_BRACK         shift and go to state 150
+    COMMA           shift and go to state 150
 
 
 state 143
 
+    (9) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements . R_BRACK
+
+    R_BRACK         shift and go to state 151
+
+
+state 144
+
     (42) ifBlock -> IF L_PAR megaExp R_PAR . body optionalElse
     (3) body -> . L_BRACK statements R_BRACK
 
-    L_BRACK         shift and go to state 152
+    L_BRACK         shift and go to state 153
 
-    body                           shift and go to state 151
+    body                           shift and go to state 152
 
-state 144
+state 145
 
     (45) whileBlock -> WHILE L_PAR megaExp R_PAR . body
     (3) body -> . L_BRACK statements R_BRACK
 
-    L_BRACK         shift and go to state 152
+    L_BRACK         shift and go to state 153
 
-    body                           shift and go to state 153
+    body                           shift and go to state 154
 
-state 145
+state 146
 
     (46) forBlock -> FOR L_PAR assignment DOT_COMMA . megaExp DOT_COMMA optionalAssign R_PAR body
     (49) megaExp -> . superExp
@@ -2653,12 +2769,12 @@ state 145
     (57) superExp -> . exp EQUAL exp
     (58) superExp -> . exp NOT_EQUAL exp
     (59) exp -> . term
-    (60) exp -> . term PLUS term
-    (61) exp -> . term MINUS term
+    (60) exp -> . term PLUS exp
+    (61) exp -> . term MINUS exp
     (62) term -> . factor
-    (63) term -> . factor TIMES factor
-    (64) term -> . factor DIVIDE factor
-    (65) term -> . factor MOD factor
+    (63) term -> . factor TIMES term
+    (64) term -> . factor DIVIDE term
+    (65) term -> . factor MOD term
     (66) factor -> . NUMBER
     (67) factor -> . ALPHANUMERIC
     (68) factor -> . CHARACTER
@@ -2677,7 +2793,7 @@ state 145
     L_PAR           shift and go to state 42
     ID              shift and go to state 33
 
-    megaExp                        shift and go to state 154
+    megaExp                        shift and go to state 155
     superExp                       shift and go to state 47
     exp                            shift and go to state 49
     term                           shift and go to state 35
@@ -2685,28 +2801,28 @@ state 145
     idCall                         shift and go to state 41
     functionCall                   shift and go to state 43
 
-state 146
+state 147
 
     (75) print -> PRINT L_PAR print_help R_PAR .
 
     DOT_COMMA       reduce using rule 75 (print -> PRINT L_PAR print_help R_PAR .)
 
 
-state 147
-
-    (80) read -> READ L_PAR idCall R_PAR .
-
-    DOT_COMMA       reduce using rule 80 (read -> READ L_PAR idCall R_PAR .)
-
-
 state 148
 
-    (7) arrays -> VAR type ID L_KEY . NUMBER R_KEY DOT_COMMA
+    (81) read -> READ L_PAR idCall R_PAR .
 
-    NUMBER          shift and go to state 155
+    DOT_COMMA       reduce using rule 81 (read -> READ L_PAR idCall R_PAR .)
 
 
 state 149
+
+    (7) arrays -> VAR type ID L_KEY . NUMBER R_KEY DOT_COMMA
+
+    NUMBER          shift and go to state 156
+
+
+state 150
 
     (14) functionsHelp2 -> type ID COMMA . functionsHelp2
     (13) functionsHelp2 -> . type ID
@@ -2724,16 +2840,16 @@ state 149
     STRING          shift and go to state 14
 
     type                           shift and go to state 126
-    functionsHelp2                 shift and go to state 156
+    functionsHelp2                 shift and go to state 157
 
-state 150
+state 151
 
     (9) functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK .
 
     MAIN            reduce using rule 9 (functions -> FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK .)
 
 
-state 151
+state 152
 
     (42) ifBlock -> IF L_PAR megaExp R_PAR body . optionalElse
     (43) optionalElse -> .
@@ -2748,11 +2864,11 @@ state 151
     COMMENT_LINE    reduce using rule 43 (optionalElse -> .)
     VAR             reduce using rule 43 (optionalElse -> .)
     R_BRACK         reduce using rule 43 (optionalElse -> .)
-    ELSE            shift and go to state 158
+    ELSE            shift and go to state 159
 
-    optionalElse                   shift and go to state 157
+    optionalElse                   shift and go to state 158
 
-state 152
+state 153
 
     (3) body -> L_BRACK . statements R_BRACK
     (20) statements -> .
@@ -2776,8 +2892,8 @@ state 152
     (45) whileBlock -> . WHILE L_PAR megaExp R_PAR body
     (46) forBlock -> . FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body
     (75) print -> . PRINT L_PAR print_help R_PAR
-    (80) read -> . READ L_PAR idCall R_PAR
-    (81) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
+    (81) read -> . READ L_PAR idCall R_PAR
+    (82) lineComment -> . COMMENT_LINE ALPHANUMERIC END_LINE
     (7) arrays -> . VAR type ID L_KEY NUMBER R_KEY DOT_COMMA
     (73) idCall -> . ID
     (74) idCall -> . ID L_KEY exp R_KEY
@@ -2811,7 +2927,7 @@ state 152
   ! VAR             [ reduce using rule 22 (statement -> .) ]
   ! R_BRACK         [ reduce using rule 22 (statement -> .) ]
 
-    statements                     shift and go to state 159
+    statements                     shift and go to state 160
     statement                      shift and go to state 90
     assignment                     shift and go to state 91
     functionCall                   shift and go to state 92
@@ -2824,7 +2940,7 @@ state 152
     arrays                         shift and go to state 99
     idCall                         shift and go to state 20
 
-state 153
+state 154
 
     (45) whileBlock -> WHILE L_PAR megaExp R_PAR body .
 
@@ -2839,28 +2955,28 @@ state 153
     R_BRACK         reduce using rule 45 (whileBlock -> WHILE L_PAR megaExp R_PAR body .)
 
 
-state 154
+state 155
 
     (46) forBlock -> FOR L_PAR assignment DOT_COMMA megaExp . DOT_COMMA optionalAssign R_PAR body
 
-    DOT_COMMA       shift and go to state 160
-
-
-state 155
-
-    (7) arrays -> VAR type ID L_KEY NUMBER . R_KEY DOT_COMMA
-
-    R_KEY           shift and go to state 161
+    DOT_COMMA       shift and go to state 161
 
 
 state 156
+
+    (7) arrays -> VAR type ID L_KEY NUMBER . R_KEY DOT_COMMA
+
+    R_KEY           shift and go to state 162
+
+
+state 157
 
     (14) functionsHelp2 -> type ID COMMA functionsHelp2 .
 
     R_PAR           reduce using rule 14 (functionsHelp2 -> type ID COMMA functionsHelp2 .)
 
 
-state 157
+state 158
 
     (42) ifBlock -> IF L_PAR megaExp R_PAR body optionalElse .
 
@@ -2875,23 +2991,23 @@ state 157
     R_BRACK         reduce using rule 42 (ifBlock -> IF L_PAR megaExp R_PAR body optionalElse .)
 
 
-state 158
+state 159
 
     (44) optionalElse -> ELSE . body
     (3) body -> . L_BRACK statements R_BRACK
 
-    L_BRACK         shift and go to state 152
+    L_BRACK         shift and go to state 153
 
-    body                           shift and go to state 162
+    body                           shift and go to state 163
 
-state 159
+state 160
 
     (3) body -> L_BRACK statements . R_BRACK
 
-    R_BRACK         shift and go to state 163
+    R_BRACK         shift and go to state 164
 
 
-state 160
+state 161
 
     (46) forBlock -> FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA . optionalAssign R_PAR body
     (47) optionalAssign -> .
@@ -2906,18 +3022,18 @@ state 160
     R_PAR           reduce using rule 47 (optionalAssign -> .)
     ID              shift and go to state 133
 
-    assignment                     shift and go to state 164
-    optionalAssign                 shift and go to state 165
+    assignment                     shift and go to state 165
+    optionalAssign                 shift and go to state 166
     idCall                         shift and go to state 20
 
-state 161
+state 162
 
     (7) arrays -> VAR type ID L_KEY NUMBER R_KEY . DOT_COMMA
 
-    DOT_COMMA       shift and go to state 166
+    DOT_COMMA       shift and go to state 167
 
 
-state 162
+state 163
 
     (44) optionalElse -> ELSE body .
 
@@ -2932,7 +3048,7 @@ state 162
     R_BRACK         reduce using rule 44 (optionalElse -> ELSE body .)
 
 
-state 163
+state 164
 
     (3) body -> L_BRACK statements R_BRACK .
 
@@ -2948,37 +3064,37 @@ state 163
     R_BRACK         reduce using rule 3 (body -> L_BRACK statements R_BRACK .)
 
 
-state 164
+state 165
 
     (48) optionalAssign -> assignment .
 
     R_PAR           reduce using rule 48 (optionalAssign -> assignment .)
 
 
-state 165
+state 166
 
     (46) forBlock -> FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign . R_PAR body
 
-    R_PAR           shift and go to state 167
+    R_PAR           shift and go to state 168
 
 
-state 166
+state 167
 
     (7) arrays -> VAR type ID L_KEY NUMBER R_KEY DOT_COMMA .
 
     DOT_COMMA       reduce using rule 7 (arrays -> VAR type ID L_KEY NUMBER R_KEY DOT_COMMA .)
 
 
-state 167
+state 168
 
     (46) forBlock -> FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR . body
     (3) body -> . L_BRACK statements R_BRACK
 
-    L_BRACK         shift and go to state 152
+    L_BRACK         shift and go to state 153
 
-    body                           shift and go to state 168
+    body                           shift and go to state 169
 
-state 168
+state 169
 
     (46) forBlock -> FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body .
 
@@ -3023,14 +3139,14 @@ WARNING: shift/reduce conflict for PRINT in state 128 resolved as shift
 WARNING: shift/reduce conflict for READ in state 128 resolved as shift
 WARNING: shift/reduce conflict for COMMENT_LINE in state 128 resolved as shift
 WARNING: shift/reduce conflict for VAR in state 128 resolved as shift
-WARNING: shift/reduce conflict for ID in state 152 resolved as shift
-WARNING: shift/reduce conflict for IF in state 152 resolved as shift
-WARNING: shift/reduce conflict for WHILE in state 152 resolved as shift
-WARNING: shift/reduce conflict for FOR in state 152 resolved as shift
-WARNING: shift/reduce conflict for PRINT in state 152 resolved as shift
-WARNING: shift/reduce conflict for READ in state 152 resolved as shift
-WARNING: shift/reduce conflict for COMMENT_LINE in state 152 resolved as shift
-WARNING: shift/reduce conflict for VAR in state 152 resolved as shift
+WARNING: shift/reduce conflict for ID in state 153 resolved as shift
+WARNING: shift/reduce conflict for IF in state 153 resolved as shift
+WARNING: shift/reduce conflict for WHILE in state 153 resolved as shift
+WARNING: shift/reduce conflict for FOR in state 153 resolved as shift
+WARNING: shift/reduce conflict for PRINT in state 153 resolved as shift
+WARNING: shift/reduce conflict for READ in state 153 resolved as shift
+WARNING: shift/reduce conflict for COMMENT_LINE in state 153 resolved as shift
+WARNING: shift/reduce conflict for VAR in state 153 resolved as shift
 WARNING: reduce/reduce conflict in state 46 resolved using rule (assignment -> idCall ASSIGN functionCall)
 WARNING: rejected rule (factor -> functionCall) in state 46
 WARNING: reduce/reduce conflict in state 69 resolved using rule (statements -> <empty>)
@@ -3039,6 +3155,15 @@ WARNING: reduce/reduce conflict in state 90 resolved using rule (statements -> <
 WARNING: rejected rule (statement -> <empty>) in state 90
 WARNING: reduce/reduce conflict in state 128 resolved using rule (statements -> <empty>)
 WARNING: rejected rule (statement -> <empty>) in state 128
-WARNING: reduce/reduce conflict in state 152 resolved using rule (statements -> <empty>)
-WARNING: rejected rule (statement -> <empty>) in state 152
+WARNING: reduce/reduce conflict in state 135 resolved using rule (factor -> ALPHANUMERIC)
+WARNING: rejected rule (print_help -> ALPHANUMERIC) in state 135
+WARNING: reduce/reduce conflict in state 136 resolved using rule (factor -> idCall)
+WARNING: rejected rule (print_help -> idCall) in state 136
+WARNING: reduce/reduce conflict in state 137 resolved using rule (factor -> functionCall)
+WARNING: rejected rule (print_help -> functionCall) in state 137
+WARNING: reduce/reduce conflict in state 153 resolved using rule (statements -> <empty>)
+WARNING: rejected rule (statement -> <empty>) in state 153
 WARNING: Rule (statement -> <empty>) is never reduced
+WARNING: Rule (print_help -> ALPHANUMERIC) is never reduced
+WARNING: Rule (print_help -> idCall) is never reduced
+WARNING: Rule (print_help -> functionCall) is never reduced
