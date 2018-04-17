@@ -28,8 +28,12 @@ def p_body(p):
 def p_variables(p):
   '''variables :
                | VAR type ID DOT_COMMA variables
-  	       | VAR type assignment DOT_COMMA variables'''
+  	       | VAR type assignment DOT_COMMA variables
+  	       | VAR type ID L_KEY NUMBER R_KEY DOT_COMMA variables'''
   if len(p) > 2 :
+    if len(p) > 5:
+      p[0] = FuncNode('arrVar', p[3], p[2], p[5], p[8])
+      
     p[0] = FuncNode('var', p[3], p[2], p[5])  
   #TODO: Revisar ID y assignment en punto neuralgico
   
@@ -94,8 +98,7 @@ def p_statement(p):
                 | forBlock
                 | print DOT_COMMA
                 | read DOT_COMMA
-                | lineComment
-                | arrays DOT_COMMA'''
+                | lineComment'''
   p[0] = p[1]
   
 # Assignment
