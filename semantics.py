@@ -23,6 +23,8 @@ class FuncNode(object):
       else:
         sS += iI.show(iN + 1)
       sS += "\n"
+
+    # print(quadruples)
     return sS
 
 # -------------------------------------------------------------
@@ -181,7 +183,7 @@ class FuncNode(object):
     else:
       currentTable = localTable
 
-    varTipos = {'int' : 1, 'decim' : 2, 'bool' : 3, 'char' : 4, 'String' : 5}
+    # varTypes = {'int' : 1, 'decim' : 2, 'bool' : 3, 'char' : 4, 'String' : 5}
 
 # -------------------------------------------------------------
 
@@ -200,6 +202,34 @@ class FuncNode(object):
         else:
           print (self.args[1].args[0], currentTable[funcName][key].keys())
           raise Exception("Variable '" + self.args[1].args[0] + "' has not been declared. Cannot assign value.")
+
+# -------------------------------------------------------------
+    if self.type == "assignmentIncrease":
+      varName = self.args[1].args[0]
+      resultType, address = self.args[2][0].expression(funcName, result)
+      
+      for key in currentTable[funcName]:
+      #verifies that the variable has been declared
+        if self.args[1].args[0] in currentTable[funcName][key].keys():
+          quadruples.append(['++', '', '', currentTable[funcName][resultType][varName]])
+          break
+        else:
+          print (self.args[1].args[0], currentTable[funcName][key].keys())
+          raise Exception("Variable '" + self.args[1].args[0] + "' has not been declared. Cannot increment.")
+
+# -------------------------------------------------------------
+    if self.type == "assignmentDecrease":
+      varName = self.args[1].args[0]
+      resultType, address = self.args[2][0].expression(funcName, result)
+      
+      for key in currentTable[funcName]:
+      #verifies that the variable has been declared
+        if self.args[1].args[0] in currentTable[funcName][key].keys():
+          quadruples.append(['--', '', '', currentTable[funcName][resultType][varName]])
+          break
+        else:
+          print (self.args[1].args[0], currentTable[funcName][key].keys())
+          raise Exception("Variable '" + self.args[1].args[0] + "' has not been declared. Cannot increment.")
 
 # -------------------------------------------------------------
 

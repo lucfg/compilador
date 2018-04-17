@@ -31,16 +31,11 @@ def p_variables(p):
   	       | VAR type assignment DOT_COMMA variables
   	       | VAR type ID L_KEY NUMBER R_KEY DOT_COMMA variables'''
   if len(p) > 2 :
-    if len(p) > 5:
+    if len(p) > 8:
       p[0] = FuncNode('arrVar', p[3], p[2], p[5], p[8])
-      
-    p[0] = FuncNode('var', p[3], p[2], p[5])  
+    else:
+      p[0] = FuncNode('var', p[3], p[2], p[5])  
   #TODO: Revisar ID y assignment en punto neuralgico
-  
-# Variable array declaration
-def p_arrays(p):
-  '''arrays : VAR type ID L_KEY NUMBER R_KEY DOT_COMMA'''
-  p[0] = FuncNode('arrVar', p[3], p[2], p[5])
 
 # Function declaration
 def p_functions(p):
@@ -87,7 +82,7 @@ def p_statements(p):
     if p[2] is None:
       p[0] = FuncNode('statement', p[1])
     else:
-      p[0] = FuncNode('statement', p[2][0], p[1], p[2][1])
+      p[0] = FuncNode('statement', p[1], p[2])
 
 def p_statement(p):
   '''statement :
@@ -105,12 +100,19 @@ def p_statement(p):
 def p_assignment(p):
   '''assignment : idCall ASSIGN megaExp
                 | idCall ASSIGN functionCall
-                | idCall INCREMENT 
-                | idCall DECREMENT'''
+                | assignIncr
+                | assignDecr'''
   if len(p) > 3:
     p[0] = FuncNode('assignment', p[1], p[2], p[3])
   else:
-    p[0] = FuncNode('assignment', p[1], p[2])
+    p[0] = p[1]
+def p_assignIncr(p):
+  '''assignIncr : idCall INCREMENT'''
+  p[0] = FuncNode('assignmentIncrease', p[1], p[2])
+def p_assignDecr(p):
+  '''assignDecr : idCall DECREMENT'''
+  p[0] = FuncNode('assignmentDecrease', p[1], p[2])
+
   
 # Function call
 def p_functionCall(p):
