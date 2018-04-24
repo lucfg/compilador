@@ -36,11 +36,6 @@ def p_variables(p):
       
     p[0] = FuncNode('var', p[3], p[2], p[5])  
   #TODO: Revisar ID y assignment en punto neuralgico
-  
-# Variable array declaration
-def p_arrays(p):
-  '''arrays : VAR type ID L_KEY NUMBER R_KEY DOT_COMMA'''
-  p[0] = FuncNode('arrVar', p[3], p[2], p[5])
 
 # Function declaration
 def p_functions(p):
