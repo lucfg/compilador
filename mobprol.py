@@ -19,12 +19,13 @@ def test(input_string):
     parse_tree = parser.parse(input_string, lexer=lexer) 
     print ('Successfully built parse tree:')
     print (parse_tree)
-    if isinstance(parse_tree, FuncNode):
-        print (parse_tree.semantic_all())
+    print(parse_tree.semanticAll())
+    #if isinstance(parse_tree, FuncNode):
+#        print (parse_tree.semanticAll())
         # print (memory[0])
         # print (virtual_machine(cuadruplos, memory[0]))
-    else:
-        print ('Failed program')
+#    else:
+#        print ('Failed program')
 
 
 while True:

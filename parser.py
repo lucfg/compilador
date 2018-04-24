@@ -278,17 +278,17 @@ def p_error(p):
 # ---------------------------------------------------------------------------
     
 # Build the parser to check on grammar's sintaxis
-parser = yacc.yacc()
+#parser = yacc.yacc()
 
-while True:
-   try:
-       s = input('code> ')
-   except EOFError:
-       break
-   if not s: continue
-   result = parser.parse(s)
-   print("Result of semantics")
-   print (result.semanticAll())
-   print("debug: your result is:")
-   print(result)
-   print("debug: And that's about it!")
+#while True:
+#   try:
+#       s = input('code> ')
+#   except EOFError:
+#       break
+#   if not s: continue
+#   result = parser.parse(s)
+#   print("Result of semantics")
+#   print (result.semanticAll())
+#   print("debug: your result is:")
+#   print(result)
+#   print("debug: And that's about it!")
