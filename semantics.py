@@ -57,11 +57,14 @@ class FuncNode(object):
 
     if self.type == "program":
       print ("Program is beginning..")
-      
+
       for elem in self.args:
         if elem is not None:
-          elem.semantic(funcName, result)
-      print (dict(globalTable.items() + localTable.items() + auxTable.items()), quadruples)
+          if isinstance(elem, str):
+            print("THIS IS AN ID" + elem)
+          else:
+            elem.semantic(funcName, result)
+      #print (dict(globalTable.items() + localTable.items() + auxTable.items()), quadruples)
 
 # -------------------------------------------------------------
 

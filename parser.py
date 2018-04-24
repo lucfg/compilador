@@ -12,7 +12,7 @@ actualFunc = 'program'
 # Program declaration
 def p_program(p):
   '''program : PROGRAM ID L_BRACK variables functions mainBody R_BRACK'''
-  p[0] = FuncNode('program', p[2], p[4], p[5], p[6]).semanticAll
+  p[0] = FuncNode('program', p[2], p[4], p[5], p[6])
   print ("p0 is :" + str(p[0]) + ": that's it")
 
 # Main body (with variable declaration)
