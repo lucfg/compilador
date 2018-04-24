@@ -12,7 +12,8 @@ actualFunc = 'program'
 # Program declaration
 def p_program(p):
   '''program : PROGRAM ID L_BRACK variables functions mainBody R_BRACK'''
-  p[0] = FuncNode('program', p[2], p[4], p[5], p[6])
+  p[0] = FuncNode('program', p[2], p[4], p[5], p[6]).semanticAll
+  print ("p0 is :" + str(p[0]) + ": that's it")
 
 # Main body (with variable declaration)
 def p_mainBody(p):
@@ -245,7 +246,7 @@ def p_idCall(p):
 def p_print(p):
   '''print : PRINT L_PAR print_help R_PAR'''
   if p[3] is None:
-    p[0] = FuncNode('print', ' ')
+    p[0] = FuncNode('print', '')
   else:
     p[0] = FuncNode('print', p[3])
     
@@ -286,4 +287,8 @@ while True:
        break
    if not s: continue
    result = parser.parse(s)
+   print("Result of semantics")
+   print (result.semanticAll())
+   print("debug: your result is:")
    print(result)
+   print("debug: And that's about it!")

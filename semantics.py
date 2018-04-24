@@ -16,15 +16,22 @@ class FuncNode(object):
     return self.show()
   
   def show(self, iN = 0):
-    sS = " "* iN + "type: " + str(self.type) + "\n"
+    print ("entered show")
+    
+    indent = " "* iN;
+
+    sS = indent + "type: " + str(self.type) + "\n"
+
     for iI in self.args:
       if not isinstance(iI, FuncNode):
-        sS += str(iI)
+        sS += indent + str(iI)
       else:
-        sS += iI.show(iN + 1)
+        sS += indent + iI.show(iN + 1)
+      
       sS += "\n"
 
-    # print(quadruples)
+      sS += indent + "quad length is: " + str(len(quadruples))
+
     return sS
 
 # -------------------------------------------------------------
@@ -54,7 +61,7 @@ class FuncNode(object):
       for elem in self.args:
         if elem is not None:
           elem.semantic(funcName, result)
-      #print (dict(globalTable.items() + localTable.items() + auxTable.items()), quadruples)
+      print (dict(globalTable.items() + localTable.items() + auxTable.items()), quadruples)
 
 # -------------------------------------------------------------
 
@@ -72,9 +79,9 @@ class FuncNode(object):
 # -------------------------------------------------------------
 
     elif self.type == "lparameters":
-      #print self.args[0]
+      print (self.args[0])
       for i in self.args[0]:
-        #print i[0], i[1]
+        print (i[0], i[1])
         currentTable.add(function_name, i[0], i[1])
 
 # -------------------------------------------------------------
@@ -99,8 +106,7 @@ class FuncNode(object):
 
     elif self.type == "read":
       resultType, address = self.args[0].expression(funcName, result)
-      quadruples.append(["read", "TO_READ", "", address]) # TODO: cómo manejar el read
-      quadruples.append(["read", "", "", address]) # TODO: cómo manejar el read
+      quadruples.append(["read", "", "", address])
 
 # -------------------------------------------------------------
 
@@ -111,7 +117,7 @@ class FuncNode(object):
 
     #conditions
     elif self.type == "if":
-      #print 'args', self.args[0].args[0]
+      print ('args', self.args[0].args[0])
       tipo, address = self.args[0].args[0].expression(funcName, result)
 
       if tipo != 'bool':
@@ -132,7 +138,7 @@ class FuncNode(object):
         result = self.args[2].semantic(funcName, result)
         goto[3] = len(quadruples) - lenelsea
 
-      #print (quadruples)
+      print (quadruples)
 
 # -------------------------------------------------------------
 
@@ -168,7 +174,7 @@ class FuncNode(object):
       quadruples.append(goto)
       
       gotof[3] = len(quadruples) - lena
-      #print quadruples
+      print (quadruples)
 
     else:
       print("Error. Type not found")
@@ -311,3 +317,6 @@ class FuncNode(object):
       return funcType, auxAddress
 
     return result
+
+# response = FuncNode("program", "param1", "param2", "param3", "param4").semanticAll()
+# print (response)
