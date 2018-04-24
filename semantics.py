@@ -16,13 +16,22 @@ class FuncNode(object):
     return self.show()
   
   def show(self, iN = 0):
-    sS = " "* iN + "type: " + str(self.type) + "\n"
+    print ("entered show")
+    
+    indent = " "* iN;
+
+    sS = indent + "type: " + str(self.type) + "\n"
+
     for iI in self.args:
       if not isinstance(iI, FuncNode):
-        sS += str(iI)
+        sS += indent + str(iI)
       else:
-        sS += iI.show(iN + 1)
+        sS += indent + iI.show(iN + 1)
+      
       sS += "\n"
+
+      sS += indent + "quad length is: " + str(len(quadruples))
+
     return sS
 
 # -------------------------------------------------------------
@@ -52,7 +61,7 @@ class FuncNode(object):
       for elem in self.args:
         if elem is not None:
           elem.semantic(funcName, result)
-      #print (dict(globalTable.items() + localTable.items() + auxTable.items()), quadruples)
+      print (dict(globalTable.items() + localTable.items() + auxTable.items()), quadruples)
 
 # -------------------------------------------------------------
 
@@ -70,9 +79,9 @@ class FuncNode(object):
 # -------------------------------------------------------------
 
     elif self.type == "lparameters":
-      #print self.args[0]
+      print (self.args[0])
       for i in self.args[0]:
-        #print i[0], i[1]
+        print (i[0], i[1])
         currentTable.add(function_name, i[0], i[1])
 
 # -------------------------------------------------------------
@@ -97,8 +106,7 @@ class FuncNode(object):
 
     elif self.type == "read":
       resultType, address = self.args[0].expression(funcName, result)
-      quadruples.append(["read", "TO_READ", "", address]) # TODO: cómo manejar el read
-      quadruples.append(["read", "", "", address]) # TODO: cómo manejar el read
+      quadruples.append(["read", "", "", address])
 
 # -------------------------------------------------------------
 
@@ -109,7 +117,7 @@ class FuncNode(object):
 
     #conditions
     elif self.type == "if":
-      #print 'args', self.args[0].args[0]
+      print ('args', self.args[0].args[0])
       tipo, address = self.args[0].args[0].expression(funcName, result)
 
       if tipo != 'bool':
@@ -130,7 +138,7 @@ class FuncNode(object):
         result = self.args[2].semantic(funcName, result)
         goto[3] = len(quadruples) - lenelsea
 
-      #print (quadruples)
+      print (quadruples)
 
 # -------------------------------------------------------------
 
@@ -166,7 +174,7 @@ class FuncNode(object):
       quadruples.append(goto)
       
       gotof[3] = len(quadruples) - lena
-      #print quadruples
+      print (quadruples)
 
     else:
       print("Error. Type not found")
@@ -181,7 +189,7 @@ class FuncNode(object):
     else:
       currentTable = localTable
 
-    varTipos = {'int' : 1, 'decim' : 2, 'bool' : 3, 'char' : 4, 'String' : 5}
+    # varTypes = {'int' : 1, 'decim' : 2, 'bool' : 3, 'char' : 4, 'String' : 5}
 
 # -------------------------------------------------------------
 
@@ -200,6 +208,34 @@ class FuncNode(object):
         else:
           print (self.args[1].args[0], currentTable[funcName][key].keys())
           raise Exception("Variable '" + self.args[1].args[0] + "' has not been declared. Cannot assign value.")
+
+# -------------------------------------------------------------
+    if self.type == "assignmentIncrease":
+      varName = self.args[1].args[0]
+      resultType, address = self.args[2][0].expression(funcName, result)
+      
+      for key in currentTable[funcName]:
+      #verifies that the variable has been declared
+        if self.args[1].args[0] in currentTable[funcName][key].keys():
+          quadruples.append(['++', '', '', currentTable[funcName][resultType][varName]])
+          break
+        else:
+          print (self.args[1].args[0], currentTable[funcName][key].keys())
+          raise Exception("Variable '" + self.args[1].args[0] + "' has not been declared. Cannot increment.")
+
+# -------------------------------------------------------------
+    if self.type == "assignmentDecrease":
+      varName = self.args[1].args[0]
+      resultType, address = self.args[2][0].expression(funcName, result)
+      
+      for key in currentTable[funcName]:
+      #verifies that the variable has been declared
+        if self.args[1].args[0] in currentTable[funcName][key].keys():
+          quadruples.append(['--', '', '', currentTable[funcName][resultType][varName]])
+          break
+        else:
+          print (self.args[1].args[0], currentTable[funcName][key].keys())
+          raise Exception("Variable '" + self.args[1].args[0] + "' has not been declared. Cannot increment.")
 
 # -------------------------------------------------------------
 
@@ -281,3 +317,6 @@ class FuncNode(object):
       return funcType, auxAddress
 
     return result
+
+# response = FuncNode("program", "param1", "param2", "param3", "param4").semanticAll()
+# print (response)

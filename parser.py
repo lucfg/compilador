@@ -12,7 +12,8 @@ actualFunc = 'program'
 # Program declaration
 def p_program(p):
   '''program : PROGRAM ID L_BRACK variables functions mainBody R_BRACK'''
-  p[0] = FuncNode('program', p[2], p[4], p[5], p[6])
+  p[0] = FuncNode('program', p[2], p[4], p[5], p[6]).semanticAll
+  print ("p0 is :" + str(p[0]) + ": that's it")
 
 # Main body (with variable declaration)
 def p_mainBody(p):
@@ -31,10 +32,10 @@ def p_variables(p):
   	       | VAR type assignment DOT_COMMA variables
   	       | VAR type ID L_KEY NUMBER R_KEY DOT_COMMA variables'''
   if len(p) > 2 :
-    if len(p) > 5:
+    if len(p) > 8:
       p[0] = FuncNode('arrVar', p[3], p[2], p[5], p[8])
-      
-    p[0] = FuncNode('var', p[3], p[2], p[5])  
+    else:
+      p[0] = FuncNode('var', p[3], p[2], p[5])  
   #TODO: Revisar ID y assignment en punto neuralgico
 
 # Function declaration
@@ -82,7 +83,7 @@ def p_statements(p):
     if p[2] is None:
       p[0] = FuncNode('statement', p[1])
     else:
-      p[0] = FuncNode('statement', p[2][0], p[1], p[2][1])
+      p[0] = FuncNode('statement', p[1], p[2])
 
 def p_statement(p):
   '''statement :
@@ -100,12 +101,19 @@ def p_statement(p):
 def p_assignment(p):
   '''assignment : idCall ASSIGN megaExp
                 | idCall ASSIGN functionCall
-                | idCall INCREMENT 
-                | idCall DECREMENT'''
+                | assignIncr
+                | assignDecr'''
   if len(p) > 3:
     p[0] = FuncNode('assignment', p[1], p[2], p[3])
   else:
-    p[0] = FuncNode('assignment', p[1], p[2])
+    p[0] = p[1]
+def p_assignIncr(p):
+  '''assignIncr : idCall INCREMENT'''
+  p[0] = FuncNode('assignmentIncrease', p[1], p[2])
+def p_assignDecr(p):
+  '''assignDecr : idCall DECREMENT'''
+  p[0] = FuncNode('assignmentDecrease', p[1], p[2])
+
   
 # Function call
 def p_functionCall(p):
@@ -238,7 +246,7 @@ def p_idCall(p):
 def p_print(p):
   '''print : PRINT L_PAR print_help R_PAR'''
   if p[3] is None:
-    p[0] = FuncNode('print', ' ')
+    p[0] = FuncNode('print', '')
   else:
     p[0] = FuncNode('print', p[3])
     
@@ -279,4 +287,8 @@ while True:
        break
    if not s: continue
    result = parser.parse(s)
+   print("Result of semantics")
+   print (result.semanticAll())
+   print("debug: your result is:")
    print(result)
+   print("debug: And that's about it!")
