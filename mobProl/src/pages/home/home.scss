@@ -1,3 +1,19 @@
 page-home {
+    #myInput {
+        width: calc(100% - 10px);
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        padding-top: 0px;
+        padding-left: 10px;
+        padding-bottom: 0px;
+    }
 
+    #codeRow {
+        padding: 20px;
+    }
+
+    #codeColumn {
+        padding: 20px;
+    }
 }
