@@ -16,7 +16,7 @@ class FuncNode(object):
     return self.show()
   
   def show(self, iN = 0):
-    print ("entered show")
+    #print ("entered show")
     
     indent = " "* iN;
 
@@ -30,7 +30,7 @@ class FuncNode(object):
       
       sS += "\n"
 
-      sS += indent + "quad length is: " + str(len(quadruples))
+      #sS += indent + "quad length is: " + str(len(quadruples))
 
     return sS
 
@@ -56,22 +56,39 @@ class FuncNode(object):
 # -------------------------------------------------------------
 
     if self.type == "program":
-      print ("Program is beginning..")
+      quadruples.append(["GOTO","","","main"])
 
       for elem in self.args:
         if elem is not None:
           if isinstance(elem, str):
-            print("THIS IS AN ID" + elem)
+            print("Processing program " + elem + ".")
           else:
             elem.semantic(funcName, result)
+      quadruples.append(["END","","",""])
       #print (dict(globalTable.items() + localTable.items() + auxTable.items()), quadruples)
 
 # -------------------------------------------------------------
 
+    elif self.type == "main":
+      quadruples.append(["main","","",""])
+      function_name = self.args[1]
+      # TODO: check that it has not been declared before
+      localTable.add("main", "int", "return")
+      localTable.add(funcName, "funcType", self.args[0])
+
+      for element in self.args[2:]:
+        if element is not None:
+          element.semantic(funcName, result)
+
+      quadruples.append(["ret","","",""])
+# -------------------------------------------------------------
+
     elif self.type == "function":
+      print ("Received info from function: args0 " + self.args[0] + " args1 " + self.args[1])
       function_name = self.args[1]
       localTable.add(funcName, self.args[0], "return")
       localTable.add(funcName, "funcType", self.args[0])
+      quadruples.append(["func", function_name, self.args[0],""])
 
       for element in self.args[2:]:
         if element is not None:
@@ -141,12 +158,30 @@ class FuncNode(object):
         result = self.args[2].semantic(funcName, result)
         goto[3] = len(quadruples) - lenelsea
 
-      print (quadruples)
-
 # -------------------------------------------------------------
 
-#TODO: Definir while
-    #elif self.type == "while":
+#while
+    elif self.type == "while":
+      print ('args', self.args[0].args[0])
+      tipo, address = self.args[0].args[0].expression(funcName, result)
+
+      if tipo != 'bool':
+        raise Exception("Condition must be bool type")
+
+      #GotoF
+      gotof = ['gotof', address, " ", " "]
+      quadruples.append(gotof)
+      lena = len(quadruples)
+      result = self.args[1].semantic(funcName, result)
+
+      goto = ['goto', " ", " ", 0]
+      quadruples.append(goto)
+      gotof[3] = len(quadruples) - lena
+
+      if self.args[2] is not None:
+        lenelsea = len(quadruples)
+        result = self.args[2].semantic(funcName, result)
+        goto[3] = len(quadruples) - lenelsea
 
 # -------------------------------------------------------------
 
@@ -204,7 +239,7 @@ class FuncNode(object):
       #verifies that the variable has been declared
         if self.args[1].args[0] in currentTable[funcName][key].keys():
           if resultType == key:
-            quadruples.append([self.args[0], address, "", currentTable[funcName][resultType][varName]])
+            quadruples.append(["=", address, "", currentTable[funcName][resultType][varName]])
             break
           else:
             raise Exception("Cannot assign a value of different type to the variable " + self.args[1].args[0] + ".")
@@ -304,6 +339,7 @@ class FuncNode(object):
       quadruples.append(["ERA", self.args[0], "",""])
       contp = 1
 
+      #TODO: does this truly iterate through all possible parameters? Isn't the Gosub appended multiple times
       for i in self.args[1]:
         resultType, resultAddress = i.expression(funcName, result)
         quadruples.append(["Param", resultAddress, "", "param"+str(contp)])
@@ -320,6 +356,3 @@ class FuncNode(object):
       return funcType, auxAddress
 
     return result
-
-# response = FuncNode("program", "param1", "param2", "param3", "param4").semanticAll()
-# print (response)

@@ -43,10 +43,10 @@ class VarTable(dict):
 			self[funcName][t][name] = self.pBool
 			self.pLast = self.pBool
 			self.pBool += 1
-		elif t == 'functype':
+		elif t == 'funcType':
 			self[funcName][t]["return"] = name
 		else:
-			raise Exception("No type")
+			raise Exception("No such type: " + t)
 		return self.pLast
 
 
