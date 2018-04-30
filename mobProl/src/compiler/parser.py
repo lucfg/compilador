@@ -50,17 +50,17 @@ def p_functionsHelp(p):
   		   | type ID
   		   | type ID COMMA functionsHelp2'''
   if len(p) == 3 :
-    p[0] = FuncNode('params', (p[1], p[2]))
-  elif len(p) >= 3 :
-    p[0] = FuncNode('params', (p[1], p[2]) + p[4].args[0])
+    p[0] = FuncNode('params', [p[1], p[2]])
+  elif len(p) > 3 :
+    p[0] = FuncNode('params', [p[1], p[2]] + p[4].args[0])
  
 def p_functionsHelp2(p):
   '''functionsHelp2 : type ID
                     | type ID COMMA functionsHelp2'''
   if len(p) > 3 :
-    p[0] = (p[1], p[2]) + p[4].args[0]
+    p[0] = FuncNode("lparam", [p[1], p[2]] + p[4].args[0])
   else :
-    p[0] = (p[1], p[2])
+    p[0] = FuncNode("lparam", [p[1], p[2]])
 # ---------------------------------------------------------------------------
   
 ## Data Types
@@ -95,7 +95,7 @@ def p_statement(p):
                 | print DOT_COMMA
                 | read DOT_COMMA
                 | lineComment'''
-  p[0] = p[1]
+  p[0] = FuncNode("statement", p[1])
   
 # Assignment
 def p_assignment(p):
