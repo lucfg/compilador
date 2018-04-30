@@ -215,7 +215,7 @@ class FuncNode(object):
       print (quadruples)
 
     else:
-      print("Error. Type not found")
+      print("Error. Type " + self.type + " not supported.")
 
 # -------------------------------------------------------------
 # -------------------------------------------------------------
