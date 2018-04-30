@@ -22,14 +22,15 @@ def test(input_string):
     print(parse_tree.semanticAll())
         #debug
     print ("Your quads: " + str(quadruples))
+    print("Global: " + str(globalTable.items()))
+    print("Local: " + str(localTable.items()))
+    print("Aux: " + str(auxTable.items()))
     #if isinstance(parse_tree, FuncNode):
 #        print (parse_tree.semanticAll())
         # print (memory[0])
         # print (virtual_machine(cuadruplos, memory[0]))
 #    else:
 #        print ('Failed program')
-
-
 while True:
     try:
         s = input('code> ')

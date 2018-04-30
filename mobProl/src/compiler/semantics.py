@@ -71,50 +71,53 @@ class FuncNode(object):
 
     elif self.type == "main":
       quadruples.append(["main","","",""])
-      function_name = self.args[1]
+      funcName = self.type
       # TODO: check that it has not been declared before
-      localTable.add("main", "int", "return")
+      currentTable.add(funcName, "int", "main")
       localTable.add(funcName, "funcType", self.args[0])
 
-      for element in self.args[2:]:
-        if element is not None:
-          element.semantic(funcName, result)
+      for elem in self.args[1:]:
+        if elem is not None:
+          elem.semantic(funcName, result)
 
       quadruples.append(["ret","","",""])
 # -------------------------------------------------------------
 
     elif self.type == "function":
       print ("Received info from function: args0 " + self.args[0] + " args1 " + self.args[1])
-      function_name = self.args[1]
-      localTable.add(funcName, self.args[0], "return")
+      funcName = self.args[0]
+      currentTable.add(funcName, self.args[1],self.args[0])
       localTable.add(funcName, "funcType", self.args[0])
-      quadruples.append(["func", function_name, self.args[0],""])
+      quadruples.append(["func", funcName, self.args[1],""])
 
-      for element in self.args[2:]:
-        if element is not None:
-          element.semantic(funcName, result)
+      for elem in self.args[2:]:
+        if elem is not None:
+          elem.semantic(funcName, result)
 
       quadruples.append(["ret","","",""])
 
 # -------------------------------------------------------------
 
-    elif self.type == "lparameters":
-      print (self.args[0])
-      for i in self.args[0]:
-        print (i[0], i[1])
-        currentTable.add(function_name, i[0], i[1])
+    elif self.type == "params":
+      #print (self.args[0])
+      for i in range(0, len(self.args[0]), 2):
+        #print (self.args[0][i], self.args[0][i+1])
+        currentTable.add(funcName, self.args[0][i], self.args[0][i+1])
 
 # -------------------------------------------------------------
 
-    elif self.type == "variables":
+    elif self.type == "var":
       if self.args[0] is not None:
-        result = self.args[0].semantic(funcName, result)
+        if self.args[1] is not None:
+          currentTable.add(funcName, self.args[1], self.args[0])
+      if self.args[2] is not None:
+        result = self.args[2].semantic(funcName, result)
 
 # -------------------------------------------------------------
         
     elif self.type == "statement":
       if self.args[0] is not None:
-        result = self.args[0].semantics(funcName, result)
+        result = self.args[0].expression(funcName, result)
 
 # -------------------------------------------------------------
         
@@ -234,7 +237,7 @@ class FuncNode(object):
     if self.type == "assignment":
       varName = self.args[1].args[0]
       resultType, address = self.args[2][0].expression(funcName, result)
-      
+      print("Reach assignment function")
       for key in currentTable[funcName]:
       #verifies that the variable has been declared
         if self.args[1].args[0] in currentTable[funcName][key].keys():
