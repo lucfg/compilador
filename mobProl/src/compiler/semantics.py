@@ -7,6 +7,44 @@ localTable = VarTable(15001, 20001, 25001)
 auxTable = VarTable(30001, 35001, 40001)
 quadruples = []
 
+def isPrimitive(t):
+    if isinstance(t, str):
+        if t == "true" or t == "false":
+            return True
+    elif isinstance(t, int):
+        return True
+    elif isinstance(t, float):
+        return True
+    return False
+
+
+def getType(v, funcName="missingFuncName", currentTable="error"):
+    print("Getting type of " + str(v))
+    if isinstance(v, str):
+        if v == "true" or v == "false":
+            print("Si es bool")
+            return "bool"
+        else:
+            found = False
+            for key in currentTable[funcName]:
+                print ("GetType key: " + key)
+            #verifies that the variable has been declared
+                if v in currentTable[funcName][key].keys():
+                    print("Lo encontre")
+                    found = True
+                    return key
+        if not found:
+            print (self.args[0], currentTable[funcName][key].keys())
+            raise Exception("Variable '" + str(v) + "' has not been declared. Cannot assign value.")
+
+            return "string"
+    elif isinstance(v, int):
+        return "int"
+    elif isinstance(v, float):
+        return "decim"
+    else:
+        return "other"
+
 class FuncNode(object):
   def __init__(self, t, *args):
     self.type = t
@@ -38,6 +76,7 @@ class FuncNode(object):
   
   def semanticAll(self):
     class_dir = []
+    quadruples = []
     return self.semantic("global", class_dir)
 
 # -------------------------------------------------------------
@@ -116,8 +155,19 @@ class FuncNode(object):
 # -------------------------------------------------------------
         
     elif self.type == "statement":
+      print("Entro a statement")
       if self.args[0] is not None:
+        print(self.args[0])
         result = self.args[0].expression(funcName, result)
+
+# -------------------------------------------------------------
+        
+    elif self.type == "statements":
+      print("Entro a statements")
+      print(self.args[0])
+      result = self.args[0].expression(funcName, result)
+      if self.args[1] is not None:
+          result = self.args[1].semantic(funcName, result)
 
 # -------------------------------------------------------------
         
@@ -225,33 +275,40 @@ class FuncNode(object):
 # -------------------------------------------------------------
   
   def expression(self, funcName, result):
-    if funcName == "main":
+    if funcName == "global":
       currentTable = globalTable
     else:
       currentTable = localTable
 
-    # varTypes = {'int' : 1, 'decim' : 2, 'bool' : 3, 'char' : 4, 'String' : 5}
-
 # -------------------------------------------------------------
 
+    print("Entro a expresion")
+    print(funcName)
     if self.type == "assignment":
-      varName = self.args[1].args[0]
-      resultType, address = self.args[2][0].expression(funcName, result)
-      print("Reach assignment function")
+      varName = self.args[0].args[0]
+      resultType, address = self.args[2].expression(funcName, result)
+      print("Result type: " + str(resultType))
+      print("Address: " + str(address))
+      print("Assignment part 1")
+      print(varName)
+      found = False
       for key in currentTable[funcName]:
+        print("CurTable funcName Key: " + str(currentTable[funcName][key].keys()))
       #verifies that the variable has been declared
-        if self.args[1].args[0] in currentTable[funcName][key].keys():
+        if varName in currentTable[funcName][key].keys():
           if resultType == key:
+            found = True
             quadruples.append(["=", address, "", currentTable[funcName][resultType][varName]])
+            print("Hice el cuadruplo" + str(["=", address, "", currentTable[funcName][resultType][varName]]))
             break
           else:
-            raise Exception("Cannot assign a value of different type to the variable " + self.args[1].args[0] + ".")
-        else:
-          print (self.args[1].args[0], currentTable[funcName][key].keys())
-          raise Exception("Variable '" + self.args[1].args[0] + "' has not been declared. Cannot assign value.")
+            raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0]) + ".")
+      if not found:
+        print (self.args[0], currentTable[funcName][key].keys())
+        raise Exception("Variable '" + str(varName) + "' has not been declared. Cannot assign value.")
 
 # -------------------------------------------------------------
-    if self.type == "assignmentIncrease":
+    elif self.type == "assignmentIncrease":
       varName = self.args[1].args[0]
       resultType, address = self.args[2][0].expression(funcName, result)
       
@@ -262,10 +319,10 @@ class FuncNode(object):
           break
         else:
           print (self.args[1].args[0], currentTable[funcName][key].keys())
-          raise Exception("Variable '" + self.args[1].args[0] + "' has not been declared. Cannot increment.")
+          raise Exception("Variable '" + str(varName) + "' has not been declared. Cannot increment.")
 
 # -------------------------------------------------------------
-    if self.type == "assignmentDecrease":
+    elif self.type == "assignmentDecrease":
       varName = self.args[1].args[0]
       resultType, address = self.args[2][0].expression(funcName, result)
       
@@ -276,15 +333,15 @@ class FuncNode(object):
           break
         else:
           print (self.args[1].args[0], currentTable[funcName][key].keys())
-          raise Exception("Variable '" + self.args[1].args[0] + "' has not been declared. Cannot increment.")
+          raise Exception("Variable '" + str(varName) + "' has not been declared. Cannot increment.")
 
 # -------------------------------------------------------------
 
-    elif self.type == "expressions":
-      result = self.args[0].semantic(funcName, result)
+    #elif self.type == "expressions":
+#      result = self.args[0].semantic(funcName, result)
 
-      if self.args[1] is not None:
-        result = self.args[1].semantic(funcName, result)
+#      if self.args[1] is not None:
+#        result = self.args[1].semantic(funcName, result)
 
 # -------------------------------------------------------------
           
@@ -307,30 +364,163 @@ class FuncNode(object):
 
 # -------------------------------------------------------------
 
-    elif self.type == "int" :
-      return "int", currentTable.add(funcName, "int", self.args[0])
+    elif self.type == "megaExp":
+      print("Entro a megaExp")
+      auxVarName = self.args[0].args[0].args[0].args[0].args[0]
+      print(auxVarName)
+      if isPrimitive(auxVarName):
+          result, address = self.args[0].expression(funcName, result)
+          return result, address
+      else:
+          result, address = self.args[0].expression(funcName, result)
+          return result, address
+# -------------------------------------------------------------
 
 # -------------------------------------------------------------
 
-    elif self.type == "decim" :
-      return "decim", currentTable.add(funcName, "decim", self.args[0])
+    elif self.type == "megaExps":
+      print("Entro a megaExps")
+
+      #left operator type
+      leftType, leftAddress = self.args[0].expression(funcName, result)
+
+      #right operator type
+      rightType, rightAddress = self.args[2].expression(funcName, result)
+
+      #result type
+      resultType = semanticCube[leftType][rightType][self.args[1]]
+
+      #temp addresses
+      resultAddress = auxTable.add("Aux", resultType, "aux")
+      quadruples.append([self.args[1], leftAddress, rightAddress, resultAddress])
+
+      return resultType, resultAddress
 
 # -------------------------------------------------------------
 
-    elif self.type == "bool" :
-      return "bool", currentTable.add(funcName, "int", self.args[0])
+# -------------------------------------------------------------
+
+    elif self.type == "superExp":
+      print("Entro a superExp")
+      result, address = self.args[0].expression(funcName, result)
+      return result, address
+    #return getType(auxVarName, funcName, currentTable), auxVarName
 
 # -------------------------------------------------------------
 
-    elif self.type == "id":
-      table = currentTable[funcName]
+# -------------------------------------------------------------
 
-      for i in table:
-        for j in table[i]:
-          if j == self.args[0]:
-            return i, table[i][j]
+    elif self.type == "superExps":
+      print("Entro a superExps")
+      #left operator type
+      leftType, leftAddress = self.args[0].expression(funcName, result)
 
-      raise Exception("Variable does not exist: " + self.args[0])
+      #right operator type
+      rightType, rightAddress = self.args[2].expression(funcName, result)
+
+      #result type
+      print("LeftType: " + leftType)
+      print("RightType: " + rightType)
+      print("Args[1]: " + str(self.args[1]))
+      resultType = semanticCube[leftType][rightType][self.args[1]]
+
+      #temp addresses
+      resultAddress = auxTable.add("Aux", resultType, "aux")
+      quadruples.append([self.args[1], leftAddress, rightAddress, resultAddress])
+
+      return resultType, resultAddress
+
+# -------------------------------------------------------------
+
+# -------------------------------------------------------------
+
+    elif self.type == "exp":
+      print("Entro a Exp")
+      auxVarName = self.args[0].args[0]
+      result, address = self.args[0].expression(funcName, result)
+      return result, address
+          #return getType(auxVarName, funcName, currentTable), auxVarName
+
+# -------------------------------------------------------------
+
+# -------------------------------------------------------------
+
+    elif self.type == "exps":
+      print("Entro a Exps")
+      #left operator type
+      leftType, leftAddress = self.args[0].expression(funcName, result)
+
+      #right operator type
+      rightType, rightAddress = self.args[2].expression(funcName, result)
+
+      #result type
+      print("LeftType: " + leftType)
+      print("RightType: " + rightType)
+      print("Args[1]: " + str(self.args[1]))
+      resultType = semanticCube[leftType][rightType][self.args[1]]
+      print(resultType)
+      
+      #temp addresses
+      resultAddress = auxTable.add("Aux", resultType, "aux")
+      quadruples.append([self.args[1], leftAddress, rightAddress, resultAddress])
+
+      return resultType, resultAddress
+
+# -------------------------------------------------------------
+
+# -------------------------------------------------------------
+
+    elif self.type == "term":
+      print("Entro a term")
+      print("Term args0: " + str(self.args[0]))
+      result, address = self.args[0].expression(funcName, result)
+      return result, address
+#          auxVarName = self.args[0].args[0].args[0]
+#          return getType(auxVarName, funcName, currentTable), auxVarName
+
+# -------------------------------------------------------------
+
+#-------------------------------------------------------------
+
+    elif self.type == "terms":
+      print("Entro a terms")
+      #left operator type
+      leftType, leftAddress = self.args[0].expression(funcName, result)
+
+      #right operator type
+      rightType, rightAddress = self.args[2].expression(funcName, result)
+
+      #result type
+      resultType = semanticCube[leftType][rightType][self.args[1]]
+
+      #temp addresses
+      resultAddress = auxTable.add("Aux", resultType, "aux")
+      quadruples.append([self.args[1], leftAddress, rightAddress, resultAddress])
+
+      return resultType, resultAddress
+
+# -------------------------------------------------------------
+
+# -------------------------------------------------------------
+
+    elif self.type == "factor":
+      print("Entro a factor")
+      print(self.args[0])
+      if isPrimitive(self.args[0]):
+        return getType(self.args[0], funcName, currentTable), self.args[0]
+      else:
+        result, address = self.args[0].expression(funcName, result)
+        return result, address
+
+# -------------------------------------------------------------
+# TODO: arreglos
+    elif self.type == "idCall":
+        print("Entro a idCall")
+        typeGet = getType(self.args[0], funcName, currentTable)
+        return typeGet, currentTable[funcName][typeGet][self.args[0]]
+        if self.args[3] is not None:
+            aux = self.args[3].expression(funcName, result)
+            quadruples.append([self.args[2], result, aux, currentTable[funcName][resultType][varName]])
 
 # -------------------------------------------------------------
 

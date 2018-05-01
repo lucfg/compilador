@@ -21,7 +21,9 @@ def test(input_string):
     print (parse_tree)
     print(parse_tree.semanticAll())
         #debug
-    print ("Your quads: " + str(quadruples))
+    #print ("Your quads: " + str(quadruples))
+    for i in range (0, len(quadruples), 1):
+        print (str(i) + str(quadruples[i]))
     print("Global: " + str(globalTable.items()))
     print("Local: " + str(localTable.items()))
     print("Aux: " + str(auxTable.items()))

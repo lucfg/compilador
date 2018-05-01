@@ -1,7 +1,7 @@
 import sys
 import ply.yacc as yacc
 import lexer
-from semantics import FuncNode
+from semantics import *
 tokens = lexer.tokens
 
 actualFunc = 'program'
@@ -30,7 +30,7 @@ def p_variables(p):
   '''variables :
                | VAR type ID DOT_COMMA variables
   	       | VAR type assignment DOT_COMMA variables
-  	       | VAR type ID L_KEY NUMBER R_KEY DOT_COMMA variables'''
+  	       | VAR type ID L_KEY INTEGER R_KEY DOT_COMMA variables'''
   if len(p) > 2 :
     if len(p) > 8:
       p[0] = FuncNode('arrVar', p[3], p[2], p[5], p[8])
@@ -83,7 +83,7 @@ def p_statements(p):
     if p[2] is None:
       p[0] = FuncNode('statement', p[1])
     else:
-      p[0] = FuncNode('statement', p[1], p[2])
+      p[0] = FuncNode('statements', p[1], p[2])
 
 def p_statement(p):
   '''statement :
@@ -95,7 +95,8 @@ def p_statement(p):
                 | print DOT_COMMA
                 | read DOT_COMMA
                 | lineComment'''
-  p[0] = FuncNode("statement", p[1])
+  
+  p[0] = p[1]
   
 # Assignment
 def p_assignment(p):
@@ -103,7 +104,7 @@ def p_assignment(p):
                 | idCall ASSIGN functionCall
                 | assignIncr
                 | assignDecr'''
-  if len(p) > 3:
+  if len(p) > 2:
     p[0] = FuncNode('assignment', p[1], p[2], p[3])
   else:
     p[0] = p[1]
@@ -181,7 +182,7 @@ def p_megaExp(p):
              | superExp AND superExp
              | superExp OR superExp'''
   if len(p) > 2:
-     p[0] = FuncNode('megaExp', p[1], p[2], p[3])
+     p[0] = FuncNode('megaExps', p[1], p[2], p[3])
   else:
      p[0] = FuncNode('megaExp', p[1])
   
@@ -194,7 +195,7 @@ def p_superExp(p):
               | exp EQUAL exp
               | exp NOT_EQUAL exp'''
   if len(p) > 2:
-     p[0] = FuncNode('superExp', p[1], p[2], p[3])
+    p[0] = FuncNode('superExps', p[1], p[2], p[3])
   else:
      p[0] = FuncNode('superExp', p[1])
   
@@ -203,7 +204,7 @@ def p_exp(p):
           | term PLUS exp
           | term MINUS exp'''
    if len(p) > 2:
-     p[0] = FuncNode('exp', p[1], p[2], p[3])
+     p[0] = FuncNode('exps', p[1], p[2], p[3])
    else:
      p[0] = FuncNode('exp', p[1])
     
@@ -213,22 +214,24 @@ def p_term(p):
            | factor DIVIDE term
            | factor MOD term'''
    if len(p) > 2:
-     p[0] = FuncNode('term', p[1], p[2], p[3])
+     p[0] = FuncNode('terms', p[1], p[2], p[3])
    else:
      p[0] = FuncNode('term', p[1])
     
 def p_factor(p): 
-   '''factor : NUMBER 
+   '''factor : INTEGER
+             | DECIMAL
              | ALPHANUMERIC 
              | CHARACTER
              | BOOLEAN
              | idCall
              | L_PAR megaExp R_PAR
              | functionCall'''
+   
    if len(p) > 2:
-     p[0] = p[2]
+     p[0] = FuncNode('factor', p[2])
    else:
-     p[0] = p[1]
+     p[0] = FuncNode('factor', p[1])
 # ---------------------------------------------------------------------------
 
 ## OTHERS
@@ -238,7 +241,7 @@ def p_idCall(p):
   if len(p) > 2:
     p[0] = FuncNode('idCall', p[1], p[3])
   else:
-    p[0] = p[1]
+    p[0] = FuncNode('idCall', p[1])
 # ---------------------------------------------------------------------------
 
 ## INPUT AND OUTPUT

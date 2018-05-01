@@ -28,7 +28,7 @@ tokens = [
   	# Primitives	
   	'ID',
   	# Data
-    'NUMBER', 'ALPHANUMERIC', 'CHARACTER',
+    'INTEGER', 'DECIMAL', 'ALPHANUMERIC', 'CHARACTER',
   	# Arithmetic operators
 		'INCREMENT', 'DECREMENT','PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MOD',    
     # Boolean operators
@@ -51,10 +51,17 @@ def t_ID(t):
     return t
   
 # Data
-def t_NUMBER(t):
- 	r'\d+'
- 	t.value = int(t.value)
- 	return t
+
+def t_DECIMAL(t):
+    r'[0-9]*\.[0-9]+'
+    t.value = float(t.value)
+    return t
+
+def t_INTEGER(t):
+    r'\d+'
+    t.value = int(t.value)
+    return t
+    
 # FALTA ALPHANUMERIC ////////////////////FALTA ESTO//////////////////////
 t_CHARACTER = r'[a-zA-Z_]'
 t_ALPHANUMERIC = r'\"[a-zA-Z_0-9\s]*\"'
