@@ -32,16 +32,27 @@ def getType(v, funcName="missingFuncName", currentTable="error"):
                 if v in currentTable[funcName][key].keys():
                     print("Lo encontre")
                     found = True
-                    return key
+                    return key, False
+                    break
+
+            for key in globalTable["global"]:
+                print ("GetType key global: " + key)
+            #verifies that the variable has been declared
+                if not found and (v in globalTable["global"][key].keys()):
+                    print("Lo encontre")
+                    found = True
+                    return key, True
+                    break
+                
         if not found:
-            print (self.args[0], currentTable[funcName][key].keys())
+            print (v, currentTable[funcName][key].keys())
             raise Exception("Variable '" + str(v) + "' has not been declared. Cannot assign value.")
 
             return "string"
     elif isinstance(v, int):
-        return "int"
+        return "int", "value"
     elif isinstance(v, float):
-        return "decim"
+        return "decim", "value"
     else:
         return "other"
 
@@ -293,7 +304,7 @@ class FuncNode(object):
       print(varName)
       found = False
       for key in currentTable[funcName]:
-        print("CurTable funcName Key: " + str(currentTable[funcName][key].keys()))
+        print("CurTable funcName Key: " + str(globalTable["global"].keys()))
       #verifies that the variable has been declared
         if varName in currentTable[funcName][key].keys():
           if resultType == key:
@@ -303,6 +314,18 @@ class FuncNode(object):
             break
           else:
             raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0]) + ".")
+      for key in globalTable["global"]:
+          print("CurTable funcName Key: " + str(globalTable["global"].keys()))
+      #verifies that the variable has been declared
+          if not found and (varName in globalTable["global"][key].keys()):
+              if resultType == key:
+                  found = True
+                  quadruples.append(["=", address, "", globalTable["global"][resultType][varName]])
+                  print("Hice el cuadruplo" + str(["=", address, "", globalTable["global"][resultType][varName]]))
+                  break
+              else:
+                  raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0]) + ".")
+        
       if not found:
         print (self.args[0], currentTable[funcName][key].keys())
         raise Exception("Variable '" + str(varName) + "' has not been declared. Cannot assign value.")
@@ -455,7 +478,7 @@ class FuncNode(object):
 
       #result type
       print("LeftType: " + leftType)
-      print("RightType: " + rightType)
+      print("RightType: " + str(rightType))
       print("Args[1]: " + str(self.args[1]))
       resultType = semanticCube[leftType][rightType][self.args[1]]
       print(resultType)
@@ -507,7 +530,12 @@ class FuncNode(object):
       print("Entro a factor")
       print(self.args[0])
       if isPrimitive(self.args[0]):
-        return getType(self.args[0], funcName, currentTable), self.args[0]
+        typeGet, valOrAdd = getType(self.args[0], funcName, currentTable)
+        print("typeGet de un valor: " + str(typeGet))
+        if typeGet == "int" or typeGet == "decim":
+            address = "*" + str(self.args[0]) + "*"
+ #       auxAddress = auxTable.add("Aux", resultType, "aux")
+        return typeGet, address
       else:
         result, address = self.args[0].expression(funcName, result)
         return result, address
@@ -516,8 +544,12 @@ class FuncNode(object):
 # TODO: arreglos
     elif self.type == "idCall":
         print("Entro a idCall")
-        typeGet = getType(self.args[0], funcName, currentTable)
-        return typeGet, currentTable[funcName][typeGet][self.args[0]]
+        typeGet, isGlobal = getType(self.args[0], funcName, currentTable)
+        print("getType de global:" + str(typeGet))
+        if isGlobal:
+            return typeGet, globalTable["global"][typeGet][self.args[0]]
+        else:
+            return typeGet, currentTable[funcName][typeGet][self.args[0]]
         if self.args[3] is not None:
             aux = self.args[3].expression(funcName, result)
             quadruples.append([self.args[2], result, aux, currentTable[funcName][resultType][varName]])
