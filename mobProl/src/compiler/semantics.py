@@ -11,6 +11,8 @@ def isPrimitive(t):
     if isinstance(t, str):
         if t == "true" or t == "false":
             return True
+        elif t[0] == "\"":
+            return True
     elif isinstance(t, int):
         return True
     elif isinstance(t, float):
@@ -23,7 +25,9 @@ def getType(v, funcName="missingFuncName", currentTable="error"):
     if isinstance(v, str):
         if v == "true" or v == "false":
             print("Si es bool")
-            return "bool"
+            return "bool", "value"
+        elif v[0] == "\"":
+            return "string", "value"
         else:
             found = False
             for key in currentTable[funcName]:
@@ -48,13 +52,12 @@ def getType(v, funcName="missingFuncName", currentTable="error"):
             print (v, currentTable[funcName][key].keys())
             raise Exception("Variable '" + str(v) + "' has not been declared. Cannot assign value.")
 
-            return "string"
     elif isinstance(v, int):
         return "int", "value"
     elif isinstance(v, float):
         return "decim", "value"
     else:
-        return "other"
+        return "other", "value"
 
 class FuncNode(object):
   def __init__(self, t, *args):
@@ -179,23 +182,6 @@ class FuncNode(object):
       result = self.args[0].expression(funcName, result)
       if self.args[1] is not None:
           result = self.args[1].semantic(funcName, result)
-
-# -------------------------------------------------------------
-        
-    elif self.type == "print":
-      resultType, address = self.args[0].expression(funcName, result)
-      quadruples.append(["print", address, "", ""])
-
-# -------------------------------------------------------------
-
-    elif self.type == "read":
-      resultType, address = self.args[0].expression(funcName, result)
-      quadruples.append(["read", "", "", address])
-
-# -------------------------------------------------------------
-
-  # TODO: Por especificar
-  #elif self.type == "assignment":
 
 # -------------------------------------------------------------
 
@@ -529,12 +515,12 @@ class FuncNode(object):
     elif self.type == "factor":
       print("Entro a factor")
       print(self.args[0])
+      address = self.args[0]
       if isPrimitive(self.args[0]):
         typeGet, valOrAdd = getType(self.args[0], funcName, currentTable)
         print("typeGet de un valor: " + str(typeGet))
         if typeGet == "int" or typeGet == "decim":
-            address = "*" + str(self.args[0]) + "*"
- #       auxAddress = auxTable.add("Aux", resultType, "aux")
+            address = "*" + str(self.args[0]) + "*"    
         return typeGet, address
       else:
         result, address = self.args[0].expression(funcName, result)
@@ -553,6 +539,22 @@ class FuncNode(object):
         if self.args[3] is not None:
             aux = self.args[3].expression(funcName, result)
             quadruples.append([self.args[2], result, aux, currentTable[funcName][resultType][varName]])
+
+# -------------------------------------------------------------
+
+# -------------------------------------------------------------
+        
+    elif self.type == "print":
+      print ("starting to print") 
+      resultType, address = self.args[0].expression(funcName, result)
+      print("Sigue en print")
+      quadruples.append(["print", address, "", ""])
+
+# -------------------------------------------------------------
+
+    elif self.type == "read":
+      resultType, address = self.args[0].expression(funcName, result)
+      quadruples.append(["read", "", "", address])
 
 # -------------------------------------------------------------
 
