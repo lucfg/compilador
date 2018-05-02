@@ -458,7 +458,8 @@ class FuncNode(object):
     elif self.type == "functionCall" :
         print("Entro a functionCall")
         print("Args de functionCall: " + str(self.args[1]))#parametros
-
+        funcType = ""
+        global nextReturn
       #separates a space for the function call
         quadruples.append(["ERA", self.args[0], "",""])
  #       contpar = 1
@@ -467,12 +468,16 @@ class FuncNode(object):
         for i in self.args[1:]:
             print("Args del paramtero: " + str(i))
             resultType, resultAddress = i.expression(funcName, result)
- 
-            quadruples.append(["Gosub", self.args[0], "", ""])
-            funcType = localTable[self.args[0]]["funcType"]["return"]
+            auxGosub = ["Gosub", "", "", ""]
+            quadruples.append(auxGosub)
 
+            for key in globalTable[self.args[0]].keys():
+                funcType = key
+                break
+
+            auxGosub[1] = globalTable[self.args[0]][funcType][self.args[0]]
             auxAddress = auxTable.add("Aux", funcType, "aux")
-            nextReturn = ["=", localTable[self.args[0]][funcType]["return"], "", auxAddress]
+            nextReturn = ["=", globalTable[self.args[0]][funcType][self.args[0]], "", auxAddress]
             quadruples.append(nextReturn)
 
             return funcType, auxAddress
@@ -484,6 +489,7 @@ class FuncNode(object):
         print(resultType)
         print(address)
         quadruples.append(["Param", address, "", "param"])
+        resultType, address = self.args[1].expression(funcName, result)
         return resultType, address
 
 
@@ -503,6 +509,7 @@ class FuncNode(object):
     elif self.type == "paramF":
         print("entro a paramF")
         resultType, address = self.args[0].expression(funcName, result)
+        
         return resultType, address
 
 # -------------------------------------------------------------
