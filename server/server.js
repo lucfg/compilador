@@ -13,16 +13,16 @@ app.use(cors());
 
 var quadruples = null;
 
-var options = {
-  mode: 'text',
-  pythonPath: '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3',
-  pythonOptions: ['-W', 'ignore'],
-  args: ["program myProgram { main() {}}"]
-};
-
 app.post('/compile', function(req, res) {
   console.log("Compiling program...")
   console.log("Code to compile: " + req.body.code);
+
+  var options = {
+    mode: 'text',
+    pythonPath: '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3',
+    pythonOptions: ['-W', 'ignore'],
+    args: [req.body.code]
+  };
   
   PythonShell.run('mobprol.py', options, function (err, results) {
     if (err) throw err;
