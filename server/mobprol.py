@@ -31,7 +31,8 @@ def test(input_string):
     jsonQuads = ""
     for quad in quadruples:
         jsonQuads += "{\"quad\":" + str(quad) + "},"
-    print ("{" + "\"quadruples\":" + jsonQuads + "}")
+    #print ("{" + "\"quadruples\":" + str(quadruples) + "}")
+    print (str(quadruples))
     #if isinstance(parse_tree, FuncNode):
 #        print (parse_tree.semanticAll())
         # print (memory[0])
