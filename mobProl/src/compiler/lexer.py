@@ -15,7 +15,6 @@ reserved = {
   # Conditionals
 	'if' : 'IF',
   'else' : 'ELSE',
-	'for' : 'FOR',
   'while' : 'WHILE',
   # Primitives
   'int' : 'INT',

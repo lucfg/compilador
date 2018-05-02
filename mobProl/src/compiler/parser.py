@@ -91,7 +91,6 @@ def p_statement(p):
   		| functionCall DOT_COMMA
                 | ifBlock
                 | whileBlock
-                | forBlock
                 | print DOT_COMMA
                 | read DOT_COMMA
                 | lineComment'''
@@ -147,10 +146,7 @@ def p_functionCallParamsMultiple(p):
 # If block
 def p_ifBlock(p):
   '''ifBlock : IF L_PAR megaExp R_PAR body optionalElse'''
-  if p[6] is None:
-    p[0] = FuncNode('if', p[3], p[5])
-  else:
-    p[0] = FuncNode('if', p[3], p[5], p[6])
+  p[0] = FuncNode('if', p[3], p[5], p[6])
   
 def p_optionalElse(p):
   '''optionalElse : 
@@ -162,17 +158,6 @@ def p_whileBlock(p):
   '''whileBlock : WHILE L_PAR megaExp R_PAR body'''
   p[0] = FuncNode('while', p[3], p[5])
   
-def p_forBlock(p): 
-  '''forBlock : FOR L_PAR assignment DOT_COMMA megaExp DOT_COMMA optionalAssign R_PAR body'''
-  if p[7] is None:
-    FuncNode('for', p[3], p[5], p[9])
-  else:
-    FuncNode('for', p[3], p[5], p[7], p[9])
-  
-def p_optionalAssign(p):
-  '''optionalAssign : 
-  		    | assignment'''
-  p[0] = p[1]
 # ---------------------------------------------------------------------------
 
 ## OPERATIONS

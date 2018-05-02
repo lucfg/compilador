@@ -6,6 +6,7 @@ globalTable = VarTable()
 localTable = VarTable(15001, 20001, 25001)
 auxTable = VarTable(30001, 35001, 40001)
 quadruples = []
+gotoMain = ["GOTO","","",""]
 
 def isPrimitive(t):
     if isinstance(t, str):
@@ -24,32 +25,26 @@ def getType(v, funcName="missingFuncName", currentTable="error"):
     print("Getting type of " + str(v))
     if isinstance(v, str):
         if v == "true" or v == "false":
-            print("Si es bool")
             return "bool", "value"
         elif v[0] == "\"":
             return "string", "value"
         else:
             found = False
             for key in currentTable[funcName]:
-                print ("GetType key: " + key)
             #verifies that the variable has been declared
                 if v in currentTable[funcName][key].keys():
-                    print("Lo encontre")
                     found = True
                     return key, False
                     break
 
             for key in globalTable["global"]:
-                print ("GetType key global: " + key)
             #verifies that the variable has been declared
                 if not found and (v in globalTable["global"][key].keys()):
-                    print("Lo encontre")
                     found = True
                     return key, True
                     break
                 
         if not found:
-            print (v, currentTable[funcName][key].keys())
             raise Exception("Variable '" + str(v) + "' has not been declared. Cannot assign value.")
 
     elif isinstance(v, int):
@@ -68,7 +63,6 @@ class FuncNode(object):
     return self.show()
   
   def show(self, iN = 0):
-    #print ("entered show")
     
     indent = " "* iN;
 
@@ -81,9 +75,6 @@ class FuncNode(object):
         sS += indent + iI.show(iN + 1)
       
       sS += "\n"
-
-      #sS += indent + "quad length is: " + str(len(quadruples))
-
     return sS
 
 # -------------------------------------------------------------
@@ -109,7 +100,7 @@ class FuncNode(object):
 # -------------------------------------------------------------
 
     if self.type == "program":
-      quadruples.append(["GOTO","","","main"])
+      quadruples.append(gotoMain)
 
       for elem in self.args:
         if elem is not None:
@@ -118,14 +109,13 @@ class FuncNode(object):
           else:
             elem.semantic(funcName, result)
       quadruples.append(["END","","",""])
-      #print (dict(globalTable.items() + localTable.items() + auxTable.items()), quadruples)
 
 # -------------------------------------------------------------
 
     elif self.type == "main":
       quadruples.append(["main","","",""])
+      gotoMain[3] = len(quadruples)
       funcName = self.type
-      # TODO: check that it has not been declared before
       currentTable.add(funcName, "int", "main")
       localTable.add(funcName, "funcType", self.args[0])
 
@@ -137,7 +127,6 @@ class FuncNode(object):
 # -------------------------------------------------------------
 
     elif self.type == "function":
-      print ("Received info from function: args0 " + self.args[0] + " args1 " + self.args[1])
       funcName = self.args[0]
       currentTable.add(funcName, self.args[1],self.args[0])
       localTable.add(funcName, "funcType", self.args[0])
@@ -150,7 +139,7 @@ class FuncNode(object):
       quadruples.append(["ret","","",""])
 
 # -------------------------------------------------------------
-
+    #TODO: PARAMS
     elif self.type == "params":
       #print (self.args[0])
       for i in range(0, len(self.args[0]), 2):
@@ -171,14 +160,15 @@ class FuncNode(object):
     elif self.type == "statement":
       print("Entro a statement")
       if self.args[0] is not None:
-        print(self.args[0])
-        result = self.args[0].expression(funcName, result)
+        if self.args[0].type == "assignment" or self.args[0].type == "functionCall" or self.args[0].type == "print" or self.args[0].type == "read":
+            result = self.args[0].expression(funcName, result)
+        else:
+            result = self.args[0].semantic(funcName, result)
 
 # -------------------------------------------------------------
         
     elif self.type == "statements":
       print("Entro a statements")
-      print(self.args[0])
       result = self.args[0].expression(funcName, result)
       if self.args[1] is not None:
           result = self.args[1].semantic(funcName, result)
@@ -187,82 +177,50 @@ class FuncNode(object):
 
     #conditions
     elif self.type == "if":
-      print ('args', self.args[0].args[0])
-      tipo, address = self.args[0].args[0].expression(funcName, result)
-
-      if tipo != 'bool':
+      print ("Entro al if")
+      resultType, address = self.args[0].expression(funcName, result)
+      if resultType != 'bool':
         raise Exception("Condition must be bool type")
 
       #GotoF
       gotof = ['gotof', address, " ", " "]
       quadruples.append(gotof)
-      lena = len(quadruples)
       result = self.args[1].semantic(funcName, result)
-
-      goto = ['goto', " ", " ", 0]
+      auxQuadDesp = len(quadruples)
+      
+      goto = ['goto', " ", " ", " "]
       quadruples.append(goto)
-      gotof[3] = len(quadruples) - lena
+      gotof[3] = auxQuadDesp + 1
 
+      # Else
       if self.args[2] is not None:
-        lenelsea = len(quadruples)
+        auxElseAnt = len(quadruples)
         result = self.args[2].semantic(funcName, result)
-        goto[3] = len(quadruples) - lenelsea
+        auxElseDesp = len(quadruples)
+        goto[3] = auxElseDesp
 
 # -------------------------------------------------------------
 
 #while
     elif self.type == "while":
-      print ('args', self.args[0].args[0])
-      tipo, address = self.args[0].args[0].expression(funcName, result)
-
-      if tipo != 'bool':
+      print ("Entro al while")
+      auxQuadAnt = len(quadruples)
+      resultType, address = self.args[0].expression(funcName, result)
+      if resultType != 'bool':
         raise Exception("Condition must be bool type")
 
       #GotoF
       gotof = ['gotof', address, " ", " "]
       quadruples.append(gotof)
-      lena = len(quadruples)
       result = self.args[1].semantic(funcName, result)
+      auxQuadDesp = len(quadruples)
 
-      goto = ['goto', " ", " ", 0]
+      goto = ['goto', " ", " ", " "]
       quadruples.append(goto)
-      gotof[3] = len(quadruples) - lena
-
-      if self.args[2] is not None:
-        lenelsea = len(quadruples)
-        result = self.args[2].semantic(funcName, result)
-        goto[3] = len(quadruples) - lenelsea
+      gotof[3] = auxQuadDesp + 1
+      goto[3] = auxQuadAnt
 
 # -------------------------------------------------------------
-
-    elif self.type == "for" :
-      back = len(quadruples)
-      pointer = currentTable.getpInt()
-      currentTable.add(funcName, 'int', self.args[0])
-      quadruples.append(['=', 0 , '', currentTable[funcName]['int'][self.args[0]]])
-
-      # Length Array
-      for key in currentTable[funcName]:
-        if self.args[2] in currentTable[funcName][key].keys():
-          saveLength = auxTable.add("Aux", "int", "aux")
-          quadruples.append(['length', currentTable[funcName][key][self.args[2]], "",saveLength])
-        else:
-          raise Exception("The array is not defined")
-
-      saveBool = auxTable.add("Aux", "int", "aux")
-      quadruples.append(['<',currentTable[funcName]['int'][self.args[0]] ,currentTable[funcName][key][self.args[2]], saveBool])
-      gotof = ['gotof', saveBool, " ", " "]
-      quadruples.append(gotof)
-
-      lena = len(quadruples)
-      result = self.args[3].semantic(funcName, result)
-      quadruples.append(['+', 1, currentTable[funcName]['int'][self.args[0]], currentTable[funcName]['int'][self.args[0]]])
-
-      goto = ['goto', back - len(quadruples), " ", ]
-      quadruples.append(goto)
-      
-      gotof[3] = len(quadruples) - lena
-      print (quadruples)
 
     else:
       print("Error. Type " + self.type + " not supported.")
@@ -279,41 +237,33 @@ class FuncNode(object):
 
 # -------------------------------------------------------------
 
-    print("Entro a expresion")
     print(funcName)
     if self.type == "assignment":
       varName = self.args[0].args[0]
       resultType, address = self.args[2].expression(funcName, result)
-      print("Result type: " + str(resultType))
-      print("Address: " + str(address))
-      print("Assignment part 1")
-      print(varName)
+      
       found = False
       for key in currentTable[funcName]:
-        print("CurTable funcName Key: " + str(globalTable["global"].keys()))
-      #verifies that the variable has been declared
+      #verifies that the variable has been declared in current table
         if varName in currentTable[funcName][key].keys():
           if resultType == key:
             found = True
             quadruples.append(["=", address, "", currentTable[funcName][resultType][varName]])
-            print("Hice el cuadruplo" + str(["=", address, "", currentTable[funcName][resultType][varName]]))
             break
           else:
             raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0]) + ".")
+
       for key in globalTable["global"]:
-          print("CurTable funcName Key: " + str(globalTable["global"].keys()))
-      #verifies that the variable has been declared
+      #verifies that the variable has been declared in global table
           if not found and (varName in globalTable["global"][key].keys()):
               if resultType == key:
                   found = True
                   quadruples.append(["=", address, "", globalTable["global"][resultType][varName]])
-                  print("Hice el cuadruplo" + str(["=", address, "", globalTable["global"][resultType][varName]]))
                   break
               else:
                   raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0]) + ".")
         
       if not found:
-        print (self.args[0], currentTable[funcName][key].keys())
         raise Exception("Variable '" + str(varName) + "' has not been declared. Cannot assign value.")
 
 # -------------------------------------------------------------
@@ -375,15 +325,8 @@ class FuncNode(object):
 
     elif self.type == "megaExp":
       print("Entro a megaExp")
-      auxVarName = self.args[0].args[0].args[0].args[0].args[0]
-      print(auxVarName)
-      if isPrimitive(auxVarName):
-          result, address = self.args[0].expression(funcName, result)
-          return result, address
-      else:
-          result, address = self.args[0].expression(funcName, result)
-          return result, address
-# -------------------------------------------------------------
+      result, address = self.args[0].expression(funcName, result)
+      return result, address
 
 # -------------------------------------------------------------
 
@@ -428,9 +371,6 @@ class FuncNode(object):
       rightType, rightAddress = self.args[2].expression(funcName, result)
 
       #result type
-      print("LeftType: " + leftType)
-      print("RightType: " + rightType)
-      print("Args[1]: " + str(self.args[1]))
       resultType = semanticCube[leftType][rightType][self.args[1]]
 
       #temp addresses
@@ -463,11 +403,7 @@ class FuncNode(object):
       rightType, rightAddress = self.args[2].expression(funcName, result)
 
       #result type
-      print("LeftType: " + leftType)
-      print("RightType: " + str(rightType))
-      print("Args[1]: " + str(self.args[1]))
       resultType = semanticCube[leftType][rightType][self.args[1]]
-      print(resultType)
       
       #temp addresses
       resultAddress = auxTable.add("Aux", resultType, "aux")
@@ -481,7 +417,6 @@ class FuncNode(object):
 
     elif self.type == "term":
       print("Entro a term")
-      print("Term args0: " + str(self.args[0]))
       result, address = self.args[0].expression(funcName, result)
       return result, address
 #          auxVarName = self.args[0].args[0].args[0]
@@ -514,11 +449,9 @@ class FuncNode(object):
 
     elif self.type == "factor":
       print("Entro a factor")
-      print(self.args[0])
       address = self.args[0]
       if isPrimitive(self.args[0]):
         typeGet, valOrAdd = getType(self.args[0], funcName, currentTable)
-        print("typeGet de un valor: " + str(typeGet))
         if typeGet == "int" or typeGet == "decim":
             address = "*" + str(self.args[0]) + "*"    
         return typeGet, address
@@ -531,7 +464,6 @@ class FuncNode(object):
     elif self.type == "idCall":
         print("Entro a idCall")
         typeGet, isGlobal = getType(self.args[0], funcName, currentTable)
-        print("getType de global:" + str(typeGet))
         if isGlobal:
             return typeGet, globalTable["global"][typeGet][self.args[0]]
         else:
@@ -545,9 +477,8 @@ class FuncNode(object):
 # -------------------------------------------------------------
         
     elif self.type == "print":
-      print ("starting to print") 
+      print ("Entro a print") 
       resultType, address = self.args[0].expression(funcName, result)
-      print("Sigue en print")
       quadruples.append(["print", address, "", ""])
 
 # -------------------------------------------------------------
