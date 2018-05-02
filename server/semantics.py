@@ -37,7 +37,7 @@ def getType(v, funcName="missingFuncName", currentTable="error"):
                     found = True
                     return key, False
                     break
-
+    
             for key in globalTable["global"]:
             #verifies that the variable has been declared
                 if not found and (v in globalTable["global"][key].keys()):
@@ -277,19 +277,20 @@ class FuncNode(object):
             break
           else:
             raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0]) + ".")
-
-      for key in globalTable["global"]:
-      #verifies that the variable has been declared in global table
-          if not found and (varName in globalTable["global"][key].keys()):
-              if resultType == key:
-                  found = True
-                  if auxValue == "value":
-                      quadruples.append([self.args[1], globalTable["global"][resultType][varName], "*1*", globalTable["global"][resultType][varName]])
+      print(str(globalTable))
+      if "global" in globalTable.keys():
+          for key in globalTable["global"]:
+          #verifies that the variable has been declared in global table
+              if not found and (varName in globalTable["global"][key].keys()):
+                  if resultType == key:
+                      found = True
+                      if auxValue == "value":
+                          quadruples.append([self.args[1], globalTable["global"][resultType][varName], "*1*", globalTable["global"][resultType][varName]])
+                      else:
+                          quadruples.append(["=", address, "", globalTable["global"][resultType][varName]])
+                      break
                   else:
-                      quadruples.append(["=", address, "", globalTable["global"][resultType][varName]])
-                  break
-              else:
-                  raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0]) + ".")
+                      raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0]) + ".")
         
       if not found:
         raise Exception("Variable '" + str(varName) + "' has not been declared. Cannot assign value.")
