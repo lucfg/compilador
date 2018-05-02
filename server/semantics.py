@@ -294,61 +294,6 @@ class FuncNode(object):
         raise Exception("Variable '" + str(varName) + "' has not been declared. Cannot assign value.")
 
 # -------------------------------------------------------------
-    elif self.type == "assignmentIncrease":
-      varName = self.args[1].args[0]
-      resultType, address = self.args[2][0].expression(funcName, result)
-      
-      for key in currentTable[funcName]:
-      #verifies that the variable has been declared
-        if self.args[1].args[0] in currentTable[funcName][key].keys():
-          quadruples.append(['++', '', '', currentTable[funcName][resultType][varName]])
-          break
-        else:
-          print (self.args[1].args[0], currentTable[funcName][key].keys())
-          raise Exception("Variable '" + str(varName) + "' has not been declared. Cannot increment.")
-
-# -------------------------------------------------------------
-    elif self.type == "assignmentDecrease":
-      varName = self.args[1].args[0]
-      resultType, address = self.args[2][0].expression(funcName, result)
-      
-      for key in currentTable[funcName]:
-      #verifies that the variable has been declared
-        if self.args[1].args[0] in currentTable[funcName][key].keys():
-          quadruples.append(['--', '', '', currentTable[funcName][resultType][varName]])
-          break
-        else:
-          print (self.args[1].args[0], currentTable[funcName][key].keys())
-          raise Exception("Variable '" + str(varName) + "' has not been declared. Cannot increment.")
-
-# -------------------------------------------------------------
-
-    #elif self.type == "expressions":
-#      result = self.args[0].semantic(funcName, result)
-
-#      if self.args[1] is not None:
-#        result = self.args[1].semantic(funcName, result)
-
-# -------------------------------------------------------------
-          
-    # Handles an expression
-    elif self.type == "expression":
-      #left operator type
-      leftType, leftAddress = self.args[1].expression(funcName, result)
-	
-      #right operator type
-      rightType, rightAddress = self.args[2].expression(funcName, result)
-
-      #result type
-      resultType = semanticCube[leftType][rightType][self.args[0]]
-
-      #temp addresses
-      resultAddress = auxTable.add("Aux", resultType, "aux")
-      quadruples.append([self.args[0], leftAddress, rightAddress, resultAddress])
-
-      return resultType, resultAddress
-
-# -------------------------------------------------------------
 
     elif self.type == "megaExp":
       print("Entro a megaExp")
@@ -505,12 +450,6 @@ class FuncNode(object):
       print ("Entro a print") 
       resultType, address = self.args[0].expression(funcName, result)
       quadruples.append(["print", address, "", ""])
-
-# -------------------------------------------------------------
-
-    elif self.type == "read":
-      resultType, address = self.args[0].expression(funcName, result)
-      quadruples.append(["read", "", "", address])
 
 # -------------------------------------------------------------
 

@@ -92,7 +92,6 @@ def p_statement(p):
                 | ifBlock
                 | whileBlock
                 | print DOT_COMMA
-                | read DOT_COMMA
                 | lineComment
                 | return DOT_COMMA'''
   
@@ -250,10 +249,7 @@ def p_print_help(p):
   		| functionCall
   		| megaExp'''
   p[0] = p[1]
-
-def p_read(p):
-  '''read : READ L_PAR idCall R_PAR'''
-  p[0] = FuncNode('read', p[3])
+  
 # ---------------------------------------------------------------------------
 
 ## COMMENTS
