@@ -602,13 +602,13 @@ class LexerReflect(object):
     # Validate the tokens
     def validate_tokens(self):
         terminals = {}
-        for n in self.tokens:
-            if not _is_identifier.match(n):
-                self.log.error("Bad token name '%s'", n)
-                self.error = True
-            if n in terminals:
-                self.log.warning("Token '%s' multiply defined", n)
-            terminals[n] = 1
+        #for n in self.tokens:
+        #    if not _is_identifier.match(n):
+        #        self.log.error("Bad token name '%s'", n)
+        #        self.error = True
+        #    if n in terminals:
+        #        #self.log.warning("Token '%s' multiply defined", n)
+        #    terminals[n] = 1
 
     # Get the literals specifier
     def get_literals(self):
@@ -994,7 +994,8 @@ def lex(module=None, object=None, debug=False, optimize=False, lextab='lextab',
     lexobj.lexstateerrorf = linfo.errorf
     lexobj.lexerrorf = linfo.errorf.get('INITIAL', None)
     if not lexobj.lexerrorf:
-        errorlog.warning('No t_error rule is defined')
+        #errorlog.warning('No t_error rule is defined')
+        youShallNotWarnMe = True
 
     # Set up eof functions
     lexobj.lexstateeoff = linfo.eoff

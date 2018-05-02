@@ -33,10 +33,20 @@ def test(input_string):
         # print (virtual_machine(cuadruplos, memory[0]))
 #    else:
 #        print ('Failed program')
-while True:
-    try:
-        s = input('code> ')
-    except EOFError:
-        break
-    if not s: continue
+if len(sys.argv) < 2:
+    while True:
+        try:
+            s = input('code> ')
+        except EOFError:
+            break
+        if not s: continue
+        test(s)
+else:
+    i = 0
+    s = ""
+    for arg in sys.argv:
+        if i == 1:
+            s = str(arg)
+        i += 1
+
     test(s)
