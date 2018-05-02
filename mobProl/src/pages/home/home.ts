@@ -1,7 +1,8 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { Http } from '@angular/http';
-import { NavController } from 'ionic-angular';
+import { NavController, ModalController } from 'ionic-angular';
 import { map } from 'rxjs/operators';
+import { OutputPage } from '../output/output';
 
 @Component({
   selector: 'page-home',
@@ -10,7 +11,8 @@ import { map } from 'rxjs/operators';
 export class HomePage {
   programName: string;
   programCodeString: string;
-  fullCodeString: string;
+
+  quadruples = [];
 
   // Interface
   @ViewChild('myInput') myInput: ElementRef;
@@ -19,10 +21,11 @@ export class HomePage {
 
   constructor(
         public navCtrl: NavController,
+        public modalCtrl: ModalController,
         private http: Http,
     ) {
     this.programName = "myProgram"
-    this.programCodeString = "main() {}";
+    this.programCodeString = "main() {var int a = 0; print(\"Hola\")}";
   }
 
   ionViewDidLoad(){
@@ -30,28 +33,51 @@ export class HomePage {
   }
 
   async compileAndRun() {
-    console.log("debug: Compiling code...");
-    let data = {
-        code: "test code"
-    };
-
-    this.http.post('http://localhost:8080/compile', data).pipe(
-        map(res => res.json())
-    ).subscribe(response => {
-      console.log("Response quadruples are:");  
-      console.log(response.quadruples);
-    });
+    await this.compile();
+    await this.run();
   }
 
   /**
    * Sends code to python and receives cuadruples to execute
    */
-  compile() {
-    //TODO: run python code
+  async compile() {
+    console.log("Compiling code...");
+    let data = {
+        code: "program " + this.programName + "{ "
+            + this.programCodeString
+            + " }"
+    };
+
+    var response;
+    try {
+      response = await this.http.post('http://localhost:8080/compile', data).toPromise();  
+    } catch (err) {
+      console.log("Error while trying to access the server: " + err.message);
+    }
+
+    if (!response) {
+      return;
+    }
+    
+    let jsonResponse = response.json();
+    this.quadruples = jsonResponse.quadruples;
+
+    console.log("Received quadruples to execute:");
+    console.log(this.quadruples);
   }
 
-  run(quadruples) {
-    //TODO: receive and execute quadruples
+  /**
+   * Uses quadruples to run commands, showing output on screen
+   */
+  async run() {
+    console.log("debug: Running program...");
+    const modal = this.modalCtrl.create(OutputPage, {quadruples: this.quadruples});
+
+    modal.onWillDismiss(() => {
+      // No interface updates needed?
+    });
+
+    modal.present();
   }
 
   

@@ -4,8 +4,6 @@ var logger = require('morgan');
 var methodOverride = require('method-override')
 var cors = require('cors');
 var PythonShell = require('python-shell');
-//var pyshell = new PythonShell('test.py');
-//you can use error handling to see if there are any errors
  
 var app = express();
 app.use(logger('dev'));
@@ -15,14 +13,6 @@ app.use(cors());
 
 var quadruples = null;
 
-//pyshell.send('hello');
- 
-/*pyshell.on('message', function (message) {
-  // received a message sent from the Python script (a simple "print" statement)
-  console.log(message);
-});
-*/
-
 var options = {
   mode: 'text',
   pythonPath: '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3',
@@ -30,24 +20,23 @@ var options = {
   args: ["program myProgram { main() {}}"]
 };
 
-PythonShell.run('mobprol.py', options, function (err, results) {
-  if (err) throw err;
-  // results is an array consisting of messages collected during execution
-  console.log('results: %j', results);
-});
-
 app.post('/compile', function(req, res) {
-  var options = {
-    mode: 'text',
-    pythonPath: '/usr/bin/env python3',
-    args: ['program myProgram { main() {}}']
-  };
+  console.log("Compiling program...")
+  console.log("Code to compile: " + req.body.code);
   
-      console.log("Sending input to compiler");
-      PythonShell.run('mobprol.py', function (err) {
+  PythonShell.run('mobprol.py', options, function (err, results) {
     if (err) throw err;
-    console.log('finished');
+
+    console.log('results: %j', results[results.length-1]);
+    console.log();
+    let unprocessedData = results[results.length-1];
+    let data = unprocessedData.replace("\\\"", "\"");
+    data = unprocessedData.replace(/[']/g, "\"");
+    console.log("New data is " + data);
+
+    res.json({"success": true, "quadruples": data});
   });
-    });
+  
+});
 
 app.listen(process.env.PORT || 8080);
