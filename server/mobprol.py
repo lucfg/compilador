@@ -27,6 +27,11 @@ def test(input_string):
     print("Global: " + str(globalTable.items()))
     print("Local: " + str(localTable.items()))
     print("Aux: " + str(auxTable.items()))
+
+    jsonQuads = ""
+    for quad in quadruples:
+        jsonQuads += "{\"quad\":" + str(quad) + "}, "
+    print ("{" + "\"quadruples\":" + jsonQuads + "}")
     #if isinstance(parse_tree, FuncNode):
 #        print (parse_tree.semanticAll())
         # print (memory[0])
