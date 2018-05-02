@@ -122,30 +122,21 @@ def p_assignDecr(p):
 # Function call
 def p_functionCall(p):
   '''functionCall : ID L_PAR functionCallParams R_PAR'''
-  p[0] = FuncNode('functionCall', p[1])
+  p[0] = FuncNode('functionCall', p[1], p[3])
   
 def p_functionCallParams(p):
-  '''functionCallParams : functionCallParamsOptional'''
-  p[0] = FuncNode('params', p[1].args[0])
+  '''functionCallParams :
+                        | functionCallParamsOptional'''
+  if len(p) > 1:
+    p[0] = FuncNode('paramF', p[1])
   
 def p_functionCallParamsOptional(p):
-  '''functionCallParamsOptional :
-                                | megaExp functionCallParamsMultiple'''
+  '''functionCallParamsOptional : megaExp COMMA functionCallParamsOptional
+                                | megaExp'''
   if len(p) > 2:
-    #p[0] = FuncNode('params', p[1] + p[2].args[0])
-    p[0] = p[1] + p[2].args[0]
-
-#TODO: Revisar punto neuralgico para FunctionCall
-def p_functionCallParamsMultiple(p):
-  '''functionCallParamsMultiple :
-                                | COMMA functionCallParamsOptional'''
-  if len(p) > 2:
-    p[0] = p[1]
-  
-#def p_functionCallParamsMultiple(p):
- # '''functionCallParamsMultiple : megaExp
-#                                | megaExp COMMA functionCallParamsMultiple'''
-
+    p[0] = FuncNode("params", p[1], p[3])
+  else:
+    p[0] = FuncNode("param", p[1])
   
 # If block
 def p_ifBlock(p):

@@ -7,6 +7,7 @@ localTable = VarTable(15001, 20001, 25001)
 auxTable = VarTable(30001, 35001, 40001)
 quadruples = []
 gotoMain = ["GOTO","","",""]
+contp = 1
 
 def isPrimitive(t):
     if isinstance(t, str):
@@ -52,7 +53,7 @@ def getType(v, funcName="missingFuncName", currentTable="error"):
     elif isinstance(v, float):
         return "decim", "value"
     else:
-        return "other", "value"
+        return "void", "value"
 
 class FuncNode(object):
   def __init__(self, t, *args):
@@ -455,26 +456,55 @@ class FuncNode(object):
 
     #call function. Receives id(params)
     elif self.type == "functionCall" :
-      global nextReturn
+        print("Entro a functionCall")
+        print("Args de functionCall: " + str(self.args[1]))#parametros
 
       #separates a space for the function call
-      quadruples.append(["ERA", self.args[0], "",""])
-      contp = 1
+        quadruples.append(["ERA", self.args[0], "",""])
+ #       contpar = 1
 
       #TODO: does this truly iterate through all possible parameters? Isn't the Gosub appended multiple times
-      for i in self.args[1]:
-        resultType, resultAddress = i.expression(funcName, result)
-        quadruples.append(["Param", resultAddress, "", "param"+str(contp)])
+        for i in self.args[1:]:
+            print("Args del paramtero: " + str(i))
+            resultType, resultAddress = i.expression(funcName, result)
+ 
+            quadruples.append(["Gosub", self.args[0], "", ""])
+            funcType = localTable[self.args[0]]["funcType"]["return"]
 
-        contp += 1
+            auxAddress = auxTable.add("Aux", funcType, "aux")
+            nextReturn = ["=", localTable[self.args[0]][funcType]["return"], "", auxAddress]
+            quadruples.append(nextReturn)
 
-        quadruples.append(["Gosub", self.args[0], "", ""])
-        funcType = localTable[self.args[0]]["funcType"]["return"]
+            return funcType, auxAddress
+# -------------------------------------------------------------
 
-        auxAddress = auxTable.add("Aux", funcType, "aux")
-        nextReturn = ["=", localTable[self.args[0]][funcType]["return"], "", auxAddress]
-        quadruples.append(nextReturn)
+    elif self.type == "params":
+        print("entro a params")
+        resultType, address = self.args[0].expression(funcName, result)
+        print(resultType)
+        print(address)
+        quadruples.append(["Param", address, "", "param"])
+        return resultType, address
 
-      return funcType, auxAddress
+
+# -------------------------------------------------------------
+
+    elif self.type == "param":
+        print("entro a param")
+        resultType, address = self.args[0].expression(funcName, result)
+        print(resultType)
+        print(address)
+        quadruples.append(["Param", address, "", "param"])
+        return resultType, address
+        
+
+# -------------------------------------------------------------
+
+    elif self.type == "paramF":
+        print("entro a paramF")
+        resultType, address = self.args[0].expression(funcName, result)
+        return resultType, address
+
+# -------------------------------------------------------------
 
     return result
