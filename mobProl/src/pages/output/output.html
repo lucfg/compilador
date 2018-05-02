@@ -16,8 +16,10 @@
 <ion-content padding>
   <ion-grid>
     <ion-row *ngFor="let line of outputLines">
-      <ion-col>
-        {{ line }}
+      <ion-col col-auto>
+        <ion-label>
+          {{ line }}
+        </ion-label>
       </ion-col>
     </ion-row>
   </ion-grid>

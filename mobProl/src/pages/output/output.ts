@@ -34,6 +34,7 @@ export class OutputPage {
   }
 
   // Quadruple reader
+  outputLines: string[] = [];
   programIndex = [0];
   currentDepth = 0;
   
@@ -57,16 +58,16 @@ export class OutputPage {
     let arg2 = curQuad[2];
     let arg3 = curQuad[3];
 
-    let arg1isConst = arg1.indexOf('*') > -1 || arg1 == "True" || arg1 == "False";
-    let arg2isConst = arg2.indexOf('*') > -1 || arg2 == "True" || arg2 == "False";
+    let arg1isConst = arg1.indexOf('*') > -1 || arg1 == "true" || arg1 == "false";
+    let arg2isConst = arg2.indexOf('*') > -1 || arg2 == "true" || arg2 == "false";
     //let arg3isConst = arg3.indexOf('*') > -1 || arg3 == "True" || arg3 == "False";
 
     var arg1Const;
     var arg2Const;
-    if (arg1 == "True") {
+    if (arg1 == "true") {
       arg1Const = true;
     }
-    else if (arg1 == "False") {
+    else if (arg1 == "false") {
       arg1Const = true;
     }
     else {
@@ -75,10 +76,10 @@ export class OutputPage {
       arg1Const = Number(cleanString1);
     }
 
-    if (arg2 == "True") {
+    if (arg2 == "true") {
       arg2Const = true;
     }
-    else if (arg2 == "False") {
+    else if (arg2 == "false") {
       arg2Const = false;
     }
     else {
@@ -87,18 +88,31 @@ export class OutputPage {
       arg2Const = Number(cleanString2);
     }
 
+    console.log("arg1isConst: " + arg1isConst + arg1Const + " arg2isConst: " + arg2isConst + arg2Const);
     
     switch (curQuad[0].toLowerCase()) {
       // GoTo's
       case "goto":
         console.log("Going from " + this.programIndex[depth] + " in level " + depth + " to " + curQuad[3]);
-        this.programIndex[depth] = curQuad[3];
+        this.programIndex[depth] = curQuad[3]-1;
+        break;
+
+      case "gotof":
+        if (arg1isConst ? arg1Const : this.memory[arg1].value) {
+          console.log("Changing running index to " + arg3);
+          this.programIndex[depth] = arg3-1;
+        }
         break;
 
       // Statements
       case "=":
         console.log("Assigning to address " + arg3 + ", value/addr " + (arg1isConst ? arg1Const : this.memory[arg1].value));
         this.memory[arg3] = new varTuple( arg1isConst ? arg1Const : this.memory[arg1].value );
+        break;
+
+      case "print":
+        console.log("Outputting: " + (arg1isConst ? arg1Const : this.memory[arg1].value));
+        this.outputLines.push(arg1isConst ? arg1Const : this.memory[arg1].value);
         break;
 
       // Expressions

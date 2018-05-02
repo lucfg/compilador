@@ -90,7 +90,7 @@ export class HomePage {
     const modal = this.modalCtrl.create(OutputPage, {programName: this.programName, quadruples: this.quadruples});
 
     modal.onWillDismiss(() => {
-      // No interface updates needed?
+      this.quadruples = [];
     });
 
     modal.present();
