@@ -12,6 +12,7 @@ reserved = {
   'var' : 'VAR',
   'true' : 'BOOLEAN',
   'false' : 'BOOLEAN',
+  'return' : 'RETURN',
   # Conditionals
 	'if' : 'IF',
   'else' : 'ELSE',

@@ -93,11 +93,16 @@ def p_statement(p):
                 | whileBlock
                 | print DOT_COMMA
                 | read DOT_COMMA
-                | lineComment'''
+                | lineComment
+                | return DOT_COMMA'''
   
   p[0] = p[1]
   
 # Assignment
+def p_return(p):
+  '''return : RETURN megaExp'''
+  p[0] = FuncNode('return', p[2])
+
 def p_assignment(p):
   '''assignment : idCall ASSIGN megaExp
                 | idCall ASSIGN functionCall
@@ -109,10 +114,10 @@ def p_assignment(p):
     p[0] = p[1]
 def p_assignIncr(p):
   '''assignIncr : idCall INCREMENT'''
-  p[0] = FuncNode('assignmentIncrease', p[1], p[2])
+  p[0] = FuncNode('assignment', p[1], '+', 1)
 def p_assignDecr(p):
   '''assignDecr : idCall DECREMENT'''
-  p[0] = FuncNode('assignmentDecrease', p[1], p[2])
+  p[0] = FuncNode('assignment', p[1], '-', 1)
 
   
 # Function call

@@ -123,22 +123,38 @@ class FuncNode(object):
         if elem is not None:
           elem.semantic(funcName, result)
 
-      quadruples.append(["ret","","",""])
+      quadruples.append(["ret","*0*","",""])
 # -------------------------------------------------------------
 
     elif self.type == "function":
       funcName = self.args[0]
       currentTable.add(funcName, self.args[1],self.args[0])
       localTable.add(funcName, "funcType", self.args[0])
-      quadruples.append(["func", funcName, self.args[1],""])
+      auxFuncType = ["func", funcName, self.args[1],""]
+      quadruples.append(auxFuncType)
+
+ #     auxReturn = ""
 
       for elem in self.args[2:]:
         if elem is not None:
           elem.semantic(funcName, result)
 
-      quadruples.append(["ret","","",""])
+      quadruples.append(["ENDPROC","","",""])
 
 # -------------------------------------------------------------
+
+    elif self.type == "return":
+        resultType, address = self.args[0].expression(funcName, result)
+        print("El result de RETURN" + str(resultType))
+
+        print(str(globalTable[funcName].keys()))
+        if resultType in globalTable[funcName].keys(): 
+            quadruples.append(["ret", address,"",""])
+        else:
+            raise Exception("The function " + funcName + " needs to return something of type " + resultType + ".")
+
+# -------------------------------------------------------------
+
     #TODO: PARAMS
     elif self.type == "params":
       #print (self.args[0])
@@ -240,15 +256,23 @@ class FuncNode(object):
     print(funcName)
     if self.type == "assignment":
       varName = self.args[0].args[0]
-      resultType, address = self.args[2].expression(funcName, result)
-      
+      address = ""
+      auxValue = ""
+      if isPrimitive(self.args[2]):
+          resultType, auxValue = getType(self.args[2], funcName, currentTable)
+      else:
+          resultType, address = self.args[2].expression(funcName, result)
+      print("auxValue" + auxValue)
       found = False
       for key in currentTable[funcName]:
       #verifies that the variable has been declared in current table
         if varName in currentTable[funcName][key].keys():
           if resultType == key:
             found = True
-            quadruples.append(["=", address, "", currentTable[funcName][resultType][varName]])
+            if auxValue == "value":
+                quadruples.append([self.args[1], currentTable[funcName][resultType][varName], "*1*", currentTable[funcName][resultType][varName]])
+            else:
+                quadruples.append(["=", address, "", currentTable[funcName][resultType][varName]])
             break
           else:
             raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0]) + ".")
@@ -258,7 +282,10 @@ class FuncNode(object):
           if not found and (varName in globalTable["global"][key].keys()):
               if resultType == key:
                   found = True
-                  quadruples.append(["=", address, "", globalTable["global"][resultType][varName]])
+                  if auxValue == "value":
+                      quadruples.append([self.args[1], globalTable["global"][resultType][varName], "*1*", globalTable["global"][resultType][varName]])
+                  else:
+                      quadruples.append(["=", address, "", globalTable["global"][resultType][varName]])
                   break
               else:
                   raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0]) + ".")
@@ -471,8 +498,6 @@ class FuncNode(object):
         if self.args[3] is not None:
             aux = self.args[3].expression(funcName, result)
             quadruples.append([self.args[2], result, aux, currentTable[funcName][resultType][varName]])
-
-# -------------------------------------------------------------
 
 # -------------------------------------------------------------
         
