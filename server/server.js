@@ -34,7 +34,7 @@ app.post('/compile', function(req, res) {
     data = unprocessedData.replace(/[']/g, "\"");
     console.log("New data is " + data);
 
-    res.json({"success": true, "quadruples": data});
+    res.json({data});
   });
   
 });

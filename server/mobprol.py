@@ -28,11 +28,15 @@ def test(input_string):
     print("Local: " + str(localTable.items()))
     print("Aux: " + str(auxTable.items()))
 
-    jsonQuads = ""
+    jsonQuads = "["
+    iQuad = 0
     for quad in quadruples:
-        jsonQuads += "{\"quad\":" + str(quad) + "},"
-    #print ("{" + "\"quadruples\":" + str(quadruples) + "}")
-    print (str(quadruples))
+        jsonQuads += "{\"arg1\":\"" + str(quad[0]) + "\" , \"arg2\":\"" + str(quad[1]) + "\" , \"arg3\":\"" + str(quad[2]) + "\" , \"arg4\":\"" + str(quad[3]) + "\"}"
+        if iQuad < len(quadruples)-1:
+            jsonQuads += ","
+            iQuad += 1
+    jsonQuads += "]"
+    print (jsonQuads)
     #if isinstance(parse_tree, FuncNode):
 #        print (parse_tree.semanticAll())
         # print (memory[0])

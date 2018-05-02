@@ -25,7 +25,8 @@ export class HomePage {
         private http: Http,
     ) {
     this.programName = "myProgram"
-    this.programCodeString = "main() {var int a = 0; print(\"Hola\")}";
+    //this.programCodeString = "main() {var int a = 0; print(\"Hola\")}";
+    this.programCodeString = "var int a; var decim c; var int d; func int uno(int a, decim b, int c){var int z; a = c + 34;} main(){var decim b; var int f; var decim g; var bool myBool; myBool = 1 == 2; g = 1.0; f = 2; b = f+g*(4+5/2); a = 6;}";
   }
 
   ionViewDidLoad(){
@@ -44,7 +45,7 @@ export class HomePage {
     console.log("Compiling code...");
     let data = {
         code: "program " + this.programName + "{ "
-            + this.programCodeString
+            + this.programCodeString.replace(/\n/g, "")
             + " }"
     };
 
@@ -59,10 +60,25 @@ export class HomePage {
       return;
     }
     
-    let jsonResponse = response.json();
-    this.quadruples = jsonResponse.quadruples;
+    console.log("normal response is: " + response);
+    let jsonResponse = JSON.parse(response.json().data);
+    console.log("Your json is: ")
+    console.log(jsonResponse);
+
+    for(var i = 0; i < jsonResponse.length; i++) {
+      var obj = jsonResponse[i];
+      let tempQuad = [];
+  
+      tempQuad.push(obj.arg1);
+      tempQuad.push(obj.arg2);
+      tempQuad.push(obj.arg3);
+      tempQuad.push(obj.arg4);
+
+      this.quadruples.push(tempQuad);
+    }
 
     console.log("Received quadruples to execute:");
+    
     console.log(this.quadruples);
   }
 
@@ -71,7 +87,7 @@ export class HomePage {
    */
   async run() {
     console.log("debug: Running program...");
-    const modal = this.modalCtrl.create(OutputPage, {quadruples: this.quadruples});
+    const modal = this.modalCtrl.create(OutputPage, {programName: this.programName, quadruples: this.quadruples});
 
     modal.onWillDismiss(() => {
       // No interface updates needed?
