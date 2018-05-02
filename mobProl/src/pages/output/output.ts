@@ -174,7 +174,6 @@ export class OutputPage {
       case "end":
         console.log("Reached end of quadruples.");
         return;
-        break;
     
       // Ignore other quads
       default:
