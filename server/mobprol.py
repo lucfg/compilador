@@ -1,4 +1,3 @@
-
 import sys
 import ply.lex as lex
 import ply.yacc as yacc
@@ -6,9 +5,7 @@ from semantics import *
 from parser import *
 from lexer import *
 lexer = lex.lex() 
-# program_file = str(sys.argv[1])
-# f = open(program_file, 'r').read()
-# print (f)
+
    
 
 def test(input_string):
