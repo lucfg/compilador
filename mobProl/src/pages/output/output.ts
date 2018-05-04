@@ -43,7 +43,7 @@ export class OutputPage {
   executeQuadruples(programIndex: number) {
     // Prepare arguments to work them later
     let curQuad = this.quadruples[programIndex];
-    console.log("Running quad: " + JSON.stringify(curQuad));
+    console.log("Running quad " + programIndex + ": " + JSON.stringify(curQuad));
 
     let instruction = curQuad[0];
     let rawArg1 = curQuad[1];
@@ -52,39 +52,53 @@ export class OutputPage {
 
     var arg1;
     var arg2;
-    var arg3 = rawArg3;
+    var arg3 = Number(rawArg3);
 
     let isConstantArg1 = true;
     let isConstantArg2 = true;
 
     // Get arg1's value
-    if (rawArg1.indexOf('*') > -1) {
-      let cleanString1 = arg1.replace(/\*/g, '');
+    if (rawArg1.indexOf('*') > -1) { // Check for numbers (both int and float)
+      let cleanString1 = rawArg1.replace(/\*/g, '');
       //console.log("Cleaned string 1 is: " + cleanString1 + arg1isConst);
       arg1 = Number(cleanString1); // TODO: this probably won't work with strings
+    }
+    else if (rawArg1.indexOf('/') > -1) { // Check for string values
+      let cleanString1 = rawArg1.replace(/\//g, '');
+      arg1 = cleanString1;
     }
     else if (rawArg1 == "true") {
       arg1 = true;
     }
     else if (rawArg1 == "false") {
       arg1 = false;
+    } else if (rawArg1 == "") { // no arg provided
+      arg1 = null;
     } else { // arg is address
+      console.log("arg1 is an addr (" + rawArg1 + ") and it points to " + this.memory[Number(rawArg1)]);
       arg1 = this.memory[Number(rawArg1)].value;
       isConstantArg1 = false;
     }
 
     // Get arg2's value
     if (rawArg2.indexOf('*') > -1) {
-      let cleanString1 = arg2.replace(/\*/g, '');
+      let cleanString1 = rawArg2.replace(/\*/g, '');
       //console.log("Cleaned string 1 is: " + cleanString1 + arg2isConst);
       arg2 = Number(cleanString1); // TODO: this probably won't work with strings
+    }
+    else if (rawArg2.indexOf('/') > -1) { // Check for string values
+      let cleanString2 = rawArg2.replace(/\//g, '');
+      arg2 = cleanString2;
     }
     else if (rawArg2 == "true") {
       arg2 = true;
     }
     else if (rawArg2 == "false") {
       arg2 = false;
+    } else if (rawArg2 == "") { // No arg provided
+      arg2 = null;
     } else { // arg is address
+      console.log("arg2 is an addr (" + rawArg2 + ") and it points to " + this.memory[Number(rawArg2)]);
       arg2 = this.memory[Number(rawArg2)].value;
       isConstantArg2 = false;
     }
@@ -95,7 +109,7 @@ export class OutputPage {
     let arg1Log = arg1 + (isConstantArg1 ? " (const)" : " (addr: " + Number(rawArg1) + ")");
     let arg2Log = arg2 + (isConstantArg2 ? " (const)" : " (addr: " + Number(rawArg2) + ")");
 
-    switch (curQuad[0].toLowerCase()) {
+    switch (instruction.toLowerCase()) {
       // ======= GoTo's =======
       case "goto":
         console.log("Going from " + programIndex + " to " + arg3);

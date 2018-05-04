@@ -30,8 +30,22 @@ app.post('/compile', function(req, res) {
     console.log('results: %j', results[results.length-1]);
     console.log();
     let unprocessedData = results[results.length-1];
-    let data = unprocessedData.replace("\\\"", "\"");
-    data = unprocessedData.replace(/[']/g, "\"");
+    
+    // Clean data for json
+    var data;
+      // Unnecessary backslashes
+    data = unprocessedData.replace("\\\"", "\"");
+    console.log("Data after removing backslashes: ");
+    console.log(data);
+      // Change strings to constant notation
+    data = data.replace(/\:\"\" ,/g, "\: \"\"\,"); // Modify empty data to not collide with strings
+    data = data.replace(/\:\"\"\}/g, "\: \"\"\}"); // Modify empty data to not collide with strings
+
+    data = data.replace(/\:\"\"/g, "\:\"/");        // Modify string start
+    data = data.replace(/\"\" /g, "/\"");           // Modify string end
+
+      // Change single quot marks for double
+    data = data.replace(/[']/g, "\"");
     console.log("New data is " + data);
 
     res.json({data});
