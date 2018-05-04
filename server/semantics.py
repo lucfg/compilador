@@ -186,7 +186,10 @@ class FuncNode(object):
         
     elif self.type == "statements":
       print("Entro a statements")
-      result = self.args[0].expression(funcName, result)
+      if self.args[0].type == "assignment" or self.args[0].type == "functionCall" or self.args[0].type == "print" or self.args[0].type == "read":
+          result = self.args[0].expression(funcName, result)
+      else:
+          result = self.args[0].semantic(funcName, result)
       if self.args[1] is not None:
           result = self.args[1].semantic(funcName, result)
 
