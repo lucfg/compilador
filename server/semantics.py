@@ -115,7 +115,7 @@ class FuncNode(object):
 
     elif self.type == "main":
       quadruples.append(["main","","",""])
-      gotoMain[3] = len(quadruples)
+      gotoMain[3] = len(quadruples) - 1
       funcName = self.type
       currentTable.add(funcName, "int", "main")
       localTable.add(funcName, "funcType", self.args[0])

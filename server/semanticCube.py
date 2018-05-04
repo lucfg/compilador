@@ -1,8 +1,8 @@
 semanticCube = {
     "int": {
         "int": {
-            "*": "decim",
-            "/": "decim",
+            "*": "int",
+            "/": "int",
             "%": "int",
             "+": "int",
             "-": "int",
