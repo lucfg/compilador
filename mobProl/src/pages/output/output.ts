@@ -96,7 +96,7 @@ export class OutputPage {
     let arg2Log = arg2 + (isConstantArg2 ? " (const)" : " (addr: " + Number(rawArg2) + ")");
 
     switch (curQuad[0].toLowerCase()) {
-      // GoTo's
+      // ======= GoTo's =======
       case "goto":
         console.log("Going from " + programIndex + " to " + arg3);
         this.executeQuadruples(arg3);
@@ -113,10 +113,48 @@ export class OutputPage {
         }
         break;
 
-      // Statements
+      case "gosub":
+        console.log("Calling function in quad " + arg1);
+        break;
+      
+      case "endproc":
+        // TODO: is there anything to do here? The quadruples should handle the memory
+        console.log("Finished function. Returning to main process...");
+        return;
+
+      case "end":
+        console.log("Reached end of quadruples.");
+        return;
+
+      // ======= Statements =======
       case "=":
         console.log("Assigning " + arg1Log + " to " + arg3);
         this.memory[arg3] = new varTuple(arg1);
+        break;
+
+      case "++":
+        console.log("Adding 1 to " + arg3);
+        this.memory[arg3].value++;
+        break;
+
+      case "--":
+        console.log("Subtracting 1 to " + arg3);
+        this.memory[arg3].value--;
+        break;
+
+      case "param":
+        // TODO: Need an address to get the param and assign it
+        console.log("(TODO) Setting param for function.");
+        break;
+
+      case "era":
+        // TODO: What to do here?
+        console.log("(TODO) What does ERA do?");
+        break;
+
+      case "ret":
+        // TODO: need to specify the address of the function to be able to assign it a return value
+        console.log("(TODO) Setting return to addr " + arg3 + ", value " + arg1Log);
         break;
 
       case "print":
@@ -124,7 +162,7 @@ export class OutputPage {
         this.outputLines.push(arg1);
         break;
 
-      // Expressions
+      // ======= Expressions =======
       case "+":
         console.log("Summing to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
         this.memory[arg3] = new varTuple(arg1 + arg2);
@@ -161,28 +199,33 @@ export class OutputPage {
         break;
 
       case "<=":
-        console.log("<= to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
+        console.log("(TODO) <= to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
         this.memory[arg3] = new varTuple(arg1 <= arg2);
         break;
 
       case ">=":
-        console.log(">= to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
+        console.log("(TODO) >= to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
         this.memory[arg3] = new varTuple(arg1 >= arg2);
         break;
 
       case "<": //TODO: are the arguments of these switched by the compiler??
-        console.log("< to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
+        console.log("(TODO) < to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
         this.memory[arg3] = new varTuple(arg1 < arg2);
         break;
 
       case ">":
-        console.log("> to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
+        console.log("(TODO) > to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
         this.memory[arg3] = new varTuple(arg1 > arg2);
         break;
 
-      case "end":
-        console.log("Reached end of quadruples.");
-        return;
+      // ======= Logs =======
+      case "main":
+        console.log("Entering main...");
+        break;
+
+      case "func":
+        console.log("Entering function " + arg1 + "...");
+        break;
     
       // Ignore other quads
       default:
@@ -190,6 +233,7 @@ export class OutputPage {
         break;
     }
 
+    // Handle next quadruple
     this.executeQuadruples(programIndex + 1);
   }
 
