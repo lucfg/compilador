@@ -468,7 +468,7 @@ class FuncNode(object):
         quadruples.append(["ERA", self.args[0], "",""])
  #       contpar = 1
 
-      #TODO: does this truly iterate through all possible parameters? Isn't the Gosub appended multiple times
+        #Checking parameters
         for i in self.args[1:]:
             print("Args del paramtero: " + str(i))
             resultType, resultAddress = i.expression(funcName, result)
@@ -492,7 +492,10 @@ class FuncNode(object):
         resultType, address = self.args[0].expression(funcName, result)
         print(resultType)
         print(address)
-        quadruples.append(["Param", address, "", "param"])
+        
+        paramAddress = auxTable.add("Aux", resultType, "aux")
+        
+        quadruples.append(["Param", address, "", paramAddress])
         resultType, address = self.args[1].expression(funcName, result)
         return resultType, address
 
