@@ -205,7 +205,7 @@ class FuncNode(object):
       result = self.args[1].semantic(funcName, result)
       auxQuadDesp = len(quadruples)
       
-      goto = ['goto', " ", " ", " "]
+      goto = ['goto', "", "", ""]
       quadruples.append(goto)
       gotof[3] = auxQuadDesp + 1
 
@@ -232,7 +232,7 @@ class FuncNode(object):
       result = self.args[1].semantic(funcName, result)
       auxQuadDesp = len(quadruples)
 
-      goto = ['goto', " ", " ", " "]
+      goto = ['goto', "", "", ""]
       quadruples.append(goto)
       gotof[3] = auxQuadDesp + 1
       goto[3] = auxQuadAnt
