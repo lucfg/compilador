@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
-//import { varTuple } from './../../models/varTuple'
 
 /**
  * Generated class for the OutputPage page.
@@ -28,147 +27,157 @@ export class OutputPage {
   }
 
   ionViewDidLoad() {
-    this.executeQuadruples(this.currentDepth);
+    this.executeQuadruples(0);
     console.log("Resulting memory:");
     console.log(this.memory);
   }
 
   // Quadruple reader
-  outputLines: string[] = [];
-  programIndex = [0];
-  currentDepth = 0;
-  
+  outputLines: string[] = []; 
   memory: HashTable<varTuple> = {};
 
-  
-
-  executeQuadruples(depth) {
-    let curQuad = this.quadruples[this.programIndex[depth]];
-
-    // Goto main
-    if (this.programIndex[depth] == 0) {
-      console.log("Running goto main: " + curQuad);
-      this.programIndex[0] = curQuad[3];
-      curQuad = this.quadruples[this.programIndex[depth]];
-    }
-
+  /**
+   * Reads a quadruple on the given index and handles it accordingly
+   * @param programIndex Index of the quadruple to rea
+   */
+  executeQuadruples(programIndex: number) {
+    // Prepare arguments to work them later
+    let curQuad = this.quadruples[programIndex];
     console.log("Running quad: " + JSON.stringify(curQuad));
 
-    let arg1 = curQuad[1];
-    let arg2 = curQuad[2];
-    let arg3 = curQuad[3];
+    let instruction = curQuad[0];
+    let rawArg1 = curQuad[1];
+    let rawArg2 = curQuad[2];
+    let rawArg3 = curQuad[3];
 
-    let arg1isConst = arg1.indexOf('*') > -1 || arg1 == "true" || arg1 == "false";
-    let arg2isConst = arg2.indexOf('*') > -1 || arg2 == "true" || arg2 == "false";
-    //let arg3isConst = arg3.indexOf('*') > -1 || arg3 == "True" || arg3 == "False";
+    var arg1;
+    var arg2;
+    var arg3 = rawArg3;
 
-    var arg1Const;
-    var arg2Const;
-    if (arg1 == "true") {
-      arg1Const = true;
-    }
-    else if (arg1 == "false") {
-      arg1Const = true;
-    }
-    else {
+    let isConstantArg1 = true;
+    let isConstantArg2 = true;
+
+    // Get arg1's value
+    if (rawArg1.indexOf('*') > -1) {
       let cleanString1 = arg1.replace(/\*/g, '');
       //console.log("Cleaned string 1 is: " + cleanString1 + arg1isConst);
-      arg1Const = Number(cleanString1);
+      arg1 = Number(cleanString1); // TODO: this probably won't work with strings
+    }
+    else if (rawArg1 == "true") {
+      arg1 = true;
+    }
+    else if (rawArg1 == "false") {
+      arg1 = false;
+    } else { // arg is address
+      arg1 = this.memory[Number(rawArg1)].value;
+      isConstantArg1 = false;
     }
 
-    if (arg2 == "true") {
-      arg2Const = true;
+    // Get arg2's value
+    if (rawArg2.indexOf('*') > -1) {
+      let cleanString1 = arg2.replace(/\*/g, '');
+      //console.log("Cleaned string 1 is: " + cleanString1 + arg2isConst);
+      arg2 = Number(cleanString1); // TODO: this probably won't work with strings
     }
-    else if (arg2 == "false") {
-      arg2Const = false;
+    else if (rawArg2 == "true") {
+      arg2 = true;
     }
-    else {
-      let cleanString2 = arg2.replace(/\*/g, '');
-      //console.log("Cleaned string 2 is: " + cleanString2 + arg2isConst);
-      arg2Const = Number(cleanString2);
+    else if (rawArg2 == "false") {
+      arg2 = false;
+    } else { // arg is address
+      arg2 = this.memory[Number(rawArg2)].value;
+      isConstantArg2 = false;
     }
 
-    console.log("arg1isConst: " + arg1isConst + arg1Const + " arg2isConst: " + arg2isConst + arg2Const);
-    
+
+    // Handle instruction
+      // debugging helpers
+    let arg1Log = arg1 + (isConstantArg1 ? " (const)" : " (addr: " + Number(rawArg1) + ")");
+    let arg2Log = arg2 + (isConstantArg2 ? " (const)" : " (addr: " + Number(rawArg2) + ")");
+
     switch (curQuad[0].toLowerCase()) {
       // GoTo's
       case "goto":
-        console.log("Going from " + this.programIndex[depth] + " in level " + depth + " to " + curQuad[3]);
-        this.programIndex[depth] = curQuad[3]-1;
-        break;
+        console.log("Going from " + programIndex + " to " + arg3);
+        this.executeQuadruples(arg3);
+        return;
 
       case "gotof":
-        if (arg1isConst ? arg1Const : this.memory[arg1].value) {
-          console.log("Changing running index to " + arg3);
-          this.programIndex[depth] = arg3-1;
+        if (arg1) {
+          console.log("Arg1 is false, going from " + programIndex + " to " + arg3);
+          this.executeQuadruples(arg3);
+          return;
+        }
+        else {
+          console.log("Arg1 is true; ignoring quadruple...")
         }
         break;
 
       // Statements
       case "=":
-        console.log("Assigning to address " + arg3 + ", value/addr " + (arg1isConst ? arg1Const : this.memory[arg1].value));
-        this.memory[arg3] = new varTuple( arg1isConst ? arg1Const : this.memory[arg1].value );
+        console.log("Assigning " + arg1Log + " to " + arg3);
+        this.memory[arg3] = new varTuple(arg1);
         break;
 
       case "print":
-        console.log("Outputting: " + (arg1isConst ? arg1Const : this.memory[arg1].value));
-        this.outputLines.push(arg1isConst ? arg1Const : this.memory[arg1].value);
+        console.log("Outputting: " + arg1Log);
+        this.outputLines.push(arg1);
         break;
 
       // Expressions
       case "+":
-        console.log("summing to dir " + arg3 + " values " + (arg1isConst ? arg1Const : this.memory[arg1].value) + " and " + (arg2isConst ? arg2Const : this.memory[arg2].value));
-        this.memory[arg3] = new varTuple((arg1isConst ? arg1Const : this.memory[arg1].value) + (arg2isConst ? arg2Const : this.memory[arg2].value));
+        console.log("Summing to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
+        this.memory[arg3] = new varTuple(arg1 + arg2);
         break;
 
       case "-":
-        console.log("subtracting to dir " + arg3)
-        this.memory[arg3] = new varTuple((arg1isConst ? arg1Const : this.memory[arg1].value) - (arg2isConst ? arg2Const : this.memory[arg2].value));
+        console.log("Subtracting to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
+        this.memory[arg3] = new varTuple(arg1 - arg2);
         break;
       
       case "/":
-        console.log("dividing to dir " + arg3 + " values " + (arg1isConst ? arg1Const : this.memory[arg1].value) + " and " +  (arg2isConst ? arg2Const : this.memory[arg2].value));
-        this.memory[arg3] = new varTuple((arg1isConst ? arg1Const : this.memory[arg1].value) / (arg2isConst ? arg2Const : this.memory[arg2].value));
+        console.log("Dividing to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
+        this.memory[arg3] = new varTuple(arg1 / arg2);
         break;
 
       case "*":
-        console.log("multiplying to dir " + arg3 + " values " + (arg1isConst ? arg1Const : this.memory[arg1].value) + " and " + (arg2isConst ? arg2Const : this.memory[arg2].value));
-        this.memory[arg3] = new varTuple((arg1isConst ? arg1Const : this.memory[arg1].value) * (arg2isConst ? arg2Const : this.memory[arg2].value));
+        console.log("Multiplying to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
+        this.memory[arg3] = new varTuple(arg1 * arg2);
         break;
 
       case "&&":
-        console.log("boolean and to dir " + arg3)
-        this.memory[arg3] = new varTuple((arg1isConst ? arg1Const : this.memory[arg1].value) && (arg2isConst ? arg2Const : this.memory[arg2].value));
+        console.log("AND to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
+        this.memory[arg3] = new varTuple(arg1 && arg2);
         break;
       
       case "||":
-        console.log("boolean or to dir " + arg3)
-        this.memory[arg3] = new varTuple((arg1isConst ? arg1Const : this.memory[arg1].value) || (arg2isConst ? arg2Const : this.memory[arg2].value));
+        console.log("OR to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
+        this.memory[arg3] = new varTuple(arg1 || arg2);
         break;
 
       case "==":
-        console.log("equals to dir " + arg3)
-        this.memory[arg3] = new varTuple((arg1isConst ? arg1Const : this.memory[arg1].value) == (arg2isConst ? arg2Const : this.memory[arg2].value));
+        console.log("== to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
+        this.memory[arg3] = new varTuple(arg1 == arg2);
         break;
 
       case "<=":
-        console.log("less or equals to dir " + arg3)
-        this.memory[arg3] = new varTuple((arg1isConst ? arg1Const : this.memory[arg1].value) <= (arg2isConst ? arg2Const : this.memory[arg2].value));
+        console.log("<= to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
+        this.memory[arg3] = new varTuple(arg1 <= arg2);
         break;
 
       case ">=":
-        console.log("more or equals to dir " + arg3)
-        this.memory[arg3] = new varTuple((arg1isConst ? arg1Const : this.memory[arg1].value) >= (arg2isConst ? arg2Const : this.memory[arg2].value));
+        console.log(">= to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
+        this.memory[arg3] = new varTuple(arg1 >= arg2);
         break;
 
-      case "<":
-        console.log("less than to dir " + arg3)
-        this.memory[arg3] = new varTuple((arg1isConst ? arg1Const : this.memory[arg1].value) < (arg2isConst ? arg2Const : this.memory[arg2].value));
+      case "<": //TODO: are the arguments of these switched by the compiler??
+        console.log("< to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
+        this.memory[arg3] = new varTuple(arg1 < arg2);
         break;
 
       case ">":
-        console.log("more than to dir " + arg3)
-        this.memory[arg3] = new varTuple((arg1isConst ? arg1Const : this.memory[arg1].value) > (arg2isConst ? arg2Const : this.memory[arg2].value));
+        console.log("> to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
+        this.memory[arg3] = new varTuple(arg1 > arg2);
         break;
 
       case "end":
@@ -181,8 +190,7 @@ export class OutputPage {
         break;
     }
 
-    this.programIndex[depth]++;
-    this.executeQuadruples(depth);
+    this.executeQuadruples(programIndex + 1);
   }
 
   /**
