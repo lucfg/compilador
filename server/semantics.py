@@ -186,7 +186,10 @@ class FuncNode(object):
         
     elif self.type == "statements":
       print("Entro a statements")
-      result = self.args[0].expression(funcName, result)
+      if self.args[0].type == "assignment" or self.args[0].type == "functionCall" or self.args[0].type == "print" or self.args[0].type == "read":
+          result = self.args[0].expression(funcName, result)
+      else:
+          result = self.args[0].semantic(funcName, result)
       if self.args[1] is not None:
           result = self.args[1].semantic(funcName, result)
 
@@ -205,7 +208,7 @@ class FuncNode(object):
       result = self.args[1].semantic(funcName, result)
       auxQuadDesp = len(quadruples)
       
-      goto = ['goto', " ", " ", " "]
+      goto = ['goto', "", "", ""]
       quadruples.append(goto)
       gotof[3] = auxQuadDesp + 1
 
@@ -232,7 +235,7 @@ class FuncNode(object):
       result = self.args[1].semantic(funcName, result)
       auxQuadDesp = len(quadruples)
 
-      goto = ['goto', " ", " ", " "]
+      goto = ['goto', "", "", ""]
       quadruples.append(goto)
       gotof[3] = auxQuadDesp + 1
       goto[3] = auxQuadAnt
@@ -465,7 +468,7 @@ class FuncNode(object):
         quadruples.append(["ERA", self.args[0], "",""])
  #       contpar = 1
 
-      #TODO: does this truly iterate through all possible parameters? Isn't the Gosub appended multiple times
+        #Checking parameters
         for i in self.args[1:]:
             print("Args del paramtero: " + str(i))
             resultType, resultAddress = i.expression(funcName, result)
@@ -489,7 +492,10 @@ class FuncNode(object):
         resultType, address = self.args[0].expression(funcName, result)
         print(resultType)
         print(address)
-        quadruples.append(["Param", address, "", "param"])
+        
+        paramAddress = auxTable.add("Aux", resultType, "aux")
+        
+        quadruples.append(["Param", address, "", paramAddress])
         resultType, address = self.args[1].expression(funcName, result)
         return resultType, address
 
