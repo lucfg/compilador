@@ -200,7 +200,7 @@ class FuncNode(object):
         raise Exception("Condition must be bool type")
 
       #GotoF
-      gotof = ['gotof', address, " ", " "]
+      gotof = ['gotof', address, "", ""]
       quadruples.append(gotof)
       result = self.args[1].semantic(funcName, result)
       auxQuadDesp = len(quadruples)
@@ -227,7 +227,7 @@ class FuncNode(object):
         raise Exception("Condition must be bool type")
 
       #GotoF
-      gotof = ['gotof', address, " ", " "]
+      gotof = ['gotof', address, "", ""]
       quadruples.append(gotof)
       result = self.args[1].semantic(funcName, result)
       auxQuadDesp = len(quadruples)
