@@ -129,6 +129,8 @@ def p_functionCallParams(p):
                         | functionCallParamsOptional'''
   if len(p) > 1:
     p[0] = FuncNode('paramF', p[1])
+  else:
+    p[0] = None
   
 def p_functionCallParamsOptional(p):
   '''functionCallParamsOptional : megaExp COMMA functionCallParamsOptional

@@ -497,10 +497,11 @@ class FuncNode(object):
         #Checking parameters
         for i in self.args[1:]:
             print("Args del paramtero: " + str(i))
-            resultType, resultAddress = i.expression(funcName, result)
+            if not (i is None):
+                resultType, resultAddress = i.expression(funcName, result)
 
-            if funcCallCont != funcDecCont:
-                raise Exception("The number of parameters does not match up.")
+                if funcCallCont != funcDecCont:
+                    raise Exception("The number of parameters does not match up.")
             
             auxGosub = ["Gosub", "", "", ""]
             quadruples.append(auxGosub)
