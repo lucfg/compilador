@@ -22,7 +22,8 @@ reserved = {
   'decim' : 'DECIM',
   'bool' : 'BOOL',
   'char' : 'CHAR',
-  'string' : 'STRING'
+  'string' : 'STRING',
+  'void' : 'VOID'
 }
 tokens = [
   	# Primitives	

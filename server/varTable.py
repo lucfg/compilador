@@ -1,12 +1,13 @@
 # Posiciones en memoria de tipos de datos:
 # int 0-5,000, float 5,001-10,000, bool 10,001-15,000
 class VarTable(dict):
-	def __init__(self, pInt = 0, pDecim = 5001, pBool = 10001):
+	def __init__(self, pInt = 0, pDecim = 5001, pBool = 10001, pVoid = 15001):
 		self.aux = 0
 		self.pLast = 0
 		self.pInt = pInt
 		self.pDecim = pDecim
 		self.pBool = pBool
+		self.pVoid = pVoid
 
 	def getpInt(self):
 		return self.pInt
@@ -16,6 +17,9 @@ class VarTable(dict):
 
 	def getpBool(self):
 		return self.pBool
+
+	def getpVoid(self):
+		return self.pVoid
 
 	def getpLast(self):
 		return self.last.pointer
@@ -45,6 +49,10 @@ class VarTable(dict):
 			self.pBool += 1
 		elif t == 'funcType':
 			self[funcName][t]["return"] = name
+		elif t == 'void':
+                        self[funcName][t][name] = self.pVoid
+                        self.pLast = self.pVoid
+                        self.pVoid += 1
 		else:
 			raise Exception("No such type: " + t)
 		return self.pLast
