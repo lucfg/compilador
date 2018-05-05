@@ -3,8 +3,8 @@ from semanticCube import *
 from varTable import *
 
 globalTable = VarTable()
-localTable = VarTable(15001, 20001, 25001)
-auxTable = VarTable(30001, 35001, 40001)
+localTable = VarTable(20001, 25001, 30001, 35001)
+auxTable = VarTable(40001, 45001, 50001, 55001)
 
 listParam = {}
 
@@ -146,7 +146,6 @@ class FuncNode(object):
       auxFuncType = ["func", funcName, self.args[1],""]
       quadruples.append(auxFuncType)
 
- #     auxReturn = ""
 
       for elem in self.args[2:]:
         if elem is not None:
@@ -170,7 +169,10 @@ class FuncNode(object):
             
             quadruples.append(["ret", address,"",globalTable[funcName][funcType][funcName]])
         else:
-            raise Exception("The function " + funcName + " needs to return something of type " + resultType + ".")
+            if "void" in globalTable[funcName].keys():
+                quadruples.append(["ret", "/void/", "", ""])
+            else:
+                raise Exception("The function " + funcName + " needs to return something of type " + resultType + ".")
 
 # -------------------------------------------------------------
 
