@@ -5,10 +5,19 @@ from varTable import *
 globalTable = VarTable()
 localTable = VarTable(15001, 20001, 25001)
 auxTable = VarTable(30001, 35001, 40001)
+
+listParam = {}
+
+global funcDecCont
+global funcCallCont
+funcDecCont = 0
+funcCallCont = 0
+
 quadruples = []
 gotoMain = ["GOTO","","",""]
 global contParam
 global funcParamCont
+global cont
 funcParamCont = 1
 contParam = 1
 
@@ -167,11 +176,15 @@ class FuncNode(object):
 
     #TODO: PARAMS
     elif self.type == "params":
-      #print (self.args[0])
+      global listParam
+      global funcDecCont
+      cont = 1
       for i in range(0, len(self.args[0]), 2):
-        #print (self.args[0][i], self.args[0][i+1])
-        
+        listParam["param" + str(cont)] = {self.args[0][i]:self.args[0][i+1]}
+        cont = cont + 1
+        funcDecCont = funcDecCont + 1
         currentTable.add(funcName, self.args[0][i], self.args[0][i+1])
+      print("TU LISTA DE PARAMETROS: " + str(listParam))
 
 # -------------------------------------------------------------
 
@@ -473,9 +486,11 @@ class FuncNode(object):
         print("Entro a functionCall")
         print("Args de functionCall: " + str(self.args[1]))#parameters
         global contParam
+        global funcCallCont
         contParam = 1
         funcType = ""
         global nextReturn
+
       #separates a space for the function call
         quadruples.append(["ERA", self.args[0], "",""])
 
@@ -483,6 +498,10 @@ class FuncNode(object):
         for i in self.args[1:]:
             print("Args del paramtero: " + str(i))
             resultType, resultAddress = i.expression(funcName, result)
+
+            if funcCallCont != funcDecCont:
+                raise Exception("The number of parameters does not match up.")
+            
             auxGosub = ["Gosub", "", "", ""]
             quadruples.append(auxGosub)
 
@@ -505,9 +524,13 @@ class FuncNode(object):
         print(address)
         
         paramAddress = auxTable.add("Aux", resultType, "aux")
+        quadruples.append(["param", address, "/param" + str(contParam) + "/", paramAddress])
+
+        if not (resultType in listParam["param" + str(contParam)].keys()):
+            raise Exception("Parameter given not of type " + resultType)
         
-        quadruples.append(["Param", address, "/param" + str(contParam) + "/", paramAddress])
         contParam = contParam + 1
+        funcCallCont = funcCallCont + 1
         
         resultType, address = self.args[1].expression(funcName, result)
         return resultType, address
@@ -522,8 +545,13 @@ class FuncNode(object):
         print(address)
 
         paramAddress = auxTable.add("Aux", resultType, "aux")
-        quadruples.append(["Param", address, "/param" + str(contParam) + "/", paramAddress])
+        quadruples.append(["param", address, "/param" + str(contParam) + "/", paramAddress])
+
+        if not (resultType in listParam["param" + str(contParam)].keys()):
+            raise Exception("Parameter given not of type " + resultType)
+        
         contParam = contParam + 1
+        funcCallCont = funcCallCont + 1
         
         return resultType, address
         
