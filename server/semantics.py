@@ -8,6 +8,8 @@ auxTable = VarTable(30001, 35001, 40001)
 quadruples = []
 gotoMain = ["GOTO","","",""]
 global contParam
+global funcParamCont
+funcParamCont = 1
 contParam = 1
 
 def isPrimitive(t):
@@ -162,6 +164,7 @@ class FuncNode(object):
       #print (self.args[0])
       for i in range(0, len(self.args[0]), 2):
         #print (self.args[0][i], self.args[0][i+1])
+        
         currentTable.add(funcName, self.args[0][i], self.args[0][i+1])
 
 # -------------------------------------------------------------
@@ -497,7 +500,7 @@ class FuncNode(object):
         
         paramAddress = auxTable.add("Aux", resultType, "aux")
         
-        quadruples.append(["Param", address, "", "param" + str(contParam)])
+        quadruples.append(["Param", address, "/param" + str(contParam) + "/", paramAddress])
         contParam = contParam + 1
         
         resultType, address = self.args[1].expression(funcName, result)
@@ -513,7 +516,7 @@ class FuncNode(object):
         print(address)
 
         paramAddress = auxTable.add("Aux", resultType, "aux")
-        quadruples.append(["Param", address, "", "param" + str(contParam)])
+        quadruples.append(["Param", address, "/param" + str(contParam) + "/", paramAddress])
         contParam = contParam + 1
         
         return resultType, address

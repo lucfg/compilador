@@ -17,8 +17,7 @@ def test(input_string):
     print ('Successfully built parse tree:')
     print (parse_tree)
     print(parse_tree.semanticAll())
-        #debug
-    #print ("Your quads: " + str(quadruples))
+
     for i in range (0, len(quadruples), 1):
         print (str(i) + str(quadruples[i]))
     print("Global: " + str(globalTable.items()))
@@ -34,12 +33,7 @@ def test(input_string):
             iQuad += 1
     jsonQuads += "]"
     print (jsonQuads)
-    #if isinstance(parse_tree, FuncNode):
-#        print (parse_tree.semanticAll())
-        # print (memory[0])
-        # print (virtual_machine(cuadruplos, memory[0]))
-#    else:
-#        print ('Failed program')
+
 if len(sys.argv) < 2:
     while True:
         try:
