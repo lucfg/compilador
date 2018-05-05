@@ -57,4 +57,31 @@ class VarTable(dict):
 			raise Exception("No such type: " + t)
 		return self.pLast
 
+	def addArr(self, funcName, t, name, size):
+		if funcName not in self:
+			self[funcName] = {}
+			
+		if t not in self[funcName]:
+			self[funcName][t] = {}
+			
+		if name is "aux":
+			name = "t" + str(self.aux)
+			self.aux += 1
+			
+		if t == 'int':
+			self[funcName][t][name] = self.pInt
+			self.pLast = self.pInt
+			self.pInt += size
+		elif t == 'decim':
+			self[funcName][t][name] = self.pDecim
+			self.pLast = self.pDecim
+			self.pDecim += size
+		elif t == 'bool':
+			self[funcName][t][name] = self.pBool
+			self.pLast = self.pBool
+			self.pBool += size
+		else:
+			raise Exception("No such type: " + t)
+		return self.pLast
+
 

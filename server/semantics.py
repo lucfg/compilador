@@ -212,12 +212,21 @@ class FuncNode(object):
 
       limInf = 1
       limSup = self.args[2]
-      r = 1 * (limInf - limSup + 1)
+      r = 1 * (limSup - limInf + 1)
       k = 0 + limInf * 1
 
+      print("LIM-INF: " + str(limInf))
+      print("LIM-SUP: " + str(limSup))
+      print("R: " + str(r))
+      print("K: " + str(k))
+
       #Adds id to currentTable
-      currentTable.add(funcName, self.args[1], self.args[0], r)
-      arrayList[self.args[0]] = [limInf, limSup, k, r, ""]
+      currentTable.addArr(funcName, self.args[1], self.args[0], r)
+      address = currentTable[funcName][self.args[1]][self.args[0]]
+      arrayList[self.args[0]] = [limInf, limSup, k, r, address]
+
+      if self.args[3] is not None:
+          result = self.args[3].semantic(funcName, result)
       
 # -------------------------------------------------------------
         
@@ -523,7 +532,7 @@ class FuncNode(object):
         global nextReturn
 
       #separates a space for the function call
-        quadruples.append(["ERA", self.args[0], "",""])
+        quadruples.append(["ERA", "/" + self.args[0] + "/", "",""])
 
         #Checking parameters
         for i in self.args[1:]:
