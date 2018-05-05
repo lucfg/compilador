@@ -29,7 +29,6 @@ def p_body(p):
 def p_variables(p):
   '''variables :
                | VAR type ID DOT_COMMA variables
-  	       | VAR type assignment DOT_COMMA variables
   	       | VAR type ID L_KEY INTEGER R_KEY DOT_COMMA variables'''
   if len(p) > 2 :
     if len(p) > 8:
