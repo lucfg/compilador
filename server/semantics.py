@@ -7,7 +7,8 @@ localTable = VarTable(15001, 20001, 25001)
 auxTable = VarTable(30001, 35001, 40001)
 quadruples = []
 gotoMain = ["GOTO","","",""]
-contp = 1
+global contParam
+contParam = 1
 
 def isPrimitive(t):
     if isinstance(t, str):
@@ -462,11 +463,12 @@ class FuncNode(object):
     elif self.type == "functionCall" :
         print("Entro a functionCall")
         print("Args de functionCall: " + str(self.args[1]))#parametros
+        global contParam
+        contParam = 1
         funcType = ""
         global nextReturn
       #separates a space for the function call
         quadruples.append(["ERA", self.args[0], "",""])
- #       contpar = 1
 
         #Checking parameters
         for i in self.args[1:]:
@@ -495,7 +497,9 @@ class FuncNode(object):
         
         paramAddress = auxTable.add("Aux", resultType, "aux")
         
-        quadruples.append(["Param", address, "", paramAddress])
+        quadruples.append(["Param", address, "param" + str(contParam), paramAddress])
+        contParam = contParam + 1
+        
         resultType, address = self.args[1].expression(funcName, result)
         return resultType, address
 
@@ -507,7 +511,11 @@ class FuncNode(object):
         resultType, address = self.args[0].expression(funcName, result)
         print(resultType)
         print(address)
-        quadruples.append(["Param", address, "", "param"])
+
+        paramAddress = auxTable.add("Aux", resultType, "aux")
+        quadruples.append(["Param", address, "param" + str(contParam), paramAddress])
+        contParam = contParam + 1
+        
         return resultType, address
         
 
