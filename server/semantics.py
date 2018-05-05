@@ -462,7 +462,7 @@ class FuncNode(object):
     #call function. Receives id(params)
     elif self.type == "functionCall" :
         print("Entro a functionCall")
-        print("Args de functionCall: " + str(self.args[1]))#parametros
+        print("Args de functionCall: " + str(self.args[1]))#parameters
         global contParam
         contParam = 1
         funcType = ""
