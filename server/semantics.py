@@ -8,10 +8,16 @@ auxTable = VarTable(40001, 45001, 50001, 55001)
 
 listParam = {}
 
+#Array dictionary
+# {arr1: [limInf, limSup, -k, r, baseDir]}
+arrayList = {}
+
 global funcDecCont
 global funcCallCont
 funcDecCont = 0
 funcCallCont = 0
+
+quadFunc = 0
 
 quadruples = []
 gotoMain = ["GOTO","","",""]
@@ -140,11 +146,13 @@ class FuncNode(object):
 # -------------------------------------------------------------
 
     elif self.type == "function":
+      global quadFunc
       funcName = self.args[0]
       currentTable.add(funcName, self.args[1],self.args[0])
       localTable.add(funcName, "funcType", self.args[0])
       auxFuncType = ["func", funcName, self.args[1],""]
       quadruples.append(auxFuncType)
+      quadFunc = len(quadruples)
 
 
       for elem in self.args[2:]:
@@ -197,6 +205,20 @@ class FuncNode(object):
       if self.args[2] is not None:
         result = self.args[2].semantic(funcName, result)
 
+# -------------------------------------------------------------
+
+    elif self.type == "arrVar":
+      global arrayList
+
+      limInf = 1
+      limSup = self.args[2]
+      r = 1 * (limInf - limSup + 1)
+      k = 0 + limInf * 1
+
+      #Adds id to currentTable
+      currentTable.add(funcName, self.args[1], self.args[0], r)
+      arrayList[self.args[0]] = [limInf, limSup, k, r, ""]
+      
 # -------------------------------------------------------------
         
     elif self.type == "statement":
@@ -519,7 +541,7 @@ class FuncNode(object):
                 funcType = key
                 break
 
-            auxGosub[1] = globalTable[self.args[0]][funcType][self.args[0]] - 1
+            auxGosub[3] = quadFunc - 1
             auxAddress = auxTable.add("Aux", funcType, "aux")
             nextReturn = ["=", globalTable[self.args[0]][funcType][self.args[0]], "", auxAddress]
             quadruples.append(nextReturn)
