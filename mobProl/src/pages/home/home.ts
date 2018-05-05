@@ -55,7 +55,6 @@ export class HomePage {
 
     var response;
     try {
-      console.log("debug: trying post");
       //response = await this.http.post('http://localhost:8080/compile', data).toPromise();
       response = await this.http.post('http://mobprol.us-3.evennode.com/compile', data).toPromise();
     } catch (err) {
@@ -63,7 +62,6 @@ export class HomePage {
       return false;
     }
 
-    console.log("debug: post done; checking for empty res")
     if (!response) {
       console.log("Server's response was empty.");
       return false;
@@ -79,9 +77,8 @@ export class HomePage {
     let errData = jsonResponse.errorData;
 
     if (errData && errData != "") {
-      console.log("Error: ");
-      console.log(errData);
-      alert("Error: " + errData);
+      console.log("Compilation error: " + errData);
+      alert(errData);
       return false;
     }
 
@@ -111,7 +108,6 @@ export class HomePage {
    * Uses quadruples to run commands, showing output on screen
    */
   async run() {
-    console.log("debug: Running program...");
     const modal = this.modalCtrl.create(OutputPage, {programName: this.programName, quadruples: this.quadruples});
 
     modal.onWillDismiss(() => {

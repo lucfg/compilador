@@ -27,8 +27,9 @@ app.post('/compile', function(req, res) {
   PythonShell.run('mobprol.py', options, function (err, results) {
     var errorData;
     if (err) { // Cancel execution to avoid pointless processing of data
-      let errorData = err.message;
-      console.log("ERROR: " + errorData);
+      console.log("REAL ERROR: " + err.message);
+      let errorData = cleanErrorMessage(err.message);
+      console.log("BEAUTIFIED ERROR: " + errorData);
       res.json({errorData});
       return;
     }
@@ -62,3 +63,25 @@ app.post('/compile', function(req, res) {
 });
 
 app.listen(process.env.PORT || 8080);
+
+function cleanErrorMessage(msg) {
+  let cleanMsg = "";
+
+  let syntaxError = "Syntax error.";
+  let nonDeclaredVariable = "Variable has not been declared.";
+
+  if (msg.indexOf("AttributeError")) { // This also happens with the same message when var lacks init
+    cleanMsg = syntaxError;
+  }
+  else if (msg.indexOf("KeyError")) {
+    cleanMsg = nonDeclaredVariable;
+  }
+  else if (msg.indexOf("ply.lex.LexError")) {
+    cleanMsg = syntaxError;
+  }
+  else if (msg.indexOf(Exception)) {
+    cleanMsg = msg.replace(/Exception: /g, "");
+  }
+
+  return cleanMsg;
+}
