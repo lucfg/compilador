@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { Http } from '@angular/http';
-import { NavController, ModalController } from 'ionic-angular';
+import { NavController, ModalController, LoadingController } from 'ionic-angular';
 import { OutputPage } from '../output/output';
 
 @Component({
@@ -21,6 +21,7 @@ export class HomePage {
   constructor(
         public navCtrl: NavController,
         public modalCtrl: ModalController,
+        public loadingCtrl: LoadingController,
         private http: Http,
     ) {
     this.programName = "myProgram"
@@ -47,6 +48,11 @@ export class HomePage {
    */
   async compile() {
     console.log("Compiling code...");
+    let loading = this.loadingCtrl.create({
+      content: 'Compiling your code...'
+    });
+    loading.present();
+
     let data = {
         code: "program " + this.programName + "{ "
             + this.programCodeString.replace(/\n/g, "")
@@ -58,11 +64,15 @@ export class HomePage {
       //response = await this.http.post('http://localhost:8080/compile', data).toPromise();
       response = await this.http.post('http://mobprol.us-3.evennode.com/compile', data).toPromise();
     } catch (err) {
+      loading.dismiss();
       console.log("Error while trying to access the server: " + err.message);
+      alert("Error: It seems like you're not connected to the internet.");
       return false;
     }
 
     if (!response) {
+      loading.dismiss();
+      alert("Unexpected error: Server's response is empty.");
       console.log("Server's response was empty.");
       return false;
     }
@@ -77,6 +87,7 @@ export class HomePage {
     let errData = jsonResponse.errorData;
 
     if (errData && errData != "") {
+      loading.dismiss();
       console.log("Compilation error: " + errData);
       alert(errData);
       return false;
@@ -101,6 +112,7 @@ export class HomePage {
     console.log("Received quadruples to execute:");
     console.log(this.quadruples);
 
+    loading.dismiss();
     return true;
   }
 
