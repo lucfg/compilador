@@ -14,18 +14,24 @@ app.use(cors());
 var quadruples = null;
 
 app.post('/compile', function(req, res) {
-  console.log("Compiling program...")
-  console.log("Code to compile: " + req.body.code);
+  //console.log("Compiling program...")
+  //console.log("Code to compile: " + req.body.code);
 
   var options = {
     mode: 'text',
-    pythonPath: '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3',
+    //pythonPath: '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3', // uncommment for localhost running (must adapt ionic app too)
     pythonOptions: ['-W', 'ignore'],
     args: [req.body.code]
   };
   
   PythonShell.run('mobprol.py', options, function (err, results) {
-    if (err) throw err;
+    var errorData;
+    if (err) { // Cancel execution to avoid pointless processing of data
+      let errorData = err.message;
+      console.log("ERROR: " + errorData);
+      res.json({errorData});
+      return;
+    }
 
     console.log('results: %j', results[results.length-1]);
     console.log();
@@ -35,8 +41,8 @@ app.post('/compile', function(req, res) {
     var data;
       // Unnecessary backslashes
     data = unprocessedData.replace("\\\"", "\"");
-    console.log("Data after removing backslashes: ");
-    console.log(data);
+    //console.log("Data after removing backslashes: ");
+    //console.log(data);
       // Change strings to constant notation
     data = data.replace(/\:\"\" ,/g, "\: \"\"\,"); // Modify empty data to not collide with strings
     data = data.replace(/\:\"\"\}/g, "\: \"\"\}"); // Modify empty data to not collide with strings
@@ -46,7 +52,9 @@ app.post('/compile', function(req, res) {
 
       // Change single quot marks for double
     data = data.replace(/[']/g, "\"");
-    console.log("New data is " + data);
+
+    console.log("Data to send is:")
+    console.log(data);
 
     res.json({data});
   });

@@ -43,7 +43,7 @@ export class OutputPage {
   executeQuadruples(programIndex: number) {
     // Prepare arguments to work them later
     let curQuad = this.quadruples[programIndex];
-    console.log("Running quad " + programIndex + ": " + JSON.stringify(curQuad));
+    console.log("RUNNING QUAD " + programIndex + ": " + JSON.stringify(curQuad));
 
     let instruction = curQuad[0];
     let rawArg1 = curQuad[1];

@@ -1,7 +1,6 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { Http } from '@angular/http';
 import { NavController, ModalController } from 'ionic-angular';
-import { map } from 'rxjs/operators';
 import { OutputPage } from '../output/output';
 
 @Component({
@@ -25,21 +24,26 @@ export class HomePage {
         private http: Http,
     ) {
     this.programName = "myProgram"
-    //this.programCodeString = "main() {var int a = 0; print(\"Hola\")}";
-    this.programCodeString = "var int a; var decim c; var int d; func int uno(int a, decim b, int c){var int z; a = c + 34;} main(){var decim b; var int f; var decim g; var bool myBool; myBool = 1 == 2; g = 1.0; f = 2; b = f+g*(4+5/2); a = 6;}";
+    this.programCodeString = "main() { print(\"Hello world\"); }";
+    //this.programCodeString = "var int a; var decim c; var int d; func int uno(int a, decim b, int c){var int z; a = c + 34;} main(){var decim b; var int f; var decim g; var bool myBool; myBool = 1 == 2; g = 1.0; f = 2; b = f+g*(4+5/2); a = 6;}";
   }
 
   ionViewDidLoad(){
     this.resizeTextArea();
   }
 
+  /**
+   * Tries to compile the program and runs it if successful
+   */
   async compileAndRun() {
-    await this.compile();
-    await this.run();
+    if (await this.compile()) {
+      await this.run();
+    }
   }
 
   /**
    * Sends code to python and receives cuadruples to execute
+   * Returns true if successful or false if not.
    */
   async compile() {
     console.log("Compiling code...");
@@ -51,22 +55,42 @@ export class HomePage {
 
     var response;
     try {
-      response = await this.http.post('http://localhost:8080/compile', data).toPromise();  
+      console.log("debug: trying post");
+      //response = await this.http.post('http://localhost:8080/compile', data).toPromise();
+      response = await this.http.post('http://mobprol.us-3.evennode.com/compile', data).toPromise();
     } catch (err) {
       console.log("Error while trying to access the server: " + err.message);
+      return false;
     }
 
+    console.log("debug: post done; checking for empty res")
     if (!response) {
-      return;
+      console.log("Server's response was empty.");
+      return false;
     }
     
-    console.log("normal response is: " + response);
-    let jsonResponse = JSON.parse(response.json().data);
+    console.log("normal response is: ");
+    console.log(response);
+    //let jsonResponse = JSON.parse(response.json());
+    let jsonResponse = response.json();
     console.log("Your json is: ")
     console.log(jsonResponse);
 
-    for(var i = 0; i < jsonResponse.length; i++) {
-      var obj = jsonResponse[i];
+    let errData = jsonResponse.errorData;
+
+    if (errData && errData != "") {
+      console.log("Error: ");
+      console.log(errData);
+      alert("Error: " + errData);
+      return false;
+    }
+
+    let quadData = JSON.parse(jsonResponse.data);
+    console.log("Your quadData:");
+    console.log(quadData);
+
+    for(var i = 0; i < quadData.length; i++) {
+      var obj = quadData[i];
       let tempQuad = [];
   
       tempQuad.push(obj.arg1);
@@ -78,8 +102,9 @@ export class HomePage {
     }
 
     console.log("Received quadruples to execute:");
-    
     console.log(this.quadruples);
+
+    return true;
   }
 
   /**
