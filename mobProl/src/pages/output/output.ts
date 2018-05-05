@@ -39,8 +39,13 @@ export class OutputPage {
   /**
    * Reads a quadruple on the given index and handles it accordingly
    * @param programIndex Index of the quadruple to rea
+   * @param error If true, stops executing more quadruples
    */
-  executeQuadruples(programIndex: number) {
+  executeQuadruples(programIndex: number, error?: boolean) {
+    if (error) {
+      return false;
+    }
+
     // Prepare arguments to work them later
     let curQuad = this.quadruples[programIndex];
     console.log("RUNNING QUAD " + programIndex + ": " + JSON.stringify(curQuad));
@@ -61,7 +66,7 @@ export class OutputPage {
     if (rawArg1.indexOf('*') > -1) { // Check for numbers (both int and float)
       let cleanString1 = rawArg1.replace(/\*/g, '');
       //console.log("Cleaned string 1 is: " + cleanString1 + arg1isConst);
-      arg1 = Number(cleanString1); // TODO: this probably won't work with strings
+      arg1 = Number(cleanString1);
     }
     else if (rawArg1.indexOf('/') > -1) { // Check for string values
       let cleanString1 = rawArg1.replace(/\//g, '');
@@ -75,16 +80,29 @@ export class OutputPage {
     } else if (rawArg1 == "") { // no arg provided
       arg1 = null;
     } else { // arg is address
-      console.log("arg1 is an addr (" + rawArg1 + ") and it points to " + this.memory[Number(rawArg1)]);
-      arg1 = this.memory[Number(rawArg1)].value;
-      isConstantArg1 = false;
+      if (!isNaN(Number(rawArg1))) {
+        if (this.memory[Number(rawArg1)] == null) {
+          console.log("Error: variable is not initialized.");
+          alert("You are trying to use a variable without giving it a value first.");
+          return false;
+        }
+        else {
+          console.log("arg1 is an addr (" + rawArg1 + ") and it points to " + this.memory[Number(rawArg1)]);
+          arg1 = this.memory[Number(rawArg1)].value;
+          isConstantArg1 = false;
+        }
+      }
+      else { // arg is a string (unexpected by memory)
+        console.log("Arg1 is an unexpected string.");
+        arg1 = rawArg1;
+      }
     }
 
     // Get arg2's value
     if (rawArg2.indexOf('*') > -1) {
       let cleanString1 = rawArg2.replace(/\*/g, '');
       //console.log("Cleaned string 1 is: " + cleanString1 + arg2isConst);
-      arg2 = Number(cleanString1); // TODO: this probably won't work with strings
+      arg2 = Number(cleanString1);
     }
     else if (rawArg2.indexOf('/') > -1) { // Check for string values
       let cleanString2 = rawArg2.replace(/\//g, '');
@@ -98,9 +116,22 @@ export class OutputPage {
     } else if (rawArg2 == "") { // No arg provided
       arg2 = null;
     } else { // arg is address
-      console.log("arg2 is an addr (" + rawArg2 + ") and it points to " + this.memory[Number(rawArg2)]);
-      arg2 = this.memory[Number(rawArg2)].value;
-      isConstantArg2 = false;
+      if (!isNaN(Number(rawArg2))) {
+        if (this.memory[Number(rawArg1)] == null) {
+          console.log("Error: variable is not initialized.");
+          alert("You are trying to use a variable without giving it a value first.");
+          return false;
+        }
+        else {
+          console.log("arg2 is an addr (" + rawArg2 + ") and it points to " + this.memory[Number(rawArg2)]);
+          arg2 = this.memory[Number(rawArg2)].value;
+          isConstantArg2 = false;
+        }
+      }
+      else { // arg is a string (unexpected by memory)
+        console.log("Arg2 is an unexpected string.");
+        arg1 = rawArg2;
+      }
     }
 
 
@@ -113,14 +144,12 @@ export class OutputPage {
       // ======= GoTo's =======
       case "goto":
         console.log("Going from " + programIndex + " to " + arg3);
-        this.executeQuadruples(arg3);
-        return;
+        return this.executeQuadruples(arg3);
 
       case "gotof":
         if (arg1) {
           console.log("Arg1 is false, going from " + programIndex + " to " + arg3);
-          this.executeQuadruples(arg3);
-          return;
+          return this.executeQuadruples(arg3);
         }
         else {
           console.log("Arg1 is true; ignoring quadruple...")
@@ -129,16 +158,16 @@ export class OutputPage {
 
       case "gosub":
         console.log("Calling function in quad " + arg1);
+        this.executeQuadruples(arg3);
         break;
       
       case "endproc":
-        // TODO: is there anything to do here? The quadruples should handle the memory
         console.log("Finished function. Returning to main process...");
-        return;
+        return true;
 
       case "end":
         console.log("Reached end of quadruples.");
-        return;
+        return true;
 
       // ======= Statements =======
       case "=":
@@ -148,32 +177,40 @@ export class OutputPage {
 
       case "++":
         console.log("Adding 1 to " + arg3);
-        this.memory[arg3].value++;
+        if (!error) {
+          this.memory[arg3].value++;
+        }
         break;
 
       case "--":
         console.log("Subtracting 1 to " + arg3);
-        this.memory[arg3].value--;
+        if (!error) {
+          this.memory[arg3].value--;
+        }
         break;
 
       case "param":
-        // TODO: Need an address to get the param and assign it
-        console.log("(TODO) Setting param for function.");
+        console.log("Setting " + arg1Log + " as param for function to " + arg3);
+        this.memory[arg3] = new varTuple(arg1);
         break;
 
       case "era":
-        // TODO: What to do here?
-        console.log("(TODO) What does ERA do?");
+        console.log("Reading params for function call...");
         break;
 
       case "ret":
-        // TODO: need to specify the address of the function to be able to assign it a return value
-        console.log("(TODO) Setting return to addr " + arg3 + ", value " + arg1Log);
+        console.log("Setting return to addr " + arg3 + " as " + arg1Log);
+        this.memory[arg3] = new varTuple(arg1);
         break;
 
       case "print":
         console.log("Outputting: " + arg1Log);
         this.outputLines.push(arg1);
+        break;
+
+      case "ver":
+        // TODO: revisar que funcione y agregar
+        console.log("Checking that array index is correct.");
         break;
 
       // ======= Expressions =======
@@ -248,7 +285,7 @@ export class OutputPage {
     }
 
     // Handle next quadruple
-    this.executeQuadruples(programIndex + 1);
+    return this.executeQuadruples(programIndex + 1);
   }
 
   /**
