@@ -481,7 +481,7 @@ class FuncNode(object):
                 funcType = key
                 break
 
-            auxGosub[1] = globalTable[self.args[0]][funcType][self.args[0]]
+            auxGosub[1] = globalTable[self.args[0]][funcType][self.args[0]] - 1
             auxAddress = auxTable.add("Aux", funcType, "aux")
             nextReturn = ["=", globalTable[self.args[0]][funcType][self.args[0]], "", auxAddress]
             quadruples.append(nextReturn)
@@ -497,7 +497,7 @@ class FuncNode(object):
         
         paramAddress = auxTable.add("Aux", resultType, "aux")
         
-        quadruples.append(["Param", address, "param" + str(contParam), paramAddress])
+        quadruples.append(["Param", address, "", "param" + str(contParam)])
         contParam = contParam + 1
         
         resultType, address = self.args[1].expression(funcName, result)
@@ -513,7 +513,7 @@ class FuncNode(object):
         print(address)
 
         paramAddress = auxTable.add("Aux", resultType, "aux")
-        quadruples.append(["Param", address, "param" + str(contParam), paramAddress])
+        quadruples.append(["Param", address, "", "param" + str(contParam)])
         contParam = contParam + 1
         
         return resultType, address
