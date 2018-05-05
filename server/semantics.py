@@ -481,6 +481,13 @@ class FuncNode(object):
 
 # -------------------------------------------------------------
 
+    elif self.type == "read":
+      print ("Entro a read") 
+      resultType, address = self.args[0].expression(funcName, result)
+      quadruples.append(["read", "", "", address])
+
+# -------------------------------------------------------------
+
     #call function. Receives id(params)
     elif self.type == "functionCall" :
         print("Entro a functionCall")

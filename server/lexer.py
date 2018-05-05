@@ -4,6 +4,7 @@ import ply.lex as lex
 reserved = {
   #Input & Output
   'print' : 'PRINT',
+  'read' : 'READ',
   #Key Words
   'main' : 'MAIN',
   'program' : 'PROGRAM',
