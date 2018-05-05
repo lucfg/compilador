@@ -302,7 +302,7 @@ class FuncNode(object):
                 quadruples.append(["=", address, "", currentTable[funcName][resultType][varName]])
             break
           else:
-            raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0]) + ".")
+            raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0].args[0]) + ".")
       print(str(globalTable))
       if "global" in globalTable.keys():
           for key in globalTable["global"]:
@@ -316,7 +316,7 @@ class FuncNode(object):
                           quadruples.append(["=", address, "", globalTable["global"][resultType][varName]])
                       break
                   else:
-                      raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0]) + ".")
+                      raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0].args[0]) + ".")
         
       if not found:
         raise Exception("Variable '" + str(varName) + "' has not been declared. Cannot assign value.")
