@@ -127,7 +127,7 @@ class FuncNode(object):
         if elem is not None:
           elem.semantic(funcName, result)
 
-      quadruples.append(["ret","*0*","",""])
+ #     quadruples.append(["ret","*0*","",""])
 # -------------------------------------------------------------
 
     elif self.type == "function":
@@ -150,10 +150,16 @@ class FuncNode(object):
     elif self.type == "return":
         resultType, address = self.args[0].expression(funcName, result)
         print("El result de RETURN" + str(resultType))
+        funcType = ""
 
         print(str(globalTable[funcName].keys()))
-        if resultType in globalTable[funcName].keys(): 
-            quadruples.append(["ret", address,"",""])
+        if resultType in globalTable[funcName].keys():
+
+            for key in globalTable[funcName].keys():
+                funcType = key
+                break
+            
+            quadruples.append(["ret", address,"",globalTable[funcName][funcType][funcName]])
         else:
             raise Exception("The function " + funcName + " needs to return something of type " + resultType + ".")
 
