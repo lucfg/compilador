@@ -12,6 +12,9 @@ listParam = {}
 # {arr1: [limInf, limSup, -k, r, baseDir]}
 arrayList = {}
 
+#Matrix dictionary
+matrixList = {}
+
 global funcDecCont
 global funcCallCont
 funcDecCont = 0
@@ -215,17 +218,40 @@ class FuncNode(object):
       limInf = 1
       limSup = self.args[2]
       r = 1 * (limSup - limInf + 1)
-      k = 0 + limInf * 1
+      minusK = (0 + limInf * 1) * -1
 
       print("LIM-INF: " + str(limInf))
       print("LIM-SUP: " + str(limSup))
       print("R: " + str(r))
-      print("K: " + str(k))
+      print("-K: " + str(minusK))
 
       #Adds id to currentTable
       currentTable.addArr(funcName, self.args[1], self.args[0], r)
       address = currentTable[funcName][self.args[1]][self.args[0]]
-      arrayList[self.args[0]] = [limInf, limSup, k, r, address]
+      arrayList[self.args[0]] = [limInf, limSup, minusK, r, address]
+
+      if self.args[3] is not None:
+          result = self.args[3].semantic(funcName, result)
+      
+# -------------------------------------------------------------
+
+    elif self.type == "arrVar":
+      global matrixList
+
+      limInf = 1
+      limSup = self.args[2]
+      r = 1 * (limSup - limInf + 1)
+      minusK = (0 + limInf * 1) * -1
+
+      print("LIM-INF: " + str(limInf))
+      print("LIM-SUP: " + str(limSup))
+      print("R: " + str(r))
+      print("-K: " + str(minusK))
+
+      #Adds id to currentTable
+      currentTable.addArr(funcName, self.args[1], self.args[0], r)
+      address = currentTable[funcName][self.args[1]][self.args[0]]
+      arrayList[self.args[0]] = [limInf, limSup, minusK, r, address]
 
       if self.args[3] is not None:
           result = self.args[3].semantic(funcName, result)
@@ -520,8 +546,8 @@ class FuncNode(object):
             #Revisar yo mismo el quadruplo de verificar??????
 
             aux1 = auxTable.add("Aux", expType, "aux")
-            # + K
-            quadruples.append(["+", expAddress, arrayList[self.args[0]][2], aux1])
+            # + (-K)
+            quadruples.append(["+", expAddress, "*" +str(arrayList[self.args[0]][2]) + "*", aux1])
 
             aux2 = auxTable.add("Aux", expType, "aux")
             # + dirBase

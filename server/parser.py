@@ -29,13 +29,16 @@ def p_body(p):
 def p_variables(p):
   '''variables :
                | VAR type ID DOT_COMMA variables
-  	       | VAR type ID L_BRACK INTEGER R_BRACK DOT_COMMA variables'''
+  	       | VAR type ID L_BRACK INTEGER R_BRACK DOT_COMMA variables
+  	       | VAR type ID L_BRACK INTEGER R_BRACK L_BRACK INTEGER R_BRACK DOT_COMMA variables'''
   if len(p) > 2 :
     if len(p) > 8:
-      p[0] = FuncNode('arrVar', p[3], p[2], p[5], p[8])
+      if len(p) > 11:
+        p[0] = FuncNode('matVar', p[3], p[2], p[5], p[8], p[11])
+      else:
+        p[0] = FuncNode('arrVar', p[3], p[2], p[5], p[8])
     else:
-      p[0] = FuncNode('var', p[3], p[2], p[5])  
-  #TODO: Revisar ID y assignment en punto neuralgico
+      p[0] = FuncNode('var', p[3], p[2], p[5])
 
 # Function declaration
 def p_functions(p):
