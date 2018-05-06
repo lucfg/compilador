@@ -648,6 +648,7 @@ class FuncNode(object):
         print("Args de functionCall: " + str(self.args[1]))#parameters
         global contParam
         global funcCallCont
+        funcCallCont = 0
         contParam = 1
         funcType = ""
         global nextReturn
@@ -663,6 +664,8 @@ class FuncNode(object):
             if not (i is None):
                 resultType, resultAddress = i.expression(funcName, result)
 
+                print("FUNCCALLCONT: " + str(funcCallCont))
+                print("FUNCDECCONT: " + str(funcDecCont))
                 if funcCallCont != funcDecCont:
                     raise Exception("The number of parameters does not match up.")
             
