@@ -562,7 +562,6 @@ class FuncNode(object):
 
         if expType is "int":
             quadruples.append(["ver", expAddress, "*" + str(arrayList[self.args[0]][0]) + "*", "*" + str(arrayList[self.args[0]][1]) + "*"])
-            #Revisar yo mismo el quadruplo de verificar??????
 
             aux1 = auxTable.add("Aux", expType, "aux")
             # + (-K)
@@ -570,12 +569,12 @@ class FuncNode(object):
 
             aux2 = auxTable.add("Aux", expType, "aux")
             # + dirBase
-            quadruples.append(["+", aux1, arrayList[self.args[0]][4], aux2])
+            quadruples.append(["+", aux1, "*" + str(arrayList[self.args[0]][4]) + "*", aux2])
 
             if isGlobal:
-                return arrTypeGet, aux2
+                return arrTypeGet, ("(" + str(aux2) + ")")
             else:
-                return arrTypeGet, aux2
+                return arrTypeGet, ("(" + str(aux2) + ")")
         else:
             raise Exception("Index must be of type int.")
 
@@ -586,13 +585,18 @@ class FuncNode(object):
     elif self.type == "idCallMat":
         print("Entro a idCallMat")
         #Gets type of variable and checks if it's global
-        arrTypeGet, isGlobal = getType(self.args[0], funcName, currentTable)
+        matTypeGet, isGlobal = getType(self.args[0], funcName, currentTable)
 
-        expType, expAddress = self.args[1].expression(funcName, currentTable)
+        expType1, expAddress1 = self.args[1].expression(funcName, currentTable)
+        expType2, expAddress2 = self.args[2].expression(funcName, currentTable)
 
-        if expType is "int":
-            quadruples.append(["ver", expAddress, "*" + str(arrayList[self.args[0]][0]) + "*", "*" + str(arrayList[self.args[0]][1]) + "*"])
-            #Revisar yo mismo el quadruplo de verificar??????
+        if expType1 is "int" and expType2 is "int":
+            #Quadruples for first dimension
+            quadruples.append(["ver", expAddress1, "*" + str(matrixList[self.args[0]][0]) + "*", "*" + str(matrixList[self.args[0]][1]) + "*"])
+            aux1 = auxTable.add("Aux", expType1, "aux")
+            # s1 * m1
+            quadruples.append
+        
 
             aux1 = auxTable.add("Aux", expType, "aux")
             # + (-K)
@@ -603,9 +607,9 @@ class FuncNode(object):
             quadruples.append(["+", aux1, arrayList[self.args[0]][4], aux2])
 
             if isGlobal:
-                return arrTypeGet, aux2
+                return matTypeGet, aux2
             else:
-                return arrTypeGet, aux2
+                return matTypeGet, aux2
         else:
             raise Exception("Index must be of type int.")
 

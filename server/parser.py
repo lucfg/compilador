@@ -210,6 +210,7 @@ def p_factor(p):
              | ALPHANUMERIC 
              | CHARACTER
              | BOOLEAN
+             | VOID
              | idCall
              | L_PAR megaExp R_PAR
              | functionCall'''
