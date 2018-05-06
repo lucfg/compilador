@@ -11,25 +11,25 @@ actualFunc = 'program'
 # ---------------------------------------------------------------------------
 # Program declaration
 def p_program(p):
-  '''program : PROGRAM ID L_BRACK variables functions mainBody R_BRACK'''
+  '''program : PROGRAM ID L_KEY variables functions mainBody R_KEY'''
   p[0] = FuncNode('program', p[2], p[4], p[5], p[6])
   print ("p0 is :" + str(p[0]) + ": that's it")
 
 # Main body (with variable declaration)
 def p_mainBody(p):
-  '''mainBody : MAIN L_PAR R_PAR L_BRACK variables statements R_BRACK'''
+  '''mainBody : MAIN L_PAR R_PAR L_KEY variables statements R_KEY'''
   p[0] = FuncNode('main', 'void', p[5], p[6])
 
 # Body (without variable declaration)
 def p_body(p):
-  '''body : L_BRACK statements R_BRACK'''
+  '''body : L_KEY statements R_KEY'''
   p[0] = p[2]
   
 # Variable declaration
 def p_variables(p):
   '''variables :
                | VAR type ID DOT_COMMA variables
-  	       | VAR type ID L_KEY INTEGER R_KEY DOT_COMMA variables'''
+  	       | VAR type ID L_BRACK INTEGER R_BRACK DOT_COMMA variables'''
   if len(p) > 2 :
     if len(p) > 8:
       p[0] = FuncNode('arrVar', p[3], p[2], p[5], p[8])
@@ -40,7 +40,7 @@ def p_variables(p):
 # Function declaration
 def p_functions(p):
   '''functions :
-               | FUNCTION type ID L_PAR functionsHelp R_PAR L_BRACK variables statements R_BRACK'''
+               | FUNCTION type ID L_PAR functionsHelp R_PAR L_KEY variables statements R_KEY'''
   if len(p) > 2:
     p[0] = FuncNode('function', p[3], p[2], p[5], p[8], p[9])
 
@@ -220,9 +220,9 @@ def p_factor(p):
 ## OTHERS
 def p_idCall(p):
   '''idCall : ID
-  	    | ID L_KEY exp R_KEY'''
+  	    | ID L_BRACK exp R_BRACK'''
   if len(p) > 2:
-    p[0] = FuncNode('idCall', p[1], p[3])
+    p[0] = FuncNode('idCallArr', p[1], p[3])
   else:
     p[0] = FuncNode('idCall', p[1])
 # ---------------------------------------------------------------------------

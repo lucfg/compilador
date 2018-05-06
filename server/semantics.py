@@ -27,6 +27,8 @@ global cont
 funcParamCont = 1
 contParam = 1
 
+funcContext = ""
+
 def isPrimitive(t):
     if isinstance(t, str):
         if t == "true" or t == "false":
@@ -496,11 +498,33 @@ class FuncNode(object):
 # TODO: arreglos
     elif self.type == "idCall":
         print("Entro a idCall")
+        #Gets type of variable and checks if it's global
         typeGet, isGlobal = getType(self.args[0], funcName, currentTable)
+        
         if isGlobal:
             return typeGet, globalTable["global"][typeGet][self.args[0]]
         else:
             return typeGet, currentTable[funcName][typeGet][self.args[0]]
+
+# -------------------------------------------------------------
+
+    elif self.type == "idCallArr":
+        print("Entro a idCallArr")
+        #Gets type of variable and checks if it's global
+        arrTypeGet, isGlobal = getType(self.args[0], funcName, currentTable)
+
+        expType, expAddress = self.args[1].expression(funcName, currentTable)
+
+        if expType is "int":
+            quadruples.append["ver", expAddress, "", ""]
+        else:
+            raise Exception("Index must be of type int.")
+        
+        if isGlobal:
+            return arrTypeGet, globalTable["global"][arrTypeGet][self.args[0]]
+        else:
+            return arrTypeGet, currentTable[funcName][arrTypeGet][self.args[0]]
+        
         if self.args[3] is not None:
             aux = self.args[3].expression(funcName, result)
             quadruples.append([self.args[2], result, aux, currentTable[funcName][resultType][varName]])
@@ -530,13 +554,15 @@ class FuncNode(object):
         contParam = 1
         funcType = ""
         global nextReturn
+        global funcContext
+        funcContext = self.args[0]
 
       #separates a space for the function call
         quadruples.append(["ERA", "/" + self.args[0] + "/", "",""])
 
         #Checking parameters
         for i in self.args[1:]:
-            print("Args del paramtero: " + str(i))
+            print("Args del parametro: " + str(i))
             if not (i is None):
                 resultType, resultAddress = i.expression(funcName, result)
 
@@ -569,6 +595,9 @@ class FuncNode(object):
 
         if not (resultType in listParam["param" + str(contParam)].keys()):
             raise Exception("Parameter given not of type " + resultType)
+
+        auxAddress = localTable[funcContext][resultType][listParam["param" + str(contParam)][resultType]]
+        quadruples.append(["=", paramAddress, "", auxAddress])
         
         contParam = contParam + 1
         funcCallCont = funcCallCont + 1
@@ -585,11 +614,16 @@ class FuncNode(object):
         print(resultType)
         print(address)
 
+        paramCont = 0
+
         paramAddress = auxTable.add("Aux", resultType, "aux")
         quadruples.append(["param", address, "/param" + str(contParam) + "/", paramAddress])
 
         if not (resultType in listParam["param" + str(contParam)].keys()):
             raise Exception("Parameter given not of type " + resultType)
+
+        auxAddress = localTable[funcContext][resultType][listParam["param" + str(contParam)][resultType]]
+        quadruples.append(["=", paramAddress, "", auxAddress])
         
         contParam = contParam + 1
         funcCallCont = funcCallCont + 1

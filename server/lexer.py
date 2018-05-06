@@ -88,10 +88,10 @@ t_AND = r'&&'
 t_OR = r'\|\|'
 
 #Block delimitators
-t_L_KEY = r'\['
-t_R_KEY = r'\]'
-t_L_BRACK = r'\{'
-t_R_BRACK = r'\}'
+t_L_KEY = r'\{'
+t_R_KEY = r'\}'
+t_L_BRACK = r'\['
+t_R_BRACK = r'\]'
 t_L_PAR = r'\('
 t_R_PAR = r'\)'
 
