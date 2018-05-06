@@ -38,7 +38,7 @@ export class HomePage {
    */
   async compileAndRun() {
     if (await this.compile()) {
-      await this.run();
+      this.run();
     }
   }
 
