@@ -223,9 +223,13 @@ def p_factor(p):
 ## OTHERS
 def p_idCall(p):
   '''idCall : ID
-  	    | ID L_BRACK exp R_BRACK'''
+  	    | ID L_BRACK exp R_BRACK
+  	    | ID L_BRACK exp R_BRACK L_BRACK exp R_BRACK'''
   if len(p) > 2:
-    p[0] = FuncNode('idCallArr', p[1], p[3])
+    if len(p) > 7:
+      p[0] = FuncNode('idCallMat', p[1], p[3], p[6])
+    else:
+      p[0] = FuncNode('idCallArr', p[1], p[3])
   else:
     p[0] = FuncNode('idCall', p[1])
 # ---------------------------------------------------------------------------

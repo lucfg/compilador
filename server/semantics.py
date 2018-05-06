@@ -13,7 +13,7 @@ listParam = {}
 arrayList = {}
 
 #Matrix dictionary
-# {mat1: []}
+# {mat1: [limInf1, limSup1, m1, r1, limInf2, limSup2, -k, r2, baseDir]}
 matrixList = {}
 
 global funcDecCont
@@ -218,9 +218,10 @@ class FuncNode(object):
 
       limInf = 1
       limSup = self.args[2]
-      r = 1 * (limSup - limInf + 1)
+      r = 1 * (limSup - limInf + 1) # m0
       minusK = (0 + limInf * 1) * -1
 
+      print("ARRAY DECLARATION:")
       print("LIM-INF: " + str(limInf))
       print("LIM-SUP: " + str(limSup))
       print("R: " + str(r))
@@ -236,26 +237,43 @@ class FuncNode(object):
       
 # -------------------------------------------------------------
 
-    elif self.type == "arrVar":
+    elif self.type == "matVar":
       global matrixList
 
-      limInf = 1
-      limSup = self.args[2]
-      r = 1 * (limSup - limInf + 1)
-      minusK = (0 + limInf * 1) * -1
+      limInf1 = 1
+      limSup1 = self.args[2]
+      limInf2 = 1
+      limSup2 = self.args[3]
+      
+      r1 = 1 * (limSup1 - limInf1 + 1)
+      r2 = r1 * (limSup2 - limInf2 + 1) # m0
+      
+      m1 = int(r2 / (limSup1 - limInf1 + 1))
+      sumAux = 0 + limInf1 * m1
 
-      print("LIM-INF: " + str(limInf))
-      print("LIM-SUP: " + str(limSup))
-      print("R: " + str(r))
+      m2 = int(m1 / (limSup2 - limInf2 + 1))
+      sumAux = sumAux + limInf2 * m2
+      minusK = sumAux * -1
+
+      print("MATRIX DECLARATION:")
+      print("LIM-INF1: " + str(limInf1))
+      print("LIM-SUP1: " + str(limSup1))
+      print("R1: " + str(r1))
+      print("M1: " + str(m1))
+
+      print("LIM-INF2: " + str(limInf2))
+      print("LIM-SUP2: " + str(limSup2))
+      print("R2: " + str(r2))
+      print("M2: " + str(m2))
       print("-K: " + str(minusK))
 
       #Adds id to currentTable
-      currentTable.addArr(funcName, self.args[1], self.args[0], r)
+      currentTable.addArr(funcName, self.args[1], self.args[0], r2)
       address = currentTable[funcName][self.args[1]][self.args[0]]
-      arrayList[self.args[0]] = [limInf, limSup, minusK, r, address]
+      matrixList[self.args[0]] = [limInf1, limSup1, m1, r1, limInf2, limSup2, minusK, r2, address]
 
-      if self.args[3] is not None:
-          result = self.args[3].semantic(funcName, result)
+      if self.args[4] is not None:
+          result = self.args[4].semantic(funcName, result)
       
 # -------------------------------------------------------------
         
@@ -537,6 +555,36 @@ class FuncNode(object):
 
     elif self.type == "idCallArr":
         print("Entro a idCallArr")
+        #Gets type of variable and checks if it's global
+        arrTypeGet, isGlobal = getType(self.args[0], funcName, currentTable)
+
+        expType, expAddress = self.args[1].expression(funcName, currentTable)
+
+        if expType is "int":
+            quadruples.append(["ver", expAddress, "*" + str(arrayList[self.args[0]][0]) + "*", "*" + str(arrayList[self.args[0]][1]) + "*"])
+            #Revisar yo mismo el quadruplo de verificar??????
+
+            aux1 = auxTable.add("Aux", expType, "aux")
+            # + (-K)
+            quadruples.append(["+", expAddress, "*" +str(arrayList[self.args[0]][2]) + "*", aux1])
+
+            aux2 = auxTable.add("Aux", expType, "aux")
+            # + dirBase
+            quadruples.append(["+", aux1, arrayList[self.args[0]][4], aux2])
+
+            if isGlobal:
+                return arrTypeGet, aux2
+            else:
+                return arrTypeGet, aux2
+        else:
+            raise Exception("Index must be of type int.")
+
+        #globalTable["global"][arrTypeGet][self.args[0]]
+        
+# -------------------------------------------------------------
+
+    elif self.type == "idCallMat":
+        print("Entro a idCallMat")
         #Gets type of variable and checks if it's global
         arrTypeGet, isGlobal = getType(self.args[0], funcName, currentTable)
 
