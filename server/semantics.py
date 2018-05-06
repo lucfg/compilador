@@ -654,6 +654,7 @@ class FuncNode(object):
         global nextReturn
         global funcContext
         funcContext = self.args[0]
+        print("FUNCCONTEXT: " + str(self.args[0]))
 
       #separates a space for the function call
         quadruples.append(["ERA", "/" + self.args[0] + "/", "",""])
@@ -686,6 +687,7 @@ class FuncNode(object):
 
     elif self.type == "params":
         print("entro a params")
+        print("FUNCCONTEXT: " + str(funcContext))
         resultType, address = self.args[0].expression(funcName, result)
         print(resultType)
         print(address)
@@ -710,6 +712,7 @@ class FuncNode(object):
 
     elif self.type == "param":
         print("entro a param")
+        print("FUNCCONTEXT: " + str(funcContext))
         resultType, address = self.args[0].expression(funcName, result)
         print(resultType)
         print(address)
