@@ -1,5 +1,5 @@
-import { varTuple } from './output';
-import { Component, DefaultKeyValueDifferFactory } from '@angular/core';
+// import { varTuple } from './output';
+import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController, AlertController } from 'ionic-angular';
 
 /**
@@ -36,6 +36,8 @@ export class OutputPage {
     this.executeQuadruples(0, 0);
     console.log("Resulting memory:");
     console.log(this.memory);
+    console.log("Resulting virtual memory:");
+    console.log(this.funcArguments);
   }
 
   // Quadruple reader
@@ -49,7 +51,7 @@ export class OutputPage {
    * @param depth depth at which the program is running (0 for main)
    * @param error If true, stops executing more quadruples
    */
-  async executeQuadruples(programIndex: number, depth: number, error?: boolean) {
+  async executeQuadruples(programIndex: number, depth: number, sendingParams?: boolean, error?: boolean) {
     if (error) {
       return false;
     }
@@ -93,24 +95,35 @@ export class OutputPage {
         arg1 = rawArg1;
       }
       else {
-        // Check if arg is an argument of the function
-        let funcArgVal = this.funcArguments[depth][rawArg1.toString()];
+        var depthArg1 = depth;
+        if (sendingParams) { // Must search in lower depth when initializing params
+          depthArg1--;
+        }
+
+        let funcArgVal = this.funcArguments[depthArg1][rawArg1.toString()];
         if (funcArgVal != null) {
-          console.log("arg1 is an argument and its value is " + this.memory[funcArgVal].value);
-          arg1 = this.memory[funcArgVal].value;
+          console.log("arg1 is an argument and its value is " + funcArgVal);
+          arg1 = funcArgVal;
         }
-        else { // Arg must be a normal address; check if it is initialized
-          if (this.memory[Number(rawArg1)] == null) {
-            console.log("Error: variable is not initialized.");
-            alert("You are trying to use a variable without giving it a value first.");
-            return false;
-          }
-          else { // Arg is a common, initialized address
-            console.log("arg1 is an addr (" + rawArg1 + ") and it points to " + this.memory[Number(rawArg1)].value);
-            arg1 = this.memory[Number(rawArg1)].value;
-            isConstantArg1 = false;
-          }
+        else { // Variable is not initialized
+          console.log("Error: arg1 is not initialized for depth " + depthArg1);
+          console.log(this.funcArguments);
+          alert("You are trying to use a variable without giving it a value first.");
+          return false;
         }
+        
+        // else { // Arg must be a normal address; check if it is initialized
+        //   if (this.memory[Number(rawArg1)] == null) {
+        //     console.log("Error: variable is not initialized.");
+        //     alert("You are trying to use a variable without giving it a value first.");
+        //     return false;
+        //   }
+        //   else { // Arg is a common, initialized address
+        //     console.log("arg1 is an addr (" + rawArg1 + ") and it points to " + this.memory[Number(rawArg1)].value);
+        //     arg1 = this.memory[Number(rawArg1)].value;
+        //     isConstantArg1 = false;
+        //   }
+        // }
       }
     }
 
@@ -137,33 +150,44 @@ export class OutputPage {
         arg2 = rawArg2;
       }
       else {
-        // Check if arg is an argument of the function
-        let funcArgVal = this.funcArguments[depth][rawArg2.toString()];
+        var depthArg2 = depth;
+        if (sendingParams) { // Must search in lower depth when initializing params
+          depthArg2--;
+        }
+        
+        let funcArgVal = this.funcArguments[depthArg2][rawArg2.toString()];
         if (funcArgVal != null) {
-          console.log("arg2 is an argument and its value is " + this.memory[funcArgVal].value);
-          arg2 = this.memory[funcArgVal].value;
+          console.log("arg2 is an argument and its value is " + funcArgVal);
+          arg2 = funcArgVal;
         }
-        else { // Arg must be a normal address; check if it is initialized
-          if (this.memory[Number(rawArg2)] == null) {
-            console.log("Error: variable is not initialized.");
-            alert("You are trying to use a variable without giving it a value first.");
-            return false;
-          }
-          else { // Arg is a common, initialized address
-            console.log("arg2 is an addr (" + rawArg2 + ") and it points to " + this.memory[Number(rawArg2)].value);
-            arg2 = this.memory[Number(rawArg2)].value;
-            isConstantArg2 = false;
-          }
+        else { // Variable is not initialized
+          console.log("Error: arg2 is not initialized for depth " + depthArg2);
+          console.log(this.funcArguments);
+          alert("You are trying to use a variable without giving it a value first.");
+          return false;
         }
+
+        // else { // Arg must be a normal address; check if it is initialized
+        //   if (this.memory[Number(rawArg2)] == null) {
+        //     console.log("Error: variable is not initialized.");
+        //     alert("You are trying to use a variable without giving it a value first.");
+        //     return false;
+        //   }
+        //   else { // Arg is a common, initialized address
+        //     console.log("arg2 is an addr (" + rawArg2 + ") and it points to " + this.memory[Number(rawArg2)].value);
+        //     arg2 = this.memory[Number(rawArg2)].value;
+        //     isConstantArg2 = false;
+        //   }
+        // }
       }
     }
 
     // Get arg'3 value
-    let funcArgVal = this.funcArguments[depth][rawArg3.toString()];
-    if (funcArgVal != null) {
-      console.log("arg3 is an argument and its real address is " + funcArgVal.address);
-      arg3 = funcArgVal;
+    if (rawArg3.indexOf('*') > -1) { // Arg was sent as an integer value
+      let cleanString3 = rawArg3.replace(/\*/g, '');
+      arg3 = Number(cleanString3);
     }
+    arg3 = Number(rawArg3); // Arg is an address
 
 
     // Handle instruction
@@ -176,12 +200,12 @@ export class OutputPage {
     switch (instruction.toLowerCase()) {
       // ======= GoTo's =======
       case "goto":
-        console.log("Going from " + programIndex + " to " + arg3);
+        console.log("Going from " + programIndex + " to " + arg3 + " in depth " + depth);
         return this.executeQuadruples(arg3, depth);
 
       case "gotof":
         if (!arg1) {
-          console.log("Arg1 is false, going from " + programIndex + " to " + arg3);
+          console.log("Arg1 is false, going from " + programIndex + " to " + arg3 + " in depth " + depth);
           return this.executeQuadruples(arg3, depth);
         }
         else {
@@ -192,10 +216,11 @@ export class OutputPage {
       case "gosub":
         console.log("Calling function in quad " + arg1 + " with the following params.");
         console.log(JSON.stringify(this.funcArguments[depth]));
-        if (!this.executeQuadruples(arg3, depth)) {
+        if (!this.executeQuadruples(arg3, depth, false)) {
           return false;
         }
         depth--; // Here, function has already been ran, so depth must be returned to previous value
+        sendingParams = false;
         break;
       
       case "endproc":
@@ -209,40 +234,46 @@ export class OutputPage {
 
       // ======= Statements =======
       case "=":
-        console.log("Assigning " + arg1Log + " to " + arg3);
-        this.memory[arg3] = new varTuple(arg1);
+        console.log("Assigning " + arg1Log + " to " + arg3 + " in depth " + depth);
+        this.funcArguments[depth][arg3.toString()] = arg1;
+        // this.memory[arg3] = new varTuple(arg1);
         break;
 
       case "++":
-        console.log("Adding 1 to " + arg3);
+        console.log("Adding 1 to " + arg3 + " in depth " + depth);
         if (!error) {
-          this.memory[arg3].value++;
+          this.funcArguments[depth][arg3.toString()]++;
+          // this.memory[arg3].value++;
         }
         break;
 
       case "--":
-        console.log("Subtracting 1 to " + arg3);
+        console.log("Subtracting 1 to " + arg3 + " in depth " + depth);
         if (!error) {
-          this.memory[arg3].value--;
+          this.funcArguments[depth][arg3.toString()]--;
+          // this.memory[arg3].value--;
         }
         break;
 
       case "param":
-        console.log("Setting " + arg1Log + " as param with name " + arg2Log + " for function.");
-        console.log("Setting param " + arg2Log + " to addr " + arg3 + " with value " + arg1);
-        this.memory[arg3] = new varTuple(arg1);
-        this.funcArguments[depth][arg2.toString()] = arg3;
+        console.log("Setting " + arg1Log + " as param with name " + arg2Log + " for function with depth " + depth + ".");
+        this.funcArguments[depth][arg2.toString()] = arg1
+        // console.log("Setting param " + arg2Log + " to addr " + arg3 + " with value " + arg1);
+        // this.memory[arg3] = new varTuple(arg1);
+        // this.funcArguments[depth][arg2.toString()] = arg3;
         break;
 
       case "era": // Prepares arguments memory for param reading
         console.log("Reading params for function call...");
+        sendingParams = true;
         depth++;
         this.funcArguments.push({});
         break;
 
       case "ret":
-        console.log("Setting return to addr " + arg3 + " as " + arg1Log);
-        this.memory[arg3] = new varTuple(arg1);
+        console.log("Setting return to addr " + arg3 + " as " + arg1Log + " for lower depth " + depth);
+        this.funcArguments[depth-1][arg3.toString()] = arg1;
+        // this.memory[arg3] = new varTuple(arg1);
         break;
 
       case "print":
@@ -263,27 +294,32 @@ export class OutputPage {
       // ======= Expressions =======
       case "+":
         console.log("Summing to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
-        this.memory[arg3] = new varTuple(arg1 + arg2);
+        this.funcArguments[depth][arg3.toString()] = arg1 + arg2;
+        // this.memory[arg3] = new varTuple(arg1 + arg2);
         break;
 
       case "-":
         console.log("Subtracting to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
-        this.memory[arg3] = new varTuple(arg1 - arg2);
+        this.funcArguments[depth][arg3.toString()] = arg1 - arg2;
+        // this.memory[arg3] = new varTuple(arg1 - arg2);
         break;
       
       case "/":
         console.log("Dividing to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
-        this.memory[arg3] = new varTuple(arg1 / arg2);
+        this.funcArguments[depth][arg3.toString()] = arg1 / arg2;
+        // this.memory[arg3] = new varTuple(arg1 / arg2);
         break;
 
       case "*":
         console.log("Multiplying to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
-        this.memory[arg3] = new varTuple(arg1 * arg2);
+        this.funcArguments[depth][arg3.toString()] = arg1 * arg2;
+        // this.memory[arg3] = new varTuple(arg1 * arg2);
         break;
 
       case "&&":
         console.log("AND to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
-        this.memory[arg3] = new varTuple(arg1 && arg2);
+        this.funcArguments[depth][arg3.toString()] = arg1 && arg2;
+        // this.memory[arg3] = new varTuple(arg1 && arg2);
         break;
       
       case "||":
@@ -293,27 +329,32 @@ export class OutputPage {
 
       case "==":
         console.log("== to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
-        this.memory[arg3] = new varTuple(arg1 == arg2);
+        this.funcArguments[depth][arg3.toString()] = arg1 == arg2;
+        // this.memory[arg3] = new varTuple(arg1 == arg2);
         break;
 
       case "<=":
         console.log("(TODO) <= to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
-        this.memory[arg3] = new varTuple(arg1 <= arg2);
+        this.funcArguments[depth][arg3.toString()] = arg1 <= arg2;
+        // this.memory[arg3] = new varTuple(arg1 <= arg2);
         break;
 
       case ">=":
         console.log("(TODO) >= to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
-        this.memory[arg3] = new varTuple(arg1 >= arg2);
+        this.funcArguments[depth][arg3.toString()] = arg1 >= arg2;
+        // this.memory[arg3] = new varTuple(arg1 >= arg2);
         break;
 
       case "<": //TODO: are the arguments of these switched by the compiler??
         console.log("(TODO) < to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
-        this.memory[arg3] = new varTuple(arg1 < arg2);
+        this.funcArguments[depth][arg3.toString()] = arg1 < arg2;
+        // this.memory[arg3] = new varTuple(arg1 < arg2);
         break;
 
       case ">":
         console.log("(TODO) > to dir " + arg3 + " values " + arg1Log + " and " + arg2Log);
-        this.memory[arg3] = new varTuple(arg1 > arg2);
+        this.funcArguments[depth][arg3.toString()] = arg1 > arg2;
+        // this.memory[arg3] = new varTuple(arg1 > arg2);
         break;
 
       // ======= Logs =======
@@ -332,7 +373,7 @@ export class OutputPage {
     }
 
     // Handle next quadruple
-    return this.executeQuadruples(programIndex + 1, depth);
+    return this.executeQuadruples(programIndex + 1, depth, sendingParams);
   }
 
   /**
@@ -353,7 +394,8 @@ export class OutputPage {
         {
           text: 'Accept',
           handler: data => {
-            this.memory[address] = new varTuple(Number(data.input));
+            // this.memory[address] = new varTuple(Number(data.input));
+            this.funcArguments[currentDepth][address.toString()] = data.input;
             this.executeQuadruples(currentQuad+1, currentDepth);
           }
         }

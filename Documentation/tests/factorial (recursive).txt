@@ -1,0 +1,22 @@
+func int factorial(int num) {
+      var int nextFact;
+	var int nextNum;
+
+	if (num > 1) {
+		nextNum = num-1;
+	      nextFact = factorial(nextNum);
+              return num * nextFact;
+	}
+	else {
+		return num;
+	}
+}
+
+main() { 
+	var int factStart;
+
+	print("Pick a number to get its factorial");
+	read(factStart);
+
+	print(factorial(factStart));
+}
