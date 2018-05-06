@@ -516,19 +516,26 @@ class FuncNode(object):
         expType, expAddress = self.args[1].expression(funcName, currentTable)
 
         if expType is "int":
-            quadruples.append["ver", expAddress, "", ""]
+            quadruples.append(["ver", expAddress, "*" + str(arrayList[self.args[0]][0]) + "*", "*" + str(arrayList[self.args[0]][1]) + "*"])
+            #Revisar yo mismo el quadruplo de verificar??????
+
+            aux1 = auxTable.add("Aux", expType, "aux")
+            # + K
+            quadruples.append(["+", expAddress, arrayList[self.args[0]][2], aux1])
+
+            aux2 = auxTable.add("Aux", expType, "aux")
+            # + dirBase
+            quadruples.append(["+", aux1, arrayList[self.args[0]][4], aux2])
+
+            if isGlobal:
+                return arrTypeGet, aux2
+            else:
+                return arrTypeGet, aux2
         else:
             raise Exception("Index must be of type int.")
-        
-        if isGlobal:
-            return arrTypeGet, globalTable["global"][arrTypeGet][self.args[0]]
-        else:
-            return arrTypeGet, currentTable[funcName][arrTypeGet][self.args[0]]
-        
-        if self.args[3] is not None:
-            aux = self.args[3].expression(funcName, result)
-            quadruples.append([self.args[2], result, aux, currentTable[funcName][resultType][varName]])
 
+        #globalTable["global"][arrTypeGet][self.args[0]]
+        
 # -------------------------------------------------------------
         
     elif self.type == "print":
