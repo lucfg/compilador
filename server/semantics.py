@@ -625,13 +625,13 @@ class FuncNode(object):
         print(address)
         
         paramAddress = auxTable.add("Aux", resultType, "aux")
-        quadruples.append(["param", address, "/param" + str(contParam) + "/", paramAddress])
+        auxAddress = localTable[funcContext][resultType][listParam["param" + str(contParam)][resultType]]
+        quadruples.append(["param", address, "*" + str(auxAddress) + "*", paramAddress])
 
         if not (resultType in listParam["param" + str(contParam)].keys()):
             raise Exception("Parameter given not of type " + resultType)
 
-        auxAddress = localTable[funcContext][resultType][listParam["param" + str(contParam)][resultType]]
-        quadruples.append(["=", paramAddress, "", auxAddress])
+ #       quadruples.append(["=", paramAddress, "", auxAddress])
         
         contParam = contParam + 1
         funcCallCont = funcCallCont + 1
