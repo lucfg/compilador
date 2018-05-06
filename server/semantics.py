@@ -37,6 +37,8 @@ def isPrimitive(t):
     if isinstance(t, str):
         if t == "true" or t == "false":
             return True
+        elif t == "void":
+            return True
         elif t[0] == "\"":
             return True
     elif isinstance(t, int):
@@ -51,6 +53,8 @@ def getType(v, funcName="missingFuncName", currentTable="error"):
     if isinstance(v, str):
         if v == "true" or v == "false":
             return "bool", "value"
+        elif v == "void":
+            return "void", "value"
         elif v[0] == "\"":
             return "string", "value"
         else:
@@ -531,7 +535,7 @@ class FuncNode(object):
       print("Entro a factor")
       address = self.args[0]
       if isPrimitive(self.args[0]):
-        typeGet, valOrAdd = getType(self.args[0], funcName, currentTable)
+        typeGet, valorAdd = getType(self.args[0], funcName, currentTable)
         if typeGet == "int" or typeGet == "decim":
             address = "*" + str(self.args[0]) + "*"    
         return typeGet, address
