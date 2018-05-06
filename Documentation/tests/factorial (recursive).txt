@@ -1,11 +1,6 @@
 func int factorial(int num) {
-      var int nextFact;
-	var int nextNum;
-
 	if (num > 1) {
-		nextNum = num-1;
-	      nextFact = factorial(nextNum);
-              return num * nextFact;
+		return (num * factorial(num-1));
 	}
 	else {
 		return num;

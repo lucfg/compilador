@@ -96,9 +96,6 @@ export class OutputPage {
       }
       else {
         var depthArg1 = depth;
-        if (sendingParams) { // Must search in lower depth when initializing params
-          depthArg1--;
-        }
 
         let funcArgVal = this.funcArguments[depthArg1][rawArg1.toString()];
         if (funcArgVal != null) {
@@ -151,9 +148,6 @@ export class OutputPage {
       }
       else {
         var depthArg2 = depth;
-        if (sendingParams) { // Must search in lower depth when initializing params
-          depthArg2--;
-        }
         
         let funcArgVal = this.funcArguments[depthArg2][rawArg2.toString()];
         if (funcArgVal != null) {
@@ -216,11 +210,10 @@ export class OutputPage {
       case "gosub":
         console.log("Calling function in quad " + arg1 + " with the following params.");
         console.log(JSON.stringify(this.funcArguments[depth]));
-        if (!this.executeQuadruples(arg3, depth, false)) {
+        if (!this.executeQuadruples(arg3, depth+1, false)) {
           return false;
         }
-        depth--; // Here, function has already been ran, so depth must be returned to previous value
-        sendingParams = false;
+        sendingParams = false; // Here, function has already been ran, so depth must be returned to previous value
         break;
       
       case "endproc":
@@ -257,7 +250,7 @@ export class OutputPage {
 
       case "param":
         console.log("Setting " + arg1Log + " as param with name " + arg2Log + " for function with depth " + depth + ".");
-        this.funcArguments[depth][arg2.toString()] = arg1
+        this.funcArguments[depth+1][arg2.toString()] = arg1
         // console.log("Setting param " + arg2Log + " to addr " + arg3 + " with value " + arg1);
         // this.memory[arg3] = new varTuple(arg1);
         // this.funcArguments[depth][arg2.toString()] = arg3;
@@ -266,13 +259,12 @@ export class OutputPage {
       case "era": // Prepares arguments memory for param reading
         console.log("Reading params for function call...");
         sendingParams = true;
-        depth++;
         this.funcArguments.push({});
         break;
 
       case "ret":
         console.log("Setting return to addr " + arg3 + " as " + arg1Log + " for lower depth " + depth);
-        this.funcArguments[depth-1][arg3.toString()] = arg1;
+        this.funcArguments[depth - 1][arg3.toString()] = arg1;
         // this.memory[arg3] = new varTuple(arg1);
         break;
 
@@ -395,7 +387,7 @@ export class OutputPage {
           text: 'Accept',
           handler: data => {
             // this.memory[address] = new varTuple(Number(data.input));
-            this.funcArguments[currentDepth][address.toString()] = data.input;
+            this.funcArguments[currentDepth][address.toString()] = Number(data.input);
             this.executeQuadruples(currentQuad+1, currentDepth);
           }
         }

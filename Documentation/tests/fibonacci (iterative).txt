@@ -1,0 +1,32 @@
+main() {
+  var int n;
+  var int t1;
+  var int t2;
+  var int nextTerm;
+  var int i;
+
+  t1 = 0;
+  t2 = 1;
+  nextTerm = 0;
+  
+  print("Terms to print for Fibonacci");
+  read (n);
+
+  i = 0;
+  while (i <= n) {
+	if (i == 1) {
+	  print (t1);
+	} else {
+	if (i == 2) {
+	  print (t2);
+	}
+	else {
+	  nextTerm = t1 + t2;
+	  t1 = t2;
+	  t2 = nextTerm;
+  	  print (nextTerm);
+	}}
+
+	i++;
+  }  
+}
