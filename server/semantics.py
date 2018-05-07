@@ -369,7 +369,7 @@ class FuncNode(object):
     if self.type == "assignment":
       print("Entro a assignment")
       if self.args[0].type == "idCallArr" or selfargs[0].type == "idCallMat":
-          resultType, address = self.args[0].expression(funcName, result)
+          resultArrType, addressArr = self.args[0].expression(funcName, result)
       varName = self.args[0].args[0]
       address = ""
       auxValue = ""
@@ -385,9 +385,15 @@ class FuncNode(object):
           if resultType == key:
             found = True
             if auxValue == "value":
-                quadruples.append([self.args[1], currentTable[funcName][resultType][varName], "*1*", currentTable[funcName][resultType][varName]])
+                if self.args[0].type == "idCallArr" or selfargs[0].type == "idCallMat":
+                    quadruples.append([self.args[1], currentTable[funcName][resultType][varName], "*1*", addressArr])
+                else:
+                    quadruples.append([self.args[1], currentTable[funcName][resultType][varName], "*1*", currentTable[funcName][resultType][varName]])
             else:
-                quadruples.append(["=", address, "", currentTable[funcName][resultType][varName]])
+                if self.args[0].type == "idCallArr" or selfargs[0].type == "idCallMat":
+                    quadruples.append(["=", address, "", addressArr])
+                else:
+                    quadruples.append(["=", address, "", currentTable[funcName][resultType][varName]])
             break
           else:
             raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0].args[0]) + ".")
