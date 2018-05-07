@@ -368,7 +368,7 @@ class FuncNode(object):
     print(funcName)
     if self.type == "assignment":
       print("Entro a assignment")
-      if self.args[0].type == "idCallArr" or selfargs[0].type == "idCallMat":
+      if self.args[0].type == "idCallArr" or self.args[0].type == "idCallMat":
           resultArrType, addressArr = self.args[0].expression(funcName, result)
       varName = self.args[0].args[0]
       address = ""
@@ -385,12 +385,12 @@ class FuncNode(object):
           if resultType == key:
             found = True
             if auxValue == "value":
-                if self.args[0].type == "idCallArr" or selfargs[0].type == "idCallMat":
+                if self.args[0].type == "idCallArr" or self.args[0].type == "idCallMat":
                     quadruples.append([self.args[1], currentTable[funcName][resultType][varName], "*1*", addressArr])
                 else:
                     quadruples.append([self.args[1], currentTable[funcName][resultType][varName], "*1*", currentTable[funcName][resultType][varName]])
             else:
-                if self.args[0].type == "idCallArr" or selfargs[0].type == "idCallMat":
+                if self.args[0].type == "idCallArr" or self.args[0].type == "idCallMat":
                     quadruples.append(["=", address, "", addressArr])
                 else:
                     quadruples.append(["=", address, "", currentTable[funcName][resultType][varName]])
@@ -405,9 +405,15 @@ class FuncNode(object):
                   if resultType == key:
                       found = True
                       if auxValue == "value":
-                          quadruples.append([self.args[1], globalTable["global"][resultType][varName], "*1*", globalTable["global"][resultType][varName]])
+                          if self.args[0].type == "idCallArr" or selfargs[0].type == "idCallMat":
+                              quadruples.append([self.args[1], globalTable["global"][resultType][varName], "*1*", addressArr])
+                          else:
+                              quadruples.append([self.args[1], globalTable["global"][resultType][varName], "*1*", currentTable[funcName][resultType][varName]])
                       else:
-                          quadruples.append(["=", address, "", globalTable["global"][resultType][varName]])
+                          if self.args[0].type == "idCallArr" or selfargs[0].type == "idCallMat":
+                              quadruples.append(["=", address, "", addressArr])
+                          else:
+                              quadruples.append(["=", address, "", globalTable["global"][resultType][varName]])
                       break
                   else:
                       raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0].args[0]) + ".")
@@ -574,7 +580,7 @@ class FuncNode(object):
 
         expType, expAddress = self.args[1].expression(funcName, currentTable)
 
-        if expType is "int":
+        if (expType == "int"):
             quadruples.append(["ver", expAddress, "*" + str(arrayList[self.args[0]][0]) + "*", "*" + str(arrayList[self.args[0]][1]) + "*"])
 
             aux1 = auxTable.add("Aux", expType, "aux")
@@ -604,7 +610,7 @@ class FuncNode(object):
         expType1, expAddress1 = self.args[1].expression(funcName, currentTable)
         expType2, expAddress2 = self.args[2].expression(funcName, currentTable)
 
-        if expType1 is "int" and expType2 is "int":
+        if (expType1 == "int") and (expType2 == "int"):
             #Quadruple for first dimension
             quadruples.append(["ver", expAddress1, "*" + str(matrixList[self.args[0]][0]) + "*", "*" + str(matrixList[self.args[0]][1]) + "*"])
 
