@@ -218,6 +218,7 @@ class FuncNode(object):
 # -------------------------------------------------------------
 
     elif self.type == "arrVar":
+      print("Entro a arrVar")
       global arrayList
 
       limInf = 1
@@ -366,6 +367,9 @@ class FuncNode(object):
 
     print(funcName)
     if self.type == "assignment":
+      print("Entro a assignment")
+      if self.args[0].type == "idCallArr" or selfargs[0].type == "idCallMat":
+          resultType, address = self.args[0].expression(funcName, result)
       varName = self.args[0].args[0]
       address = ""
       auxValue = ""
