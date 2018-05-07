@@ -2,10 +2,12 @@ import sys
 from semanticCube import *
 from varTable import *
 
+# Variable Tables
 globalTable = VarTable()
 localTable = VarTable(20001, 25001, 30001, 35001)
 auxTable = VarTable(40001, 45001, 50001, 55001)
 
+# Dictionary used to sort a list of parameters from certain function
 listParam = {}
 
 #Array dictionary
@@ -16,23 +18,38 @@ arrayList = {}
 # {mat1: [limInf1, limSup1, m1, r1, limInf2, limSup2, -k, r2, baseDir]}
 matrixList = {}
 
+# General counters for several rules
 global funcDecCont
 global funcCallCont
-funcDecCont = 0
-funcCallCont = 0
-
-quadFunc = 0
-
-quadruples = []
-gotoMain = ["GOTO","","",""]
 global contParam
 global funcParamCont
 global cont
 funcParamCont = 1
 contParam = 1
+funcDecCont = 0
+funcCallCont = 0
 
+# Saves the quadruple number of a function
+quadFunc = 0
+
+# List of quadruples to send to the virtual machine
+quadruples = []
+
+# Quadruple used at the beginning of the program
+gotoMain = ["GOTO","","",""]
+
+# Saves the name of the current function used
 funcContext = ""
 
+# isPrimitive
+# This method checks that the input is not a variable
+
+# Receives: numeric value, true, false, a string
+# or the name of a variable
+# Returns: True or False
+
+# Commonly used in methods who may use both variables
+# and numbers or other data types.
 def isPrimitive(t):
     if isinstance(t, str):
         if t == "true" or t == "false":
@@ -48,8 +65,20 @@ def isPrimitive(t):
     return False
 
 
+# getType
+# This method checks the type of a variable
+
+# Receives: a variable, the name of the current function using it,
+# and the current table in where the variable may be
+# Returns: the type of the variable, as well as a dummy that might
+# be used as a boolean or a string
+
+# Commonly used in methods that need to check the type of certain
+# variable
 def getType(v, funcName="missingFuncName", currentTable="error"):
     print("Getting type of " + str(v))
+
+    # Checks if the variable is a string, void or boolean type
     if isinstance(v, str):
         if v == "true" or v == "false":
             return "bool", "value"
@@ -58,6 +87,7 @@ def getType(v, funcName="missingFuncName", currentTable="error"):
         elif v[0] == "\"":
             return "string", "value"
         else:
+            # Checks if the variable is in the current table
             found = False
             for key in currentTable[funcName]:
             #verifies that the variable has been declared
@@ -65,17 +95,17 @@ def getType(v, funcName="missingFuncName", currentTable="error"):
                     found = True
                     return key, False
                     break
-    
+            # Checks if the variable is in the global table
             for key in globalTable["global"]:
             #verifies that the variable has been declared
                 if not found and (v in globalTable["global"][key].keys()):
                     found = True
                     return key, True
                     break
-                
+        # If the varaible was not declared
         if not found:
             raise Exception("Variable '" + str(v) + "' has not been declared. Cannot assign value.")
-
+    # Checks if variable is either int or decim type
     elif isinstance(v, int):
         return "int", "value"
     elif isinstance(v, float):
@@ -83,6 +113,11 @@ def getType(v, funcName="missingFuncName", currentTable="error"):
     else:
         return "void", "value"
 
+# Object FuncNode
+# Main class for the semantic, in charge of analyzing all the rules from the
+# syntax
+# Attributes: Type, which contains the name of the rule; and args, which are
+# the rest of the possible rules on the main FuncNode
 class FuncNode(object):
   def __init__(self, t, *args):
     self.type = t
@@ -107,17 +142,26 @@ class FuncNode(object):
     return sS
 
 # -------------------------------------------------------------
-  
+  # SemanticAll
+  # Method in charge of calling the semantic function to start the
+  # program
   def semanticAll(self):
     class_dir = []
     quadruples = []
     return self.semantic("global", class_dir)
 
 # -------------------------------------------------------------
+  # Semantic
+  # Main function of the semantics file. In charge of reading all the rules
+  # from the syntax and create the appropiate quadruples for the virtual
+  # machine
 
+  # Receives: the name of the current function name being used; and a result
+  # parameter to store the final result
   def semantic(self, funcName, result):
     result = {}
-    
+
+    # Depending on the current function used, assigns the variable table to use
     if funcName is None:
       funcName = "global"
       
@@ -127,66 +171,101 @@ class FuncNode(object):
       currentTable = localTable
 
 # -------------------------------------------------------------
-
+    # Program
+    # This condition recieves a FuncNode object with type 'program'
+    # Comunicates only with the method 'semantic'
     if self.type == "program":
+        
+      # Creates a 'goto' quadruple to make a jump to the main function
       quadruples.append(gotoMain)
 
+      # For each element of the FuncNode, it calls the semantic method
+      # for the element
       for elem in self.args:
         if elem is not None:
+            
+          # Checks the name of the program
           if isinstance(elem, str):
             print("Processing program " + elem + ".")
           else:
             elem.semantic(funcName, result)
+      # Creates a 'END' quadruple to tell the virtual machine to stop the
+      # execution
       quadruples.append(["END","","",""])
 
 # -------------------------------------------------------------
-
+    # Main
+    # This condition recieves a FuncNode object with type 'main'
+    # Comunicates only with the method 'semantic'
     elif self.type == "main":
+
+      # Creates a 'main' quadruple as a marker
       quadruples.append(["main","","",""])
+      # Assign the current quadruple position to the first 'goto' quadruple
       gotoMain[3] = len(quadruples) - 1
+
+      # Updates the current function name
       funcName = self.type
+
+      # Adds main as a variable to the global table and local table
       currentTable.add(funcName, "int", "main")
       localTable.add(funcName, "funcType", self.args[0])
 
+      # For each element of the FuncNode, it calls the semantic method
+      # for the element
       for elem in self.args[1:]:
         if elem is not None:
           elem.semantic(funcName, result)
 
- #     quadruples.append(["ret","*0*","",""])
 # -------------------------------------------------------------
-
+    # Function
+    # This condition recieves a FuncNode object with type 'function'
+    # Comunicates only with the method 'semantic'
     elif self.type == "function":
       global quadFunc
+
+      # Updates the current function in use
       funcName = self.args[0]
+
+      # Adds the function as a variable in the global and local tables
       currentTable.add(funcName, self.args[1],self.args[0])
       localTable.add(funcName, "funcType", self.args[0])
       auxFuncType = ["func", funcName, self.args[1],""]
       quadruples.append(auxFuncType)
+
+      # Saves the function's quadruple position
       quadFunc = len(quadruples)
 
-
+      # For each element of the FuncNode, it calls the semantic method
+      # for the element
       for elem in self.args[2:]:
         if elem is not None:
           elem.semantic(funcName, result)
 
+      # Creates quadruple to indicate the end of the function
       quadruples.append(["ENDPROC","","",""])
 
 # -------------------------------------------------------------
-
+    # Return
+    # This condition recieves a FuncNode object with type 'return'
+    # Comunicates only with the method 'expression'
     elif self.type == "return":
+        # Solves the expression for the return
         resultType, address = self.args[0].expression(funcName, result)
         print("El result de RETURN" + str(resultType))
         funcType = ""
 
         print(str(globalTable[funcName].keys()))
+        # Searches for the type of the return expression in the global table
         if resultType in globalTable[funcName].keys():
 
             for key in globalTable[funcName].keys():
                 funcType = key
                 break
-            
+            # Creates quadruple to store the result of the result in the function variable            
             quadruples.append(["ret", address,"",globalTable[funcName][funcType][funcName]])
         else:
+            # Creates quadruple in case the function is of type void
             if "void" in globalTable[funcName].keys():
                 quadruples.append(["ret", "/void/", "", ""])
             else:
@@ -194,11 +273,15 @@ class FuncNode(object):
 
 # -------------------------------------------------------------
 
-    #TODO: PARAMS
+    # Params
+    # This condition recieves a FuncNode object with type 'params'
     elif self.type == "params":
       global listParam
       global funcDecCont
       cont = 1
+
+      # For each parameter, add it to the parameter list and add it to the variable in
+      # the current table
       for i in range(0, len(self.args[0]), 2):
         listParam["param" + str(cont)] = {self.args[0][i]:self.args[0][i+1]}
         cont = cont + 1
@@ -207,20 +290,27 @@ class FuncNode(object):
       print("TU LISTA DE PARAMETROS: " + str(listParam))
 
 # -------------------------------------------------------------
-
+    # Var
+    # This condition recieves a FuncNode object with type 'var'
+    # Comunicates only with the method 'semantic'
     elif self.type == "var":
+      # Adds the variable to the current table and function in use
       if self.args[0] is not None:
         if self.args[1] is not None:
           currentTable.add(funcName, self.args[1], self.args[0])
+      # If more variables, calls the semantic method for them    
       if self.args[2] is not None:
         result = self.args[2].semantic(funcName, result)
 
 # -------------------------------------------------------------
-
+    # arrVar
+    # This condition recieves a FuncNode object with type 'arrVar'
+    # Comunicates only with the method 'semantic'
     elif self.type == "arrVar":
       print("Entro a arrVar")
       global arrayList
 
+      # Makes calculations to get the actual size of the variable
       limInf = 1
       limSup = self.args[2]
       r = 1 * (limSup - limInf + 1) # m0
@@ -232,19 +322,23 @@ class FuncNode(object):
       print("R: " + str(r))
       print("-K: " + str(minusK))
 
-      #Adds id to currentTable
+      #Adds variable to the current table and the array dictionary
       currentTable.addArr(funcName, self.args[1], self.args[0], r)
       address = currentTable[funcName][self.args[1]][self.args[0]]
       arrayList[self.args[0]] = [limInf, limSup, minusK, r, address]
 
+      # If more variables, calls the semantic method for them 
       if self.args[3] is not None:
           result = self.args[3].semantic(funcName, result)
       
 # -------------------------------------------------------------
-
+    # matVar
+    # This condition recieves a FuncNode object with type 'matVar'
+    # Comunicates only with the method 'semantic'
     elif self.type == "matVar":
       global matrixList
 
+      # Makes calculations to get the actual size of the variable
       limInf1 = 1
       limSup1 = self.args[2]
       limInf2 = 1
@@ -272,77 +366,103 @@ class FuncNode(object):
       print("M2: " + str(m2))
       print("-K: " + str(minusK))
 
-      #Adds id to currentTable
+      #Adds variable to the current table and the matrix dictionary
       currentTable.addArr(funcName, self.args[1], self.args[0], r2)
       address = currentTable[funcName][self.args[1]][self.args[0]]
       matrixList[self.args[0]] = [limInf1, limSup1, m1, r1, limInf2, limSup2, minusK, r2, address]
 
+      # If more variables, calls the semantic method for them 
       if self.args[4] is not None:
           result = self.args[4].semantic(funcName, result)
       
 # -------------------------------------------------------------
-        
+    # Statement
+    # This condition recieves a FuncNode object with type 'statement'
+    # Comunicates with both methods 'semantic' and 'expression'
     elif self.type == "statement":
       print("Entro a statement")
+      # If there are statements
       if self.args[0] is not None:
+        # If the next statement is a type of expression, semantic calls the
+        # expression method. If not, calls the semantic method for the statement
         if self.args[0].type == "assignment" or self.args[0].type == "functionCall" or self.args[0].type == "print" or self.args[0].type == "read":
             result = self.args[0].expression(funcName, result)
         else:
             result = self.args[0].semantic(funcName, result)
 
 # -------------------------------------------------------------
-        
+    # Statements
+    # This condition recieves a FuncNode object with type 'statements'
+    # Comunicates with both methods 'semantic' and 'expression'
     elif self.type == "statements":
       print("Entro a statements")
+      # If the next statement is a type of expression, semantic calls the
+      # expression method. If not, calls the semantic method for the statement
       if self.args[0].type == "assignment" or self.args[0].type == "functionCall" or self.args[0].type == "print" or self.args[0].type == "read":
           result = self.args[0].expression(funcName, result)
       else:
           result = self.args[0].semantic(funcName, result)
+      # If more statements, calles the method more suited for the next
+      # argument
       if self.args[1] is not None:
           result = self.args[1].semantic(funcName, result)
 
 # -------------------------------------------------------------
 
-    #conditions
+    # If
+    # This condition recieves a FuncNode object with type 'if'
+    # Comunicates with both methods 'semantic' and 'expression'
     elif self.type == "if":
       print ("Entro al if")
+      # Solves the expression inside the condition of the if
       resultType, address = self.args[0].expression(funcName, result)
       if resultType != 'bool':
         raise Exception("Condition must be bool type")
 
-      #GotoF
+      # Creates gotoF quadruple to jump if the condition is false
       gotof = ['gotof', address, "", ""]
       quadruples.append(gotof)
+
+      # Solves the expressions inside the if
       result = self.args[1].semantic(funcName, result)
       auxQuadDesp = len(quadruples)
-      
+
+      # Creates quadruple at the end of the if the condition is false
       goto = ['goto', "", "", ""]
       quadruples.append(goto)
       gotof[3] = auxQuadDesp + 1
 
-      # Else
+      # If an else exists
       if self.args[2] is not None:
         auxElseAnt = len(quadruples)
+        # Solves the expression inside the else
         result = self.args[2].semantic(funcName, result)
         auxElseDesp = len(quadruples)
+        #Changes the 'goto' quadruple to jump the else if the condition
+        # is false
         goto[3] = auxElseDesp
 
 # -------------------------------------------------------------
 
-#while
+    # While
+    # This condition recieves a FuncNode object with type 'while'
+    # Comunicates with both methods 'semantic' and 'expression'
     elif self.type == "while":
       print ("Entro al while")
       auxQuadAnt = len(quadruples)
+
+      # Solves the expression inside the condition of the while
       resultType, address = self.args[0].expression(funcName, result)
       if resultType != 'bool':
         raise Exception("Condition must be bool type")
 
-      #GotoF
+      # Creates gotoF quadruple to jump if the condition is false
       gotof = ['gotof', address, "", ""]
       quadruples.append(gotof)
       result = self.args[1].semantic(funcName, result)
       auxQuadDesp = len(quadruples)
 
+      # Creates 'goto' quadruple to jump to the beginning of the while
       goto = ['goto', "", "", ""]
       quadruples.append(goto)
       gotof[3] = auxQuadDesp + 1
@@ -356,8 +476,16 @@ class FuncNode(object):
 # -------------------------------------------------------------
 # -------------------------------------------------------------
 # -------------------------------------------------------------
-  
+  # Expression
+  # Main function of the semantics file. In charge of evaluating all the
+  # expressions from the syntax and create the appropiate quadruples for
+  # the virtual machine
+
+  # Receives: the name of the current function name being used; and a result
+  # parameter to store the final result
+  # Returns: the result type and the result address
   def expression(self, funcName, result):
+    # Depending on the current function used, assigns the variable table to use
     if funcName == "global":
       currentTable = globalTable
     else:
@@ -366,18 +494,25 @@ class FuncNode(object):
 # -------------------------------------------------------------
 
     print(funcName)
+    # Assignment
+    # This condition recieves a FuncNode object with type 'assignment'
+    # Comunicates with only the method 'expression'
     if self.type == "assignment":
       print("Entro a assignment")
+      # Check that the next FuncNode is an array or a matrix
       if self.args[0].type == "idCallArr" or self.args[0].type == "idCallMat":
           resultArrType, addressArr = self.args[0].expression(funcName, result)
       varName = self.args[0].args[0]
       address = ""
       auxValue = ""
+      #Check if the variable is a primitive. If not, solve the type of the variable
       if isPrimitive(self.args[2]):
           resultType, auxValue = getType(self.args[2], funcName, currentTable)
       else:
           resultType, address = self.args[2].expression(funcName, result)
       print("auxValue" + auxValue)
+
+      # Search the variable name in the current table
       found = False
       for key in currentTable[funcName]:
       #verifies that the variable has been declared in current table
@@ -385,11 +520,13 @@ class FuncNode(object):
           if resultType == key:
             found = True
             if auxValue == "value":
+                # Check if the next variable is an array or a matrix
                 if self.args[0].type == "idCallArr" or self.args[0].type == "idCallMat":
                     quadruples.append([self.args[1], currentTable[funcName][resultType][varName], "*1*", addressArr])
                 else:
                     quadruples.append([self.args[1], currentTable[funcName][resultType][varName], "*1*", currentTable[funcName][resultType][varName]])
             else:
+                # Check if the next variable is an array or a matrix
                 if self.args[0].type == "idCallArr" or self.args[0].type == "idCallMat":
                     quadruples.append(["=", address, "", addressArr])
                 else:
@@ -398,6 +535,7 @@ class FuncNode(object):
           else:
             raise Exception("Cannot assign a value of different type to the variable " + str(self.args[0].args[0]) + ".")
       print(str(globalTable))
+      # Search the viaraible name in the global table
       if "global" in globalTable.keys():
           for key in globalTable["global"]:
           #verifies that the variable has been declared in global table
@@ -405,11 +543,13 @@ class FuncNode(object):
                   if resultType == key:
                       found = True
                       if auxValue == "value":
+                          # Check if the next variable is an array or a matrix
                           if self.args[0].type == "idCallArr" or selfargs[0].type == "idCallMat":
                               quadruples.append([self.args[1], globalTable["global"][resultType][varName], "*1*", addressArr])
                           else:
                               quadruples.append([self.args[1], globalTable["global"][resultType][varName], "*1*", currentTable[funcName][resultType][varName]])
                       else:
+                          # Check if the next variable is an array or a matrix
                           if self.args[0].type == "idCallArr" or selfargs[0].type == "idCallMat":
                               quadruples.append(["=", address, "", addressArr])
                           else:
