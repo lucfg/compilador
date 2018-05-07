@@ -20,11 +20,3 @@ main()
         print(fibonacci(i));
         i++;}
 }
-
-func int fibonacci(int n) {if((n==1)||(n==0)){return(n);}else {return(fibonacci(n-1) + fibonacci(n-2));}}main(){var int n;var int i;i = 0;print("Input the number of terms for Fibonacci Series");read(n);print("Fibonnaci Series is as follows");while(i < n){print(fibonacci(i));i++;}}
-
-
-main() { 
-  var int a[5];
-  a[3] = 10;
-}
