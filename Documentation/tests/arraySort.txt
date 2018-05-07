@@ -1,0 +1,45 @@
+main() { 
+  var int a[10];
+  var int aLength;
+  var int i;
+  var int auxInt;
+  var bool orderedSomething;
+
+  aLength = 10;
+
+  print("Please input 10 values for your array");
+  i = 1;
+  while (i <= aLength) {
+	read(a[i]);
+	i++;
+  }
+
+  print("Unordered values");
+  i = 1;
+  while (i <= aLength) {
+	print (a[i]);
+	i++;
+  }
+
+  orderedSomething = true;
+  while (orderedSomething) {
+	orderedSomething = false;
+	i = 2;
+	while (i <= aLength) {
+	  if (a[i-1] > a[i]) {
+		auxInt = a[i-1];
+		a[i-1] = a[i];
+		a[i] = auxInt;
+		orderedSomething = true;
+	  }
+	  i++;
+	}
+  }
+
+  print("Your ordered array is");
+  i = 1;
+  while (i <= aLength) {
+	print (a[i]);
+	i++;
+  }
+}

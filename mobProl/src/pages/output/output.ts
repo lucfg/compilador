@@ -33,9 +33,14 @@ export class OutputPage {
   }
 
   run() {
-    this.executeQuadruples(0, 0);
-    console.log("Resulting memory:");
-    console.log(this.memory);
+    try {
+      this.executeQuadruples(0, 0);
+    } catch (err) {
+      console.log(err);
+      alert("Seems like you have an infinite loop.");
+    }
+    // console.log("Resulting memory:");
+    // console.log(this.memory);
     console.log("Resulting virtual memory:");
     console.log(this.funcArguments);
   }
@@ -71,6 +76,8 @@ export class OutputPage {
 
     let isConstantArg1 = true;
     let isConstantArg2 = true;
+    let mustBeInitializedArg1 = true;
+    let mustBeInitializedArg2 = true;
 
     // Get arg1's value
     if (rawArg1.indexOf('*') > -1) { // Check for numbers (both int and float)
@@ -82,6 +89,13 @@ export class OutputPage {
       let cleanString1 = rawArg1.replace(/\//g, '');
       arg1 = cleanString1;
     }
+    else if (rawArg1.indexOf('(') > -1) { // Check for array references
+      let cleanString1 = rawArg1.replace(/\(/g, '');
+      cleanString1 = cleanString1.replace(/\)/g, '');
+      let referenceAddress = cleanString1;
+      let address = this.funcArguments[depth][referenceAddress.toString()];
+      arg1 = this.funcArguments[depth][address.toString()];
+    }
     else if (rawArg1 == "true") {
       arg1 = true;
     }
@@ -89,39 +103,33 @@ export class OutputPage {
       arg1 = false;
     } else if (rawArg1 == "") { // no arg provided
       arg1 = null;
+      mustBeInitializedArg1 = false;
     } else { // arg is meant to be an address
       if (isNaN(Number(rawArg1))) { // Handle unexpected strings
         console.log("Arg1 is an unexpected string.");
         arg1 = rawArg1;
+        mustBeInitializedArg1 = false;
       }
       else {
-        var depthArg1 = depth;
-
-        let funcArgVal = this.funcArguments[depthArg1][rawArg1.toString()];
+        let funcArgVal = this.funcArguments[depth][rawArg1.toString()];
         if (funcArgVal != null) {
-          console.log("arg1 is an argument and its value is " + funcArgVal);
+          // console.log("arg1 is an argument and its value is " + funcArgVal);
           arg1 = funcArgVal;
         }
         else { // Variable is not initialized
-          console.log("Error: arg1 is not initialized for depth " + depthArg1);
+          console.log("Error: arg1 is not initialized for depth " + depth);
           console.log(this.funcArguments);
           alert("You are trying to use a variable without giving it a value first.");
           return false;
         }
-        
-        // else { // Arg must be a normal address; check if it is initialized
-        //   if (this.memory[Number(rawArg1)] == null) {
-        //     console.log("Error: variable is not initialized.");
-        //     alert("You are trying to use a variable without giving it a value first.");
-        //     return false;
-        //   }
-        //   else { // Arg is a common, initialized address
-        //     console.log("arg1 is an addr (" + rawArg1 + ") and it points to " + this.memory[Number(rawArg1)].value);
-        //     arg1 = this.memory[Number(rawArg1)].value;
-        //     isConstantArg1 = false;
-        //   }
-        // }
       }
+    }
+
+    if (mustBeInitializedArg1 && arg1 == null) {
+      console.log("Initialization error: arg1 is not initialized for depth " + depth);
+      console.log(this.funcArguments);
+      alert("You are trying to use a variable without giving it a value first.");
+      return false;
     }
 
     // Get arg2's value
@@ -134,6 +142,13 @@ export class OutputPage {
       let cleanString2 = rawArg2.replace(/\//g, '');
       arg2 = cleanString2;
     }
+    else if (rawArg2.indexOf('(') > -1) { // Check for array references
+      let cleanString2 = rawArg2.replace(/\(/g, '');
+      cleanString2 = cleanString2.replace(/\)/g, '');
+      let referenceAddress = cleanString2;
+      let address = this.funcArguments[depth][referenceAddress.toString()];
+      arg2 = this.funcArguments[depth][address.toString()];
+    }
     else if (rawArg2 == "true") {
       arg2 = true;
     }
@@ -141,47 +156,51 @@ export class OutputPage {
       arg2 = false;
     } else if (rawArg2 == "") { // No arg provided
       arg2 = null;
+      mustBeInitializedArg2 = false;
     } else { // arg is meant to be an address
       if (isNaN(Number(rawArg2))) { // Handle unexpected strings
         console.log("Arg2 is an unexpected string.");
         arg2 = rawArg2;
+        mustBeInitializedArg2 = false;
       }
       else {
-        var depthArg2 = depth;
-        
-        let funcArgVal = this.funcArguments[depthArg2][rawArg2.toString()];
+        let funcArgVal = this.funcArguments[depth][rawArg2.toString()];
         if (funcArgVal != null) {
-          console.log("arg2 is an argument and its value is " + funcArgVal);
+          // console.log("arg2 is an argument and its value is " + funcArgVal);
           arg2 = funcArgVal;
         }
         else { // Variable is not initialized
-          console.log("Error: arg2 is not initialized for depth " + depthArg2);
+          console.log("Error: arg2 is not initialized for depth " + depth);
           console.log(this.funcArguments);
           alert("You are trying to use a variable without giving it a value first.");
           return false;
         }
-
-        // else { // Arg must be a normal address; check if it is initialized
-        //   if (this.memory[Number(rawArg2)] == null) {
-        //     console.log("Error: variable is not initialized.");
-        //     alert("You are trying to use a variable without giving it a value first.");
-        //     return false;
-        //   }
-        //   else { // Arg is a common, initialized address
-        //     console.log("arg2 is an addr (" + rawArg2 + ") and it points to " + this.memory[Number(rawArg2)].value);
-        //     arg2 = this.memory[Number(rawArg2)].value;
-        //     isConstantArg2 = false;
-        //   }
-        // }
       }
     }
 
-    // Get arg'3 value
+    if (mustBeInitializedArg2 && arg2 == null) {
+      console.log("Initialization error: arg2 is not initialized for depth " + depth);
+      console.log(this.funcArguments);
+      alert("You are trying to use a variable without giving it a value first.");
+      return false;
+    }
+
+    // Get arg'3 value (mostly, an address)
     if (rawArg3.indexOf('*') > -1) { // Arg was sent as an integer value
       let cleanString3 = rawArg3.replace(/\*/g, '');
       arg3 = Number(cleanString3);
     }
-    arg3 = Number(rawArg3); // Arg is an address
+    else if (rawArg3.indexOf('(') > -1) { // Check for array references
+      let cleanString3 = rawArg3.replace(/\(/g, '');
+      cleanString3 = cleanString3.replace(/\)/g, '');
+      let referenceAddress = cleanString3;
+      let address = this.funcArguments[depth][referenceAddress.toString()];
+      // arg2 = this.funcArguments[depth][address.toString()];
+      arg3 = address;
+    }
+    else {
+      arg3 = Number(rawArg3); // Arg is an address
+    }
 
 
     // Handle instruction
@@ -194,8 +213,14 @@ export class OutputPage {
     switch (instruction.toLowerCase()) {
       // ======= GoTo's =======
       case "goto":
-        console.log("Going from " + programIndex + " to " + arg3 + " in depth " + depth);
-        return this.executeQuadruples(arg3, depth);
+        if (arg3 > 0) {
+          console.log("Going from " + programIndex + " to " + arg3 + " in depth " + depth);
+          return this.executeQuadruples(arg3, depth);
+        }        
+        else {
+          console.log("Ignoring redundant goto");
+        }
+        break;
 
       case "gotof":
         if (!arg1) {
@@ -281,6 +306,16 @@ export class OutputPage {
       case "ver":
         // TODO: revisar que funcione y agregar
         console.log("Checking that array index is correct.");
+        break;
+
+      // ======= Arrays =======
+      case "ver":
+        console.log("Checking that given index " + arg1Log + " is within array bounds " + arg2Log + arg3);
+        if (arg1 < arg2 || arg1 > arg3) {
+          console.log("Error: array index (" + arg1Log + ") is out of bounds (" + arg2Log + "-" + arg3 + ")");
+          alert("Array index is out of bounds.");
+          return false;
+        }
         break;
 
       // ======= Expressions =======

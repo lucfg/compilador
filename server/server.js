@@ -15,7 +15,8 @@ var quadruples = null;
 
 app.post('/compile', function(req, res) {
   //console.log("Compiling program...")
-  //console.log("Code to compile: " + req.body.code);
+  console.log("Code to compile: ")
+  console.log(req.body.code);
 
   var options = {
     mode: 'text',

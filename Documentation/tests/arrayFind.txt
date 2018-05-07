@@ -1,0 +1,42 @@
+main() {
+    var int a[10];
+    var int aLength;
+    var int i;
+    var int numToSearch;
+    var int numIndex;
+
+    aLength = 10;
+
+    print("Please input 10 numbers for your array");
+    i = 1;
+    while (i <= aLength) {
+        read(a[i]);
+        i++;
+    }
+
+    i = 1;
+    while (i <= aLength) {
+        print(a[i]);
+        i++;
+    }
+
+    print("Please tell me the number you would like to find");
+    read(numToSearch);
+
+    numIndex = 0;
+    i = 1;
+    while (i <= aLength && numIndex < 1) {
+        if (a[i] == numToSearch) {
+            numIndex = i;
+        }
+        i++;
+    }
+
+    if (numIndex > 0) {
+        print("Found your number on index");
+        print(numIndex);
+    }
+    else {
+        print("Sorry I could not find your number on the array provided");
+    }
+}
